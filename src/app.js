@@ -2,9 +2,10 @@
  * Module dependencies.
  */
 
-var express = require('express'), routes = require('./routes'), appjs = require('appjs'), utils = require('util');
+var express = require('express'), routes = require('./routes'), appjs = require('appjs'), utils = require('util'), kalabox = require('./kalabox') ;
 
 var app = module.exports = express.createServer();
+var boxme = new kalabox;
 
 // Configuration
 
@@ -52,7 +53,7 @@ express.compiler.compilers.less.compile = function(str, fn) {
 }
 
 // Routes
-
+console.log(boxme.vagrant);
 app.get('/', routes.index);
 
 /**
