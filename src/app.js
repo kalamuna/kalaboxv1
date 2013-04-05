@@ -2,13 +2,11 @@
  * Module dependencies.
  */
 
-var express = require('express'), routes = require('./routes'), appjs = require('appjs'), utils = require('util'), kalabox = require('./kalabox') ;
-
+var express = require('express'), routes = require('./routes'), appjs = require('appjs'), utils = require('util'); //, kalabox = require('./kalabox');
 var app = module.exports = express.createServer();
-var boxme = new kalabox;
+//var boxme = kalabox.createBox();
 
 // Configuration
-
 app.configure(function() {
   app.set('views', __dirname + '/views');
   app.set('view engine', 'ejs');
@@ -52,8 +50,16 @@ express.compiler.compilers.less.compile = function(str, fn) {
   }
 }
 
-// Routes
-console.log(boxme.vagrant);
+//Routes
+/*
+app.get('/', function(req, res){
+  //res.send('hello world');
+  kalabox.refreshBox(boxme, function(boxme) {
+    res.json(boxme);
+  });
+});
+*/
+
 app.get('/', routes.index);
 
 /**

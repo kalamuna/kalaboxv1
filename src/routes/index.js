@@ -1,8 +1,10 @@
-
 /*
  * GET home page.
  */
 
-exports.index = function(req, res){
-  res.render('index', { title: 'Kalabox' })
+exports.index = function(req, res) {
+  res.render('index', {
+    title : 'Kalabox',
+    thing : 'tes',
+  })
 };
