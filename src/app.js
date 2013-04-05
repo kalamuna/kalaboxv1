@@ -61,6 +61,7 @@ app.get('/', function(req, res){
 */
 
 app.get('/', routes.index);
+//app.get('/start', routes.start);
 
 /**
  * Setup AppJS
