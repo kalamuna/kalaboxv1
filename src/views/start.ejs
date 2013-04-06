@@ -1,0 +1,103 @@
+<script type="text/javascript">
+  var progress = setInterval(function() {
+    // DOWNLOADING STUFF
+    // CONFIGURING THINGS
+    // BUILDING BOX
+    // FLYING HIGH
+    var $bar = $('.bar');
+  
+    if ($bar.width()==350) {
+        clearInterval(progress);
+        setTimeout(function(){
+          buildKala(progress);
+        }, 2000);        
+    } else {
+        $bar.width($bar.width()+1);
+    }
+    
+  }, 900);
+
+  function buildKala(progress) {
+    $('#icoco').removeClass('kalagreen');
+    $('#icoco').addClass('kalayellow');
+    $('#icoco').children().removeClass('icon-download');
+    $('#icoco').children().addClass('icon-bolt');
+    $('.lead').text("Building Kalabox...");
+        
+    var progress = setInterval(function() {
+      var $bar = $('.bar');
+    
+      if ($bar.width()==450) {
+          clearInterval(progress);
+          setTimeout(function(){
+            configureKala(progress);
+          }, 2000);  
+      } else {
+          $bar.width($bar.width()+1);
+      }
+      
+    }, 300);
+  }  
+
+  function configureKala(progress) {
+    $('#icoco').removeClass('kalayellow');
+    $('#icoco').addClass('kalablue');
+    $('#icoco').children().removeClass('icon-bolt');
+    $('#icoco').children().addClass('icon-cog');
+    $('.lead').text("Configuring Things...");
+        
+    var progress = setInterval(function() {
+      var $bar = $('.bar');
+    
+      if ($bar.width()==550) {
+          clearInterval(progress);
+          setTimeout(function(){
+            jetKala(progress);
+          }, 6000);     
+      } else {
+          $bar.width($bar.width()+1);
+      }
+      
+    }, 500);
+  }     
+
+  function jetKala(progress) {
+    $('#icoco').removeClass('kalablue');
+    $('#icoco').addClass('kalapurple');
+    $('#icoco').children().removeClass('icon-cog');
+    $('#icoco').children().addClass('icon-fighter-jet');
+    $('.lead').text("Soaring High..");
+        
+    var progress = setInterval(function() {
+      var $bar = $('.bar');
+    
+      if ($bar.width()==600) {
+          clearInterval(progress);
+          $('.progress').removeClass('active');  
+          setTimeout(function(){
+            window.location.replace("/dash");
+          }, 2000);   
+      } else {
+          $bar.width($bar.width()+1);
+      }
+      
+    }, 1);
+  }     
+
+  
+  
+</script>
+
+<div class="kalawrap">
+  <hr>
+  <div class="text-center">
+    <div id="icoco" class="kalagreen">
+      <i class="icon-download icon-massive"></i>
+    </div>
+    <p class="lead">Downloading Stuff...</p>
+  </div>
+  <hr>
+  <div class="progress progress-striped active">
+    <div class="bar" style="width: 0%;"></div>
+  </div>
+</div>

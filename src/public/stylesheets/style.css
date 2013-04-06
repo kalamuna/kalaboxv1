@@ -17,11 +17,43 @@
   color: #afd357;
 }
 
+.kalablue {
+  color: #74b2e5;
+}
+
+.kalared {
+  color: #ed6f90;
+}
+
+.kalapurple {
+  color: #8a64a8;
+}
+
+.kalaorange {
+  color: #faac48;
+}
+
+.kalayellow {
+  color: #ffed90;
+}
+
 .icon-massive {
   font-size: 280px;
 }
 
+.kalawrap {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
 #icoco {
-  height: 200px;
-  margin-top: 65px;
+}
+
+.btn-massive {
+  width: 200px;
+}
+
+small {
+  color: #999;
+  font-size: 11px;
 }

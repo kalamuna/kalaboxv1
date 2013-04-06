@@ -7,3 +7,9 @@ exports.index = function(req, res) {
     title : 'Kalabox',
   })
 };
+
+exports.start = function(req, res) {
+  res.render('start', {
+    title : 'Boot this Box!',
+  })
+};
