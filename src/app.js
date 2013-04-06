@@ -43,6 +43,7 @@ app.get('/', function(req, res){
 
 app.get('/', routes.index);
 app.get('/start', routes.start);
+app.get('/dash', routes.dash);
 
 /**
  * Setup AppJS

@@ -13,3 +13,9 @@ exports.start = function(req, res) {
     title : 'Boot this Box!',
   })
 };
+
+exports.dash = function(req, res) {
+  res.render('dash', {
+    title : 'Kalabox',
+  })
+};

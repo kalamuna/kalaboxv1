@@ -1,0 +1,243 @@
+<div class="kalawrap">
+  <div style="margin-top: 20px;">
+    <div class="tabbable">
+      <!-- Only required for left/right tabs -->
+      <ul class="nav nav-pills">
+        <li class="active"><a href="#home" data-toggle="tab">Home</a>
+        </li>
+        <li><a href="#sites" data-toggle="tab">Local Sites</a>
+        
+        <li><a href="#pantheon" data-toggle="tab">Pantheon</a>
+        </li>
+
+        <li><a href="#tools" data-toggle="tab">Tools</a></li>
+        <li><a href="#code" data-toggle="tab">Commands</a></li>
+
+        <li><a href="#deploy" data-toggle="tab">Deploy</a>
+        </li>
+        </li>
+      </ul>
+      <hr>
+
+      <div class="tab-content">
+        <div class="tab-pane active" id="home">
+          <div style="width: 300px;" class="pull-right">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Thing</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tr class="success">
+                <td>Kalabox</td>
+                <td>Running</td>
+              </tr>
+              <tr class="success">
+                <td>nginx</td>
+                <td>Running</td>
+              </tr>
+              <tr class="success">
+                <td>MySQL</td>
+                <td>Running</td>
+              </tr>
+              <tr class="success">
+                <td>SSH Keys</td>
+                <td>Installed</td>
+              </tr>
+              <tr class="error">
+                <td>Apache Solr</td>
+                <td>Not Installed</td>
+              </tr>
+              <tr class="info">
+                <td>Webroot</td>
+                <td>~/kalabox/www</td>
+              </tr>
+              <tr class="info">
+                <td>Happiness</td>
+                <td>Maximal</td>
+              </tr>
+            </table>
+          </div>
+          <div class="pull-left">
+            <img src="/images/kalaboxv2.png" height="250" width="250">
+            <p class="lead text-center" style="margin-top: 10px;">Oh
+              Hello There.</p>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+
+        <div class="tab-pane" id="sites">
+          <div style="height: 305px;">
+            <div class="text-center">
+              <h1>How Strange!</h1>
+              <p id="info" class="lead">It seems like you have no sites
+                locally.</p>
+              <p class="lead">Do you wish to spin one up?</p>
+              <a class="btn btn-large btn-success btn-massive" href="#">Yes,
+                I do.</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="pantheon">
+          <div style="height: 315px;">
+            <div class="well">
+              <div class="pull-right" style="width: 300px;">
+                <h2>kalademo</h2>
+                <a id="kalademo-build" class="btn btn-primary" href="#">Build
+                  this site locally.</a>
+                <div id="kalademo-progress"
+                  class="progress progress-striped active"
+                  style="width: 200px;">
+                  <div class="bar" style="width: 0%;"></div>
+                </div>
+                <a id="kalademo-launch" class="btn btn-success"
+                  target="_blank" href="http://kalademo.kala">Launch!</a>
+              </div>
+              <div class="pull-left">
+                <img src="/images/kalademo.png" width="200">
+              </div>
+              <div class="clearfix"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="tools">
+          <div style="height: 315px;">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Thing</th>
+                  <th>Stuff</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tr class="">
+                <td>Welcome</td>
+                <td>start.kala</td>
+                <td><a href="http://start.kala" target="_blank">Launch</a>
+                </td>
+              </tr>
+              <tr class="">
+                <td>phpMyAdmin</td>
+                <td>php.kala</td>
+                <td><a href="http://php.kala" target="_blank">Launch</a>
+                </td>
+              </tr>
+              <tr class="">
+                <td>Webgrind</td>
+                <td>grind.kala</td>
+                <td><a href="http://grind.kala" target="_blank">Launch</a>
+                </td>
+              </tr>
+              <tr class="">
+                <td>xdebug</td>
+                <td>host.kala</td>
+                <td><a href="http://grind.kala" target="_blank">Info</a>
+                </td>
+              </tr>
+              <tr class="">
+                <td>APC</td>
+                <td>Running</td>
+                <td><a href="http://apc.kala" target="_blank">Info</a></td>
+              </tr>
+              <tr class="">
+                <td>Version Control</td>
+                <td>git</td>
+                <td><a href="http://drush.ws" target="_blank">Info</a></td>
+              </tr>
+              <tr class="info">
+                <td>Max Warp</td>
+                <td>9</td>
+                <td><a href="http://www.youtube.com/watch?v=g3rFNbSKpEE"
+                  target="_blank">Engage</a></td>
+              </tr>
+            </table>
+
+          </div>
+        </div>
+
+        <div class="tab-pane" id="code">
+          <div style="height: 315px;">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Command</th>
+                  <th>Info</th>
+                </tr>
+              </thead>
+              <tr class="">
+                <td>drush build SITENAME.dev</td>
+                <td>Will build your pantheon site</td>
+              </tr>
+              <tr class="">
+                <td>drush krefresh SITENAME.dev</td>
+                <td>Will rebuild your pantheon site</td>
+              </tr>
+              <tr class="">
+                <td>drush crush SITENAME.dev</td>
+                <td>Will remove SITENAME.dev</td>
+              </tr>
+              <tr class="">
+                <td>drush code SITENAME.dev</td>
+                <td>Will get your pantheon codebase</td>
+              </tr>
+              <tr class="">
+                <td>drush data SITENAME.dev</td>
+                <td>Will get your pantheon database</td>
+              </tr>
+              <tr class="">
+                <td>drush files SITENAME.dev</td>
+                <td>Will sync your pantheon file</td>
+              </tr>
+              <tr class="">
+                <td>drush kala</td>
+                <td>Will list these commands</td>
+              </tr>
+            </table>
+          </div>
+        </div>
+
+        <div class="tab-pane" id="deploy">
+          <div style="height: 315px;">
+            <div class="hero-unit">
+              <h2>Future Magic</h2>
+              <p class="lead">Deploy your site to Pantheon, Acquia,
+                Rackspace</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <hr>
+</div>
+
+<script type="text/javascript">
+  $('#kalademo-progress').hide();
+  $('#kalademo-launch').hide();
+
+  $("#kalademo-build").click(function() {
+    $("#kalademo-build").hide();
+    $('#kalademo-progress').show();
+
+    var progress = setInterval(function() {
+      var $bar = $('.bar');
+    
+      if ($bar.width()==200) {
+          clearInterval(progress);
+          $('.progress').removeClass('active');  
+          setTimeout(function(){
+            $('#kalademo-progress').hide();
+            $("#kalademo-launch").show();
+          }, 2000);      
+      } else {
+          $bar.width($bar.width()+1);
+      }
+      
+    }, 200);
+    
+  });
+</script>
