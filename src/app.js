@@ -2,9 +2,12 @@
  * Module dependencies.
  */
 
-var express = require('express'), routes = require('./routes'), appjs = require('appjs'), utils = require('util'); //, kalabox = require('./kalabox');
+var express = require('express'), routes = require('./routes'), appjs = require('appjs'), utils = require('util'); // ,
+// kalabox
+// =
+// require('./kalabox');
 var app = module.exports = express.createServer();
-//var boxme = kalabox.createBox();
+var io = require('socket.io').listen(app);
 
 // Configuration
 app.configure(function() {
@@ -31,19 +34,24 @@ app.configure('production', function() {
   app.use(express.errorHandler());
 });
 
-//Routes
+// Routes
 /*
-app.get('/', function(req, res){
-  //res.send('hello world');
-  kalabox.refreshBox(boxme, function(boxme) {
-    res.json(boxme);
-  });
-});
-*/
+ * app.get('/', function(req, res){ //res.send('hello world');
+ * kalabox.refreshBox(boxme, function(boxme) { res.json(boxme); }); });
+ */
 
 app.get('/', routes.index);
 app.get('/start', routes.start);
 app.get('/dash', routes.dash);
+
+io.sockets.on('connection', function(socket) {
+  socket.emit('news', {
+    hello : 'world'
+  });
+  socket.on('my other event', function(data) {
+    console.log(data);
+  });
+});
 
 /**
  * Setup AppJS
