@@ -15,8 +15,6 @@ function Kalabox() {
   this.done = false;
 }
 
-
-
 exports.refreshBox = function(box, cb) {
   box.setVBox(cb);
   box.setVagrant(cb);

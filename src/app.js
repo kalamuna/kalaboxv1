@@ -7,7 +7,7 @@ var express = require('express'), routes = require('./routes'), appjs = require(
 // =
 // require('./kalabox');
 var app = module.exports = express.createServer();
-var io = require('socket.io').listen(app);
+io = require('socket.io').listen(app);
 
 // Configuration
 app.configure(function() {
@@ -43,15 +43,6 @@ app.configure('production', function() {
 app.get('/', routes.index);
 app.get('/start', routes.start);
 app.get('/dash', routes.dash);
-
-io.sockets.on('connection', function(socket) {
-  socket.emit('news', {
-    hello : 'world'
-  });
-  socket.on('my other event', function(data) {
-    console.log(data);
-  });
-});
 
 /**
  * Setup AppJS
