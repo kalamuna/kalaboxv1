@@ -41,7 +41,7 @@ app.configure('production', function() {
  */
 
 app.get('/', routes.index);
-app.get('/start', routes.start);
+app.get('/install', routes.install);
 app.get('/dash', routes.dash);
 
 /**

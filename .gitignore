@@ -3,3 +3,6 @@ dist/*
 /.settings
 /.buildpath
 /.project
+kalabox.sublime-project
+kalabox.sublime-workspace
+Drupal.sublime-projectcompletions
