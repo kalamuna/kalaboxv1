@@ -57,7 +57,7 @@ exports.downloadFile = function(file_url, destination, callback) {
  * Checks if VirtualBox is installed.
  *
  * @param  function callback
- *   Callback to pass a boolean answer.
+ *   Callback to pass an output array with version if installed, or false if not.
  */
 exports.checkVBox = function(callback) {
   if (vboxVersion) {
@@ -79,7 +79,7 @@ exports.checkVBox = function(callback) {
  * Checks if Vagrant is installed.
  *
  * @param  function callback
- *   Callback to pass a boolean answer.
+ *   Callback to pass an output array with version if installed, or false if not.
  */
 exports.checkVagrant = function(callback) {
   if (vagrantVersion) {
