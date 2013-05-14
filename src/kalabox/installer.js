@@ -20,10 +20,8 @@ var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg';
 
 // Installer file info:
 var vboxUrlParsed = url.parse(VBOX_URL);
-vboxUrlParsed.fileName = vboxUrlParsed.pathname.split('/').pop();
 vboxUrlParsed.packageLocation = '/Volumes/VirtualBox/VirtualBox.mpkg';
 var vagrantUrlParsed = url.parse(VAGRANT_URL);
-vagrantUrlParsed.fileName = vagrantUrlParsed.pathname.split('/').pop();
 vagrantUrlParsed.packageLocation = '/Volumes/Vagrant/Vagrant.pkg';
 
 // Helper functions:
@@ -47,17 +45,15 @@ function downloadAndReport(url, destination, callback) {
  *   URL object from url.parse().
  * @param  string destination
  *   Directory to store downloaded DMGs, with trailing /.
- * @param  string fileName
- *   The file name portion of the URL.
  * @param  string packageLocation
  *   Location of the installer package in the mounted DMG.
  */
 var installDMG = flow('installDMG')(
   // Begin installation process.
-  function install0(fileUrl, destination, fileName, packageLocation) {
+  function install0(fileUrl, destination, packageLocation) {
     this.data.fileUrl = fileUrl;
     this.data.destination = destination;
-    this.data.fileName = fileName;
+    this.data.fileName = fileUrl.pathname.split('/').pop();
     this.data.packageLocation = packageLocation;
     // We will be downloading the files to a directory, so make sure it's there
     // This step is not required if you have manually created the directory.
@@ -85,14 +81,17 @@ var installDMG = flow('installDMG')(
   // Execute installer.
   function install4(stdout, stderr) {
     console.log('DMG mounted.');
-    var command = 'osascript ' + __dirname + '/install_command.scpt ' + '"' + this.data.packageLocation + '" "/Volumes/Untitled 1"';
-    console.log(command);
-    exec(command, this.async());
+    exec('osascript ' + __dirname + '/install_command.scpt ' + '"' + this.data.packageLocation + '" "/"', this.async());
   },
+  // Unmount DMG after installation.
   function installVBox5(stdout, stderr) {
     console.log('Installed!');
+    var mountPoint = this.data.packageLocation.split('/');
+    mountPoint.pop();
+    mountPoint = mountPoint.join('/');
+    exec('hdiutil detach ' + mountPoint, this.async());
   },
-  function installEnd() {
+  function installEnd(stdout, stderr) {
     if (this.err) {
       console.log(this.err.message);
       throw this.err;
@@ -106,5 +105,5 @@ var installDMG = flow('installDMG')(
 exports.install = function() {
   // @todo Check if VBox and Vagrant are installed.
   // Download and install Vagrant.
-  installDMG(vagrantUrlParsed, DOWNLOAD_DIR, vagrantUrlParsed.fileName, vagrantUrlParsed.packageLocation);
+  installDMG(vagrantUrlParsed, DOWNLOAD_DIR, vagrantUrlParsed.packageLocation);
 };
