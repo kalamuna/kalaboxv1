@@ -34,19 +34,20 @@ exports.downloadFile = function(file_url, destination, callback) {
   };
 
   var file_name = parsedUrl.pathname.split('/').pop();
-  var file = fs.createWriteStream(destination + file_name);
+  var file = fs.createWriteStream(destination + file_name, {encoding: 'binary'});
 
   http.get(options, function(res) {
     var filesize = res.headers['content-length'];
     var downloaded = 0;
     var done = 0;
+    res.setEncoding('binary');
     res.on('data', function(data) {
-      file.write(data);
+      file.write(data, 'binary');
       downloaded = downloaded + data.length;
       done = (downloaded / filesize) * 100;
       callback(done);
-    }).on('end', function() {
-      file.end();
+    }).on('end', function(data) {
+      file.end(data, 'binary');
       console.log(file_name + ' downloaded to ' + destination);
       callback(100);
     });

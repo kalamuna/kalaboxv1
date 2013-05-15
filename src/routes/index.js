@@ -11,7 +11,7 @@ exports.index = function(req, res) {
 };
 
 exports.install = function(req, res) {
-  res.render('start', {
+  res.render('install', {
     title : 'Boot this Box!'
   });
   installer.install();

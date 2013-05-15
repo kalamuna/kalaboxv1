@@ -16,8 +16,11 @@ var flow = require('nue').flow,
 var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg';
     VBOX_VERSION = '4.2.8',
     TEMP_DIR = '/tmp/',
-    VAGRANT_URL = 'http://files.kalamuna.com/vagrant-macosx-1.1.2.dmg',
-    VAGRANT_VERSION = '1.1.2';
+    VAGRANT_URL = 'http://wills-drupal-practice.kala/vagrant-macosx-1.1.2.dmg',//VAGRANT_URL = 'http://files.kalamuna.com/vagrant-macosx-1.1.2.dmg',
+    VAGRANT_VERSION = '1.1.2',
+    KALABOX_DIR = process.env.HOME + '/.kalabox/',
+    KALABOX64_URL = 'http://wills-drupal-practice.kala/kalabox64.box',//KALABOX64_URL = 'http://files.kalamuna.com/kalabox64.box',
+    KALASTACK_URL = 'https://github.com/kalamuna/kalastack/archive/2.x.zip';
 
 // Installer file info:
 var vboxUrlParsed = url.parse(VBOX_URL);
@@ -31,7 +34,7 @@ function downloadAndReport(url, destination, callback) {
   installUtils.downloadFile(url, destination, function(percentDone) {
     if (percentDone < 100) {
       // Notify client of progress.
-      io.sockets.emit('vbox', { complete: percentDone });
+      io.sockets.emit('installer', { complete: percentDone });
     }
     else {
       callback();
@@ -39,23 +42,33 @@ function downloadAndReport(url, destination, callback) {
   });
 }
 
+function sendMessage(message) {
+  io.sockets.emit('installer', { message: message });
+}
+
 /**
  * Downloads and installs a DMG file.
  *
- * @param  object fileUrl
+ * @param object fileUrl
  *   URL object from url.parse().
- * @param  string destination
+ * @param string destination
  *   Directory to store downloaded DMGs, with trailing /.
- * @param  string packageLocation
+ * @param string packageLocation
  *   Location of the installer package in the mounted DMG.
+ * @param string programName
+ *   Name of the software being installed.
+ * @param function callback
+ *   Callback to invoke on completion.
  */
 var installDMG = flow('installDMG')(
   // Begin installation process.
-  function installDMG0(fileUrl, destination, packageLocation) {
+  function installDMG0(fileUrl, destination, packageLocation, programName, callback) {
     this.data.fileUrl = fileUrl;
     this.data.destination = destination;
     this.data.fileName = fileUrl.pathname.split('/').pop();
     this.data.packageLocation = packageLocation;
+    this.data.programName = programName;
+    this.data.callback = callback;
     // We will be downloading the files to a directory, so make sure it's there
     // This step is not required if you have manually created the directory.
     var mkdir = 'mkdir -p ' + destination;
@@ -64,6 +77,7 @@ var installDMG = flow('installDMG')(
   // Start downloads.
   function installDMG1() {
     // Download vbox.
+    sendMessage('Downloading ' + this.data.programName + '...');
     downloadAndReport(this.data.fileUrl.href, this.data.destination, this.async());
   },
   // Confirm download succeeded.
@@ -77,17 +91,20 @@ var installDMG = flow('installDMG')(
       return;
     }
     console.log('Software downloaded!');
+    sendMessage('Mounting ' + this.data.programName + ' image...');
     exec('hdiutil attach ' + this.data.destination + this.data.fileName, this.async());
   },
   // Execute installer.
   function installDMG4(stdout, stderr) {
     console.log('DMG mounted.');
+    sendMessage('Installing ' + this.data.programName + '...');
     exec('osascript ' + __dirname + '/install_command.scpt ' + '"' + this.data.packageLocation + '" "/"', this.async());
     // @todo Handle user cancelling or failing admin authentication.
   },
   // Unmount DMG after installation.
   function installDMG5(stdout, stderr) {
     console.log('Installed!');
+    sendMessage('Installed! Ejecting image...');
     var mountPoint = this.data.packageLocation.split('/');
     mountPoint.pop();
     mountPoint = mountPoint.join('/');
@@ -98,6 +115,7 @@ var installDMG = flow('installDMG')(
       console.log(this.err.message);
       throw this.err;
     }
+    this.data.callback();
   }
 );
 
@@ -146,16 +164,77 @@ exports.install = flow('installKalabox')(
     console.log("Vagrant installed: " + this.data.vagrantInstalled);
     this.next();
   },
-  // Download and install Vagrant.
+  // Download and install VBox.
   function install3() {
-    if (!this.data.vagrantInstalled) {
-      installDMG(vagrantUrlParsed, TEMP_DIR, vagrantUrlParsed.packageLocation);
+    if (!this.data.vboxInstalled) {
+      installDMG(vboxUrlParsed, TEMP_DIR, vboxUrlParsed.packageLocation, 'VirtualBox', this.async());
     }
+    else {
+      this.next();
+    }
+  },
+  // Download and install Vagrant.
+  function install4() {
+    console.log('VirtualBox Installed');
+    if (!this.data.vagrantInstalled) {
+      installDMG(vagrantUrlParsed, TEMP_DIR, vagrantUrlParsed.packageLocation, 'Vagrant', this.async());
+    }
+    else {
+      this.next();
+    }
+  },
+  // @todo Verify that VBox and Vagrant were installed successfully.
+  // Create the .kalabox directory in home.
+  function install5() {
+    console.log('Vagrant installed.');
+    exec('mkdir -p ' + KALABOX_DIR, this.async());
+  },
+  // Download Kalabox image.
+  function install6(stdout, stderr) {
+    sendMessage('Downloading the Kalabox Ubuntu image...');
+    downloadAndReport(KALABOX64_URL, KALABOX_DIR, this.async());
+  },
+  // Verify Kalabox was downloaded.
+  function install7() {
+    fs.exists(KALABOX_DIR + 'kalabox64.box', this.async(as(0)));
+  },
+  // Download Kalastack archive from GitHub if download made it.
+  function install8(exists) {
+    if (!exists) {
+      this.endWith({message: 'Failed to download Kalabox image.'});
+      return;
+    }
+    console.log('Downloaded Kalabox image.');
+    sendMessage('Downloading Kalastack...');
+    downloadAndReport(KALASTACK_URL, KALABOX_DIR, this.async());
+  },
+  // Verify Kalastack archive was downloaded.
+  function install9() {
+    fs.exists(KALABOX_DIR + '2.x.zip', this.async(as(0)));
+  },
+  // Extract Kalastack from downloaded archive if download succeeded.
+  function install10(exists) {
+    if (!exists) {
+      this.endWith({message: 'Failed to download Kalastack archive.'});
+      return;
+    }
+    exec('unzip 2.x.zip', {cwd: KALABOX_DIR}, this.async());
+  },
+  // @todo Delete Kalastack tar.gz file.
+  // Start box build from Kalabox image.
+  function install11(stdout, stderr) {
+    sendMessage('Building the box...');
+    exec('vagrant box add kalabox ' + KALABOX_DIR + 'kalabox64.box', {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
+  },
+  // Finish box build with "vagrant up".
+  function install12(stdout, stderr) {
+    exec('vagrant up kalabox --provision-with=shell,puppet_server', {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
   },
   function installEnd() {
     if (this.err) {
       console.log(this.err.message);
       throw this.err;
     }
+    sendMessage('Box built!');
   }
 );

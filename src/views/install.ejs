@@ -13,11 +13,4 @@
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
-<script>
-  var socket = io.connect('http://localhost');
-
-  socket.on('vbox', function(data) {
-    var $bar = $('.bar');
-    $bar.css( "width", data.complete + "%" );
-  });
-</script>
+<script src="/js/install.js"></script>
