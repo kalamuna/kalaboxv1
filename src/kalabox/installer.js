@@ -16,11 +16,12 @@ var flow = require('nue').flow,
 var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg';
     VBOX_VERSION = '4.2.8',
     TEMP_DIR = '/tmp/',
-    VAGRANT_URL = 'http://wills-drupal-practice.kala/vagrant-macosx-1.1.2.dmg',//VAGRANT_URL = 'http://files.kalamuna.com/vagrant-macosx-1.1.2.dmg',
+    VAGRANT_URL = 'http://files.kalamuna.com/vagrant-macosx-1.1.2.dmg',
     VAGRANT_VERSION = '1.1.2',
     KALABOX_DIR = process.env.HOME + '/.kalabox/',
-    KALABOX64_URL = 'http://wills-drupal-practice.kala/kalabox64.box',//KALABOX64_URL = 'http://files.kalamuna.com/kalabox64.box',
-    KALASTACK_URL = 'https://github.com/kalamuna/kalastack/archive/2.x.zip';
+    KALABOX64_URL = 'http://files.kalamuna.com/kalabox64.box',
+    KALASTACK_URL = 'https://codeload.github.com/kalamuna/kalastack/tar.gz/2.x',
+    KALASTACK_FILENAME = '2.x';
 
 // Installer file info:
 var vboxUrlParsed = url.parse(VBOX_URL);
@@ -210,7 +211,7 @@ exports.install = flow('installKalabox')(
   },
   // Verify Kalastack archive was downloaded.
   function install9() {
-    fs.exists(KALABOX_DIR + '2.x.zip', this.async(as(0)));
+    fs.exists(KALABOX_DIR + KALASTACK_FILENAME, this.async(as(0)));
   },
   // Extract Kalastack from downloaded archive if download succeeded.
   function install10(exists) {
@@ -218,7 +219,7 @@ exports.install = flow('installKalabox')(
       this.endWith({message: 'Failed to download Kalastack archive.'});
       return;
     }
-    exec('unzip 2.x.zip', {cwd: KALABOX_DIR}, this.async());
+    exec('tar zxvf ' + KALASTACK_FILENAME, {cwd: KALABOX_DIR}, this.async());
   },
   // @todo Delete Kalastack tar.gz file.
   // Start box build from Kalabox image.

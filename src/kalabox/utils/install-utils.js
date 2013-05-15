@@ -5,11 +5,12 @@
 
 
 // Requires
-var fs = require('fs');
-var url = require('url');
-var http = require('http');
-var exec = require('child_process').exec;
-var spawn = require('child_process').spawn;
+var fs = require('fs'),
+    url = require('url'),
+    http = require('http'),
+    https = require('https'),
+    exec = require('child_process').exec,
+    spawn = require('child_process').spawn;
 
 // State variables:
 var vboxVersion,
@@ -26,28 +27,37 @@ var vboxVersion,
  *   Callback to pass progress to.
  */
 exports.downloadFile = function(file_url, destination, callback) {
+  // Get URL details from the full URL.
   var parsedUrl = url.parse(file_url);
   var options = {
     host : parsedUrl.host,
     port : 80,
     path : parsedUrl.pathname
   };
-
   var file_name = parsedUrl.pathname.split('/').pop();
-  var file = fs.createWriteStream(destination + file_name, {encoding: 'binary'});
 
-  http.get(options, function(res) {
+  // Determine if we're downloading over http or https.
+  var httpInterface = http;
+  if (parsedUrl.protocol == 'https:') {
+    httpInterface = https;
+    options.port = 443;
+  }
+
+  // Create stream and start the download.
+  var file = fs.createWriteStream(destination + file_name, {encoding: 'binary'});
+  httpInterface.get(options, function(res) {
+    res.setEncoding('binary');
     var filesize = res.headers['content-length'];
     var downloaded = 0;
     var done = 0;
-    res.setEncoding('binary');
     res.on('data', function(data) {
-      file.write(data, 'binary');
-      downloaded = downloaded + data.length;
-      done = (downloaded / filesize) * 100;
-      callback(done);
-    }).on('end', function(data) {
-      file.end(data, 'binary');
+      file.write(data, 'binary', function() {
+        downloaded = downloaded + data.length;
+        done = (downloaded / filesize) * 100;
+        callback(done);
+      });
+    }).on('end', function() {
+      file.end();
       console.log(file_name + ' downloaded to ' + destination);
       callback(100);
     });
