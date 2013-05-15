@@ -44,22 +44,22 @@ exports.downloadFile = function(file_url, destination, callback) {
   }
 
   // Create stream and start the download.
-  var file = fs.createWriteStream(destination + file_name, {encoding: 'binary'});
+  var file = fs.createWriteStream(destination + file_name);
   httpInterface.get(options, function(res) {
-    res.setEncoding('binary');
     var filesize = res.headers['content-length'];
     var downloaded = 0;
     var done = 0;
     res.on('data', function(data) {
-      file.write(data, 'binary', function() {
+      file.write(data, function() {
         downloaded = downloaded + data.length;
         done = (downloaded / filesize) * 100;
         callback(done);
       });
-    }).on('end', function() {
-      file.end();
-      console.log(file_name + ' downloaded to ' + destination);
-      callback(100);
+    }).on('end', function(data) {
+      file.end(function() {
+        console.log(file_name + ' downloaded to ' + destination);
+        callback(100);
+      });
     });
   });
 };

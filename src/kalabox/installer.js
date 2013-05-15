@@ -20,12 +20,13 @@ var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg';
     VAGRANT_VERSION = '1.1.2',
     KALABOX_DIR = process.env.HOME + '/.kalabox/',
     KALABOX64_URL = 'http://files.kalamuna.com/kalabox64.box',
+    KALABOX64_FILENAME = 'kalabox64.box',
     KALASTACK_URL = 'https://codeload.github.com/kalamuna/kalastack/tar.gz/2.x',
-    KALASTACK_FILENAME = '2.x';
+    KALASTACK_FILENAME = 'kalastack.tar.gz';
 
 // Installer file info:
 var vboxUrlParsed = url.parse(VBOX_URL);
-vboxUrlParsed.packageLocation = '/Volumes/VirtualBox/VirtualBox.mpkg';
+vboxUrlParsed.packageLocation = '/Volumes/VirtualBox/VirtualBox.pkg';
 var vagrantUrlParsed = url.parse(VAGRANT_URL);
 vagrantUrlParsed.packageLocation = '/Volumes/Vagrant/Vagrant.pkg';
 
@@ -117,6 +118,7 @@ var installDMG = flow('installDMG')(
       throw this.err;
     }
     this.data.callback();
+    this.next();
   }
 );
 
@@ -197,7 +199,7 @@ exports.install = flow('installKalabox')(
   },
   // Verify Kalabox was downloaded.
   function install7() {
-    fs.exists(KALABOX_DIR + 'kalabox64.box', this.async(as(0)));
+    fs.exists(KALABOX_DIR + KALABOX64_FILENAME, this.async(as(0)));
   },
   // Download Kalastack archive from GitHub if download made it.
   function install8(exists) {
@@ -207,10 +209,10 @@ exports.install = flow('installKalabox')(
     }
     console.log('Downloaded Kalabox image.');
     sendMessage('Downloading Kalastack...');
-    downloadAndReport(KALASTACK_URL, KALABOX_DIR, this.async());
+    exec('curl -L -o ' + KALASTACK_FILENAME + ' ' + KALASTACK_URL, {cwd: KALABOX_DIR}, this.async());
   },
   // Verify Kalastack archive was downloaded.
-  function install9() {
+  function install9(stdout, stderr) {
     fs.exists(KALABOX_DIR + KALASTACK_FILENAME, this.async(as(0)));
   },
   // Extract Kalastack from downloaded archive if download succeeded.
@@ -224,18 +226,22 @@ exports.install = flow('installKalabox')(
   // @todo Delete Kalastack tar.gz file.
   // Start box build from Kalabox image.
   function install11(stdout, stderr) {
+    console.log('Extracted Kalastack...');
     sendMessage('Building the box...');
-    exec('vagrant box add kalabox ' + KALABOX_DIR + 'kalabox64.box', {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
+    exec('vagrant box add kalabox ' + KALABOX_DIR + KALABOX64_FILENAME, {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
   },
   // Finish box build with "vagrant up".
   function install12(stdout, stderr) {
-    exec('vagrant up kalabox --provision-with=shell,puppet_server', {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
+    console.log('Kalabox added');
+    //exec('osascript -e \'do shell script "vagrant up kalabox --provision-with=shell,puppet_server" with administrator privileges\'', {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
+    exec('osascript ' + __dirname + '/vagrant_command.scpt ' + KALABOX_DIR + 'kalastack-2.x', this.async());
   },
-  function installEnd() {
+  function installEnd(stdout, stderr) {
     if (this.err) {
       console.log(this.err.message);
       throw this.err;
     }
     sendMessage('Box built!');
+    this.next();
   }
 );
