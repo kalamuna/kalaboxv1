@@ -1,12 +1,16 @@
 /**
- * Module dependencies.
+ * @file
+ * Configuration and starting point for the app.
  */
 
-var express = require('express'), routes = require('./routes'), appjs = require('appjs'), utils = require('util'); // ,
-// kalabox
-// =
-// require('./kalabox');
-var app = module.exports = express.createServer();
+// Dependencies:
+var express = require('express'),
+    routes = require('./routes/routes'),
+    appjs = require('appjs'),
+    utils = require('util'),
+    app = module.exports = express.createServer();
+
+// Initialize socket.io.
 io = require('socket.io').listen(app);
 
 // Configuration
@@ -22,24 +26,17 @@ app.configure(function() {
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });
-
 app.configure('development', function() {
   app.use(express.errorHandler({
     dumpExceptions : true,
     showStack : true
   }));
 });
-
 app.configure('production', function() {
   app.use(express.errorHandler());
 });
 
-// Routes
-/*
- * app.get('/', function(req, res){ //res.send('hello world');
- * kalabox.refreshBox(boxme, function(boxme) { res.json(boxme); }); });
- */
-
+// Routes:
 app.get('/', routes.index);
 app.get('/install', routes.install);
 app.get('/dash', routes.dash);
@@ -101,7 +98,7 @@ var trayMenu = appjs.createMenu([{
   label : 'Show',
   action : function() {
     window.frame.show();
-  },
+  }
 }, {
   label : 'Minimize',
   action : function() {
@@ -120,33 +117,39 @@ var statusIcon = appjs.createStatusIcon({
   menu : trayMenu
 });
 
-// create window with url: http://localhost:51686/ instead of http://appjs/
-var window = appjs.createWindow('http://localhost:51686/', {
-  width : 640,
-  height : 460,
-  icons : __dirname + '/public/icons'
-});
+// Initialize Kalabox and app window.
+var box = require('./kalabox/box');
+box.initialize(function () {
 
-// show the window after initialization
-window.on('create', function() {
-  window.frame.show();
-  window.frame.center();
-  window.frame.setMenuBar(menubar);
-});
-
-// add require/process/module to the window global object for debugging from the
-// DevTools
-window.on('ready', function() {
-  window.require = require;
-  window.process = process;
-  window.module = module;
-  window.addEventListener('keydown', function(e) {
-    if (e.keyIdentifier === 'F12') {
-      window.frame.openDevTools();
-    }
+  // create window with url: http://localhost:51686/ instead of http://appjs/
+  var window = appjs.createWindow('http://localhost:51686/', {
+    width : 640,
+    height : 460,
+    icons : __dirname + '/public/icons'
   });
-});
 
-window.on('close', function() {
-  console.log("Window Closed");
+  // show the window after initialization
+  window.on('create', function() {
+    window.frame.show();
+    window.frame.center();
+    window.frame.setMenuBar(menubar);
+  });
+
+  // add require/process/module to the window global object for debugging from the
+  // DevTools
+  window.on('ready', function() {
+    window.require = require;
+    window.process = process;
+    window.module = module;
+    window.addEventListener('keydown', function(e) {
+      if (e.keyIdentifier === 'F12') {
+        window.frame.openDevTools();
+      }
+    });
+  });
+
+  window.on('close', function() {
+    console.log("Window Closed");
+  });
+
 });
