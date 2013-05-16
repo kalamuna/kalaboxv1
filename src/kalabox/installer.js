@@ -230,17 +230,21 @@ exports.install = flow('installKalabox')(
     sendMessage('Building the box...');
     exec('vagrant box add kalabox ' + KALABOX_DIR + KALABOX64_FILENAME, {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
   },
-  // Finish box build with "vagrant up".
+  // Make sure the "vagrant up" shell script is executable.
   function install12(stdout, stderr) {
+    exec('chmod +x ' + __dirname + '/vagrant_up.sh', this.async());
+  },
+  // Finish box build with "vagrant up".
+  function install13(stdout, stderr) {
     console.log('Kalabox added');
-    //exec('osascript -e \'do shell script "vagrant up kalabox --provision-with=shell,puppet_server" with administrator privileges\'', {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
-    exec('osascript ' + __dirname + '/vagrant_command.scpt ' + KALABOX_DIR + 'kalastack-2.x', this.async());
+    exec(__dirname + '/vagrant_up.sh', this.async());
   },
   function installEnd(stdout, stderr) {
     if (this.err) {
       console.log(this.err.message);
       throw this.err;
     }
+    console.log('Box built!');
     sendMessage('Box built!');
     this.next();
   }
