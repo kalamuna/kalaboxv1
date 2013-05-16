@@ -2,7 +2,7 @@
  * GET home page.
  */
 
-var installer = require('../kalabox/installer');
+var installer = require('../kalabox/installer/installer');
 
 exports.index = function(req, res) {
   res.render('index', {

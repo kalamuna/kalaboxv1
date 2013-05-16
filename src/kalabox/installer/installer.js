@@ -7,7 +7,7 @@
 var flow = require('nue').flow,
     as = require('nue').as,
     parallel = require('nue').parallel,
-    installUtils = require('./utils/install-utils'),
+    installUtils = require('./install-utils'),
     exec = require('child_process').exec,
     url = require('url'),
     fs = require('fs');
