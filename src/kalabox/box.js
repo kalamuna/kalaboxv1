@@ -68,6 +68,16 @@ exports.isInstalled = function() {
 };
 
 /**
+ * Reports the power status of Kalabox.
+ *
+ * @return bool
+ *   True if running, false if not.
+ */
+exports.isRunning = function() {
+  return running;
+};
+
+/**
  * Starts up the Kalabox.
  *
  * @param function callback

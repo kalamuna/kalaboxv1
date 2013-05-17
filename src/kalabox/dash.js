@@ -4,7 +4,12 @@
  */
 
 // Dependencies:
-var box = require('./box');
+var box = require('./box'),
+    exec = require('child_process').exec;
+
+// "Constants":
+var KALABOX_DIR = process.env.HOME + '/.kalabox/',
+    KALASTACK_DIR = KALABOX_DIR + 'kalastack-2.x';
 
 // Variables:
 var socket;
@@ -27,6 +32,15 @@ function handleStopRequest(data) {
   });
 }
 
+function handleSSHRequest(data) {
+  // If box not running, don't launch ssh.
+  if (!box.isRunning()) {
+    return;
+  }
+  // Launch ssh in a new Terminal window.
+  exec('osascript ' + __dirname + '/utils/scpts/start_ssh.scpt "' + KALASTACK_DIR + '"');
+}
+
 // Module communication handlers:
 
 function handleStart() {
@@ -46,6 +60,7 @@ exports.initialize = function() {
     socket = newSocket;
     socket.on('startRequest', handleStartRequest);
     socket.on('stopRequest', handleStopRequest);
+    socket.on('sshRequest', handleSSHRequest);
   });
   // Bind handlers for communication events coming from other modules.
   box.on('start', handleStart);

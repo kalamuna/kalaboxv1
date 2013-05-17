@@ -124,7 +124,7 @@ box.initialize(function () {
   // create window with url: http://localhost:51686/ instead of http://appjs/
   var window = appjs.createWindow('http://localhost:51686/', {
     width : 640,
-    height : 460,
+    height : 490,
     icons : __dirname + '/public/icons'
   });
 

@@ -15,11 +15,22 @@ var dash = (function($, ko, socket) {
     onClick: function() {
       if (boxRunning) {
         socket.emit('stopRequest', {});
+        self.sshButton.disabled(true);
       }
       else {
         socket.emit('startRequest', {});
       }
       self.powerButton.disabled(true);
+    }
+  };
+
+  // SSH button:
+  self.sshButton = {
+    disabled: ko.observable(true),
+    onClick: function() {
+      if (boxRunning) {
+        socket.emit('sshRequest', {});
+      }
     }
   };
 
@@ -51,12 +62,14 @@ var dash = (function($, ko, socket) {
     self.powerButton.label('Stop');
     self.powerButton.disabled(false);
     boxStatusDisplay.running(true);
+    self.sshButton.disabled(false);
   });
   socket.on('boxStopped', function(data) {
     boxRunning = false;
     self.powerButton.label('Start');
     self.powerButton.disabled(false);
     boxStatusDisplay.running(false);
+    self.sshButton.disabled(true);
   });
 
   // Return public interface.
