@@ -29,10 +29,12 @@
                   <th>Status</th>
                 </tr>
               </thead>
-              <tr class="success">
-                <td>Kalabox</td>
-                <td>Running</td>
-              </tr>
+              <tbody data-bind="foreach: statusDisplays">
+                <tr data-bind="css: {success: running, error: stopped}">
+                  <td data-bind="text: name"></td>
+                  <td data-bind="text: message"></td>
+                </tr>
+              </tbody>
               <tr class="success">
                 <td>nginx</td>
                 <td>Running</td>
