@@ -6,7 +6,7 @@
         <li class="active"><a href="#home" data-toggle="tab">Home</a>
         </li>
         <li><a href="#sites" data-toggle="tab">Local Sites</a>
-        
+
         <li><a href="#pantheon" data-toggle="tab">Pantheon</a>
         </li>
 
@@ -58,6 +58,7 @@
                 <td>Maximal</td>
               </tr>
             </table>
+            <a href="#" class="btn btn-primary" data-bind="text: powerButton.label, click: powerButton.onClick"></a>
           </div>
           <div class="pull-left">
             <img src="/images/kalaboxv2.png" height="250" width="250">
@@ -215,6 +216,9 @@
   <hr>
 </div>
 
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/libs/knockout-2.2.1.js"></script>
+<script src="/js/dash.js"></script>
 <script type="text/javascript">
   $('#kalademo-progress').hide();
   $('#kalademo-launch').hide();
@@ -225,19 +229,19 @@
 
     var progress = setInterval(function() {
       var $bar = $('.bar');
-    
+
       if ($bar.width()==200) {
           clearInterval(progress);
-          $('.progress').removeClass('active');  
+          $('.progress').removeClass('active');
           setTimeout(function(){
             $('#kalademo-progress').hide();
             $("#kalademo-launch").show();
-          }, 2000);      
+          }, 2000);
       } else {
           $bar.width($bar.width()+1);
       }
-      
+
     }, 200);
-    
+
   });
 </script>

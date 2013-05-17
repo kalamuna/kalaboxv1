@@ -5,13 +5,12 @@
 
 // Dependencies:
 var installer = require('../kalabox/installer/installer'),
-    box = require('../kalabox/box');
+    box = require('../kalabox/box'),
+    dash = require('../kalabox/dash');
 
 exports.index = function(req, res) {
   if (box.isInstalled()) {
-    res.render('dash', {
-      title : 'Kalabox'
-    });
+    exports.dash(req, res);
   }
   else {
     res.render('index', {
@@ -31,4 +30,5 @@ exports.dash = function(req, res) {
   res.render('dash', {
     title : 'Kalabox'
   });
+  dash.initialize();
 };

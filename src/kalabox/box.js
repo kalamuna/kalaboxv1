@@ -36,13 +36,35 @@ exports.initialize = flow('initialize')(
     this.next();
   },
   function initializeEnd() {
+    if (this.err) {
+      console.log(this.err.message);
+      throw this.err;
+    }
     this.data.callback();
+    this.next();
   }
 );
 
 exports.isInstalled = function() {
   return installed;
 };
+
+exports.startBox = flow('startBox')(
+  // Run "vagrant up" to start the Kalabox.
+  function startBox0(callback) {
+    this.data.callback = callback;
+    //exec('osascript ' + __dirname + '/start_box.scpt "' + process.env.LOGNAME + '"', {cwd: KALASTACK_DIR}, this.async());
+    exec('vagrant up --no-provision', {cwd: KALASTACK_DIR}, this.async());
+  },
+  function startBoxEnd(stdout, stderr) {
+    if (this.err) {
+      console.log(this.err.message);
+      throw this.err;
+    }
+    this.data.callback();
+    this.next();
+  }
+);
 
 /**** Private Helper Functions: ****/
 
@@ -69,12 +91,17 @@ var checkInstalled = flow('checkInstalled')(
   // Parse Vagrant output to make sure box is built.
   function checkInstalled2(stdout, stderr) {
     var response = stdout.toString();
-    if ((response.indexOf('running (virtualbox)') !== -1) || (response.indexOf('poweroff (virtualbox)') !== -1)) {
+    if ((response.indexOf('running (virtualbox)') !== -1) ||
+        (response.indexOf('poweroff (virtualbox)') !== -1)) {
       this.data.installed = true;
     }
     this.next();
   },
   function checkInstalledEnd() {
+    if (this.err) {
+      console.log(this.err.message);
+      throw this.err;
+    }
     this.data.callback(this.data.installed);
     this.next();
   }
