@@ -9,9 +9,9 @@ var box = require('./box');
 // Variables:
 var socket;
 
-// Communication handlers:
+// Client communication handlers:
 
-function handleStart(data) {
+function handleStartRequest(data) {
   console.log('Start request received.');
   box.startBox(function() {
     console.log('Box started');
@@ -19,7 +19,7 @@ function handleStart(data) {
   });
 }
 
-function handleStop(data) {
+function handleStopRequest(data) {
   console.log('Stop request received.');
   box.stopBox(function() {
     console.log('Box stopped');
@@ -27,11 +27,27 @@ function handleStop(data) {
   });
 }
 
+// Module communication handlers:
+
+function handleStart() {
+  socket.emit('boxStarted');
+}
+
+function handleStop() {
+  socket.emit('boxStopped');
+}
+
+/**
+ * Initializes the controller, binding to events from client and other modules.
+ */
 exports.initialize = function() {
+  // Bind handlers for communication events coming from the client.
   io.sockets.on('connection', function (newSocket) {
     socket = newSocket;
-    // Register handlers for all client-sent io events.
-    socket.on('startRequest', handleStart);
-    socket.on('stopRequest', handleStop);
+    socket.on('startRequest', handleStartRequest);
+    socket.on('stopRequest', handleStopRequest);
   });
+  // Bind handlers for communication events coming from other modules.
+  box.on('start', handleStart);
+  box.on('stop', handleStop);
 };

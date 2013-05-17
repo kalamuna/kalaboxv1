@@ -42,6 +42,8 @@ exports.initialize = flow('initialize')(
   },
   function initialize1(isInstalled) {
     installed = isInstalled;
+    repeatStatusCheck();
+    statusChecker = setInterval(repeatStatusCheck, 10000);
     this.next();
   },
   function initializeEnd() {
@@ -78,21 +80,12 @@ exports.startBox = flow('startBox')(
     exec('osascript ' + __dirname + '/utils/scpts/start_box.scpt "' + KALASTACK_DIR + '"', this.async());
     //exec('vagrant up --no-provision', {cwd: KALASTACK_DIR}, this.async());
   },
-  // Check that Kalabox is running.
-  function startBox1(stdout, stderr) {
-    checkStatus(this.async(as(0)));
-  },
-  // Store check result and initiate periodic check.
-  function startBox2(isRunning) {
-    running = isRunning;
-    statusChecker = setInterval(repeatStatusCheck, 10000);
-    this.next();
-  },
-  function startBoxEnd() {
+  function startBoxEnd(stdout, stderr) {
     if (this.err) {
       console.log(this.err.message);
       throw this.err;
     }
+    running = true;
     this.data.callback();
     this.next();
   }
@@ -106,9 +99,8 @@ exports.startBox = flow('startBox')(
  */
 exports.stopBox = flow('stopBox')(
   // Run "vagrant halt" to power down the box.
-  function stopBox1(callback) {
+  function stopBox0(callback) {
     this.data.callback = callback;
-    clearInterval(statusChecker);
     exec('vagrant halt', {cwd: KALASTACK_DIR}, this.async());
   },
   function stopBoxEnd(stdout, stderr) {
@@ -170,30 +162,30 @@ var checkInstalled = flow('checkInstalled')(
  *   Callback to call with true if box is running, false if not.
  */
 var checkStatus = flow('checkStatus')(
-  function checkStatus1(callback) {
+  function checkStatus0(callback) {
     this.data.callback = callback;
-    var request = http.request(checkStatus.httpOptions, this.async(as(0)));
-    var self = this;
-    request.on('error', function(error) {
-      self.endWith({message: error.message});
-    });
-    request.end();
+    exec('vagrant status', {cwd: KALASTACK_DIR}, this.async());
   },
-  function checkStatusEnd(outcome) {
-    var isRunning = true;
-    if (this.err) {
-      isRunning = false;
-      this.err = null;
+  function checkStatus1(stdout, stderr) {
+    var response = stdout.toString();
+    if (response.indexOf('running (virtualbox)') !== -1) {
+      this.data.isRunning = true;
     }
-    console.log('Box running: ' + isRunning);
-    this.data.callback(isRunning);
+    else {
+      this.data.isRunning = false;
+    }
+    this.next();
+  },
+  function checkStatusEnd() {
+    if (this.err) {
+      console.log(this.err.message);
+      throw this.err;
+    }
+    console.log('Box running: ' + this.data.isRunning);
+    this.data.callback(this.data.isRunning);
     this.next();
   }
 );
-checkStatus.httpOptions = {
-  hostname: 'start.kala',
-  method: 'HEAD'
-};
 
 /**
  * Runs status check and stores the result.
@@ -204,5 +196,13 @@ function repeatStatusCheck() {
   checkStatus(repeatStatusCheck.storeCheck);
 }
 repeatStatusCheck.storeCheck = function(isRunning) {
-  running = isRunning;
+  if (running != isRunning) {
+    running = isRunning;
+    if (isRunning) {
+      exports.emit('start');
+    }
+    else {
+      exports.emit('stop');
+    }
+  }
 };
