@@ -58,7 +58,9 @@
                 <td>Maximal</td>
               </tr>
             </table>
-            <a href="#" class="btn btn-primary" data-bind="text: powerButton.label, click: powerButton.onClick"></a>
+            <button href="#" class="btn btn-primary"
+              data-bind="text: powerButton.label, click: powerButton.onClick, disable: powerButton.disabled">
+            </button>
           </div>
           <div class="pull-left">
             <img src="/images/kalaboxv2.png" height="250" width="250">

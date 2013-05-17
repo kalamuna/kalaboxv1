@@ -8,7 +8,8 @@ var flow = require('nue').flow,
     as = require('nue').as,
     fs = require('fs'),
     exec = require('child_process').exec,
-    http = require('http');
+    http = require('http'),
+    EventEmitter = require('events').EventEmitter;
 
 // "Constants":
 var KALABOX_DIR = process.env.HOME + '/.kalabox/',
@@ -21,6 +22,9 @@ var installed = false,
 
 // Variables:
 var statusChecker;
+
+// Make this module an instance of EventEmitter so we can emit events.
+exports = module.exports = new EventEmitter();
 
 /**** Public Methods: ****/
 
@@ -46,6 +50,7 @@ exports.initialize = flow('initialize')(
       throw this.err;
     }
     this.data.callback();
+    exports.emit('initialized');
     this.next();
   }
 );
@@ -88,6 +93,30 @@ exports.startBox = flow('startBox')(
       console.log(this.err.message);
       throw this.err;
     }
+    this.data.callback();
+    this.next();
+  }
+);
+
+/**
+ * Stops the Kalabox.
+ *
+ * @param function callback
+ *   Callback to call once the box has stopped.
+ */
+exports.stopBox = flow('stopBox')(
+  // Run "vagrant halt" to power down the box.
+  function stopBox1(callback) {
+    this.data.callback = callback;
+    clearInterval(statusChecker);
+    exec('vagrant halt', {cwd: KALASTACK_DIR}, this.async());
+  },
+  function stopBoxEnd(stdout, stderr) {
+    if (this.err) {
+      console.log(this.err.message);
+      throw this.err;
+    }
+    running = false;
     this.data.callback();
     this.next();
   }
