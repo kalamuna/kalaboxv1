@@ -62,6 +62,7 @@ exports.downloadFile = function(file_url, destination, callback) {
       });
     });
   });
+  // @todo Handle connection failure.
 };
 
 /**

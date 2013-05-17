@@ -7,15 +7,20 @@
 var flow = require('nue').flow,
     as = require('nue').as,
     fs = require('fs'),
-    exec = require('child_process').exec;
+    exec = require('child_process').exec,
+    http = require('http');
 
 // "Constants":
 var KALABOX_DIR = process.env.HOME + '/.kalabox/',
-    KALASTACK_DIR = KALABOX_DIR + 'kalastack-2.x';
+    KALASTACK_DIR = KALABOX_DIR + 'kalastack-2.x',
+    KALABOX_IP = '192.168.42.10';
 
 // State data:
 var installed = false,
     running = false;
+
+// Variables:
+var statusChecker;
 
 /**** Public Methods: ****/
 
@@ -45,10 +50,22 @@ exports.initialize = flow('initialize')(
   }
 );
 
+/**
+ * Reports the installation status of Kalabox.
+ *
+ * @return bool
+ *   True if installed, false if not.
+ */
 exports.isInstalled = function() {
   return installed;
 };
 
+/**
+ * Starts up the Kalabox.
+ *
+ * @param function callback
+ *   Callback to call once the box has started.
+ */
 exports.startBox = flow('startBox')(
   // Run "vagrant up" to start the Kalabox.
   function startBox0(callback) {
@@ -56,7 +73,17 @@ exports.startBox = flow('startBox')(
     //exec('osascript ' + __dirname + '/start_box.scpt "' + process.env.LOGNAME + '"', {cwd: KALASTACK_DIR}, this.async());
     exec('vagrant up --no-provision', {cwd: KALASTACK_DIR}, this.async());
   },
-  function startBoxEnd(stdout, stderr) {
+  // Check that Kalabox is running.
+  function startBox1(stdout, stderr) {
+    checkStatus(this.async(as(0)));
+  },
+  // Store check result and initiate periodic check.
+  function startBox2(isRunning) {
+    running = isRunning;
+    statusChecker = setInterval(repeatStatusCheck, 10000);
+    this.next();
+  },
+  function startBoxEnd() {
     if (this.err) {
       console.log(this.err.message);
       throw this.err;
@@ -106,3 +133,47 @@ var checkInstalled = flow('checkInstalled')(
     this.next();
   }
 );
+
+/**
+ * Checks if Kalabox is running.
+ *
+ * @param function callback
+ *   Callback to call with true if box is running, false if not.
+ */
+var checkStatus = flow('checkStatus')(
+  function checkStatus1(callback) {
+    this.data.callback = callback;
+    var request = http.request(checkStatus.httpOptions, this.async(as(0)));
+    var self = this;
+    request.on('error', function(error) {
+      self.endWith({message: error.message});
+    });
+    request.end();
+  },
+  function checkStatusEnd(outcome) {
+    var isRunning = true;
+    if (this.err) {
+      isRunning = false;
+      this.err = null;
+    }
+    console.log('Box running: ' + isRunning);
+    this.data.callback(isRunning);
+    this.next();
+  }
+);
+checkStatus.httpOptions = {
+  hostname: 'start.kala',
+  method: 'HEAD'
+};
+
+/**
+ * Runs status check and stores the result.
+ *
+ * To be used with setTimeout or setInterval to schedule status checking.
+ */
+function repeatStatusCheck() {
+  checkStatus(repeatStatusCheck.storeCheck);
+}
+repeatStatusCheck.storeCheck = function(isRunning) {
+  running = isRunning;
+};
