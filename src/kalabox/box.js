@@ -70,8 +70,8 @@ exports.startBox = flow('startBox')(
   // Run "vagrant up" to start the Kalabox.
   function startBox0(callback) {
     this.data.callback = callback;
-    //exec('osascript ' + __dirname + '/start_box.scpt "' + process.env.LOGNAME + '"', {cwd: KALASTACK_DIR}, this.async());
-    exec('vagrant up --no-provision', {cwd: KALASTACK_DIR}, this.async());
+    exec('osascript ' + __dirname + '/utils/scpts/start_box.scpt "' + KALASTACK_DIR + '"', this.async());
+    //exec('vagrant up --no-provision', {cwd: KALASTACK_DIR}, this.async());
   },
   // Check that Kalabox is running.
   function startBox1(stdout, stderr) {
