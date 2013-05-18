@@ -16,6 +16,7 @@ var dash = (function($, ko, socket) {
       if (boxRunning) {
         socket.emit('stopRequest', {});
         self.sshButton.disabled(true);
+        self.foldersButton.disabled(true);
       }
       else {
         socket.emit('startRequest', {});
@@ -30,6 +31,16 @@ var dash = (function($, ko, socket) {
     onClick: function() {
       if (boxRunning) {
         socket.emit('sshRequest', {});
+      }
+    }
+  };
+
+  // Shared Folders button:
+  self.foldersButton = {
+    disabled: ko.observable(true),
+    onClick: function() {
+      if (boxRunning) {
+        socket.emit('foldersRequest', {});
       }
     }
   };
@@ -63,6 +74,7 @@ var dash = (function($, ko, socket) {
     self.powerButton.disabled(false);
     boxStatusDisplay.running(true);
     self.sshButton.disabled(false);
+    self.foldersButton.disabled(false);
   });
   socket.on('boxStopped', function(data) {
     boxRunning = false;
@@ -70,6 +82,7 @@ var dash = (function($, ko, socket) {
     self.powerButton.disabled(false);
     boxStatusDisplay.running(false);
     self.sshButton.disabled(true);
+    self.foldersButton.disabled(true);
   });
 
   // Return public interface.

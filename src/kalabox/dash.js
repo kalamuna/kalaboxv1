@@ -41,6 +41,14 @@ function handleSSHRequest(data) {
   exec('osascript ' + __dirname + '/utils/scpts/start_ssh.scpt "' + KALASTACK_DIR + '"');
 }
 
+function handleFoldersRequest(data) {
+  // If box not running, don't open folders.
+  if (!box.isRunning()) {
+    return;
+  }
+  exec('open .', {cwd: process.env.HOME + '/kalabox'});
+}
+
 // Module communication handlers:
 
 function handleStart() {
@@ -61,6 +69,7 @@ exports.initialize = function() {
     socket.on('startRequest', handleStartRequest);
     socket.on('stopRequest', handleStopRequest);
     socket.on('sshRequest', handleSSHRequest);
+    socket.on('foldersRequest', handleFoldersRequest);
   });
   // Bind handlers for communication events coming from other modules.
   box.on('start', handleStart);
