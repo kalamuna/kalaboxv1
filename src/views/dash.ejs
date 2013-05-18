@@ -30,7 +30,7 @@
                 </tr>
               </thead>
               <tbody data-bind="foreach: statusDisplays">
-                <tr data-bind="css: {success: running, error: stopped}">
+                <tr data-bind="css: {success: $root.boxRunning, error: $root.boxStopped}">
                   <td data-bind="text: name"></td>
                   <td data-bind="text: message"></td>
                 </tr>
@@ -60,8 +60,9 @@
                 <td>Maximal</td>
               </tr>
             </table>
-            <button href="#" class="btn btn-primary"
-              data-bind="text: powerButton.label, click: powerButton.onClick, disable: powerButton.disabled">
+            <button href="#" class="btn"
+              data-bind="text: powerButton.label, click: powerButton.onClick, disable: powerButton.disabled,
+                         css: {'btn-success': $root.boxStopped, 'btn-danger': $root.boxRunning}">
             </button>
             <button href="#" class="btn btn-primary"
               data-bind="click: sshButton.onClick, disable: sshButton.disabled">

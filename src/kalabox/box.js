@@ -21,7 +21,7 @@ var installed = false,
     running = false;
 
 // Variables:
-var statusChecker;
+var statusChecker; // Holds reference to interval running the status checker.
 
 // Make this module an instance of EventEmitter so we can emit events.
 exports = module.exports = new EventEmitter();
@@ -42,6 +42,7 @@ exports.initialize = flow('initialize')(
   },
   function initialize1(isInstalled) {
     installed = isInstalled;
+    // Execute the status checker and set it to run periodically.
     repeatStatusCheck();
     statusChecker = setInterval(repeatStatusCheck, 10000);
     this.next();
@@ -95,6 +96,7 @@ exports.startBox = flow('startBox')(
       console.log(this.err.message);
       throw this.err;
     }
+    // Store running state and execute the callback.
     running = true;
     this.data.callback();
     this.next();
@@ -118,6 +120,7 @@ exports.stopBox = flow('stopBox')(
       console.log(this.err.message);
       throw this.err;
     }
+    // Store running state and execute the callback.
     running = false;
     this.data.callback();
     this.next();
@@ -160,6 +163,7 @@ var checkInstalled = flow('checkInstalled')(
       console.log(this.err.message);
       throw this.err;
     }
+    // Execute callback with the result.
     this.data.callback(this.data.installed);
     this.next();
   }
@@ -172,10 +176,12 @@ var checkInstalled = flow('checkInstalled')(
  *   Callback to call with true if box is running, false if not.
  */
 var checkStatus = flow('checkStatus')(
+  // Run "vagrant status" to see if box is running.
   function checkStatus0(callback) {
     this.data.callback = callback;
     exec('vagrant status', {cwd: KALASTACK_DIR}, this.async());
   },
+  // Parse Vagrant output to determine if box is running.
   function checkStatus1(stdout, stderr) {
     var response = stdout.toString();
     if (response.indexOf('running (virtualbox)') !== -1) {
@@ -192,6 +198,7 @@ var checkStatus = flow('checkStatus')(
       throw this.err;
     }
     console.log('Box running: ' + this.data.isRunning);
+    // Execute callback with the result.
     this.data.callback(this.data.isRunning);
     this.next();
   }
@@ -206,6 +213,8 @@ function repeatStatusCheck() {
   checkStatus(repeatStatusCheck.storeCheck);
 }
 repeatStatusCheck.storeCheck = function(isRunning) {
+  // If running status has changed, emit an event
+  // based on whether the box has stopped or started.
   if (running != isRunning) {
     running = isRunning;
     if (isRunning) {

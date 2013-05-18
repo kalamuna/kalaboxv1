@@ -6,14 +6,19 @@ var dash = (function($, ko, socket) {
   var self = {};
 
   // State variables:
-  var boxRunning = false;
+  var boxRunning = ko.observable(false);
+  var boxStopped = ko.computed(function() {
+    return !boxRunning();
+  });
+  self.boxRunning = boxRunning;
+  self.boxStopped = boxStopped;
 
   // Start/stop button:
   self.powerButton = {
     label: ko.observable('Start'),
     disabled: ko.observable(false),
     onClick: function() {
-      if (boxRunning) {
+      if (boxRunning()) {
         socket.emit('stopRequest', {});
         self.sshButton.disabled(true);
         self.foldersButton.disabled(true);
@@ -29,7 +34,7 @@ var dash = (function($, ko, socket) {
   self.sshButton = {
     disabled: ko.observable(true),
     onClick: function() {
-      if (boxRunning) {
+      if (boxRunning()) {
         socket.emit('sshRequest', {});
       }
     }
@@ -39,7 +44,7 @@ var dash = (function($, ko, socket) {
   self.foldersButton = {
     disabled: ko.observable(true),
     onClick: function() {
-      if (boxRunning) {
+      if (boxRunning()) {
         socket.emit('foldersRequest', {});
       }
     }
@@ -48,18 +53,13 @@ var dash = (function($, ko, socket) {
   // Status displays:
   self.statusDisplays = ko.observableArray();
   function getDisplayStatus() {
-    if (this.running()) {
+    if (boxRunning()) {
       return 'Running';
     }
     return 'Stopped';
   }
-  function getStopped() {
-    return !this.running();
-  }
   function addStatusDisplay(display) {
-    display.running = ko.observable(false);
     display.message = ko.computed({read: getDisplayStatus, owner: display});
-    display.stopped = ko.computed({read: getStopped, owner: display});
     self.statusDisplays.push(display);
   }
   var boxStatusDisplay = {
@@ -69,18 +69,16 @@ var dash = (function($, ko, socket) {
 
   // Server event handlers.
   socket.on('boxStarted', function(data) {
-    boxRunning = true;
+    boxRunning(true);
     self.powerButton.label('Stop');
     self.powerButton.disabled(false);
-    boxStatusDisplay.running(true);
     self.sshButton.disabled(false);
     self.foldersButton.disabled(false);
   });
   socket.on('boxStopped', function(data) {
-    boxRunning = false;
+    boxRunning(false);
     self.powerButton.label('Start');
     self.powerButton.disabled(false);
-    boxStatusDisplay.running(false);
     self.sshButton.disabled(true);
     self.foldersButton.disabled(true);
   });
