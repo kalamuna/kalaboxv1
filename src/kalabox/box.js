@@ -43,8 +43,10 @@ exports.initialize = flow('initialize')(
   function initialize1(isInstalled) {
     installed = isInstalled;
     // Execute the status checker and set it to run periodically.
-    repeatStatusCheck();
-    statusChecker = setInterval(repeatStatusCheck, 10000);
+    if (isInstalled) {
+      repeatStatusCheck();
+      statusChecker = setInterval(repeatStatusCheck, 10000);
+    }
     this.next();
   },
   function initializeEnd() {
@@ -52,8 +54,8 @@ exports.initialize = flow('initialize')(
       console.log(this.err.message);
       throw this.err;
     }
-    this.data.callback();
     exports.emit('initialized');
+    this.data.callback();
     this.next();
   }
 );
@@ -147,7 +149,9 @@ var checkInstalled = flow('checkInstalled')(
     if (!exists) {
       this.end();
     }
-    exec('vagrant status', {cwd: KALASTACK_DIR}, this.async());
+    else {
+      exec('vagrant status', {cwd: KALASTACK_DIR}, this.async());
+    }
   },
   // Parse Vagrant output to make sure box is built.
   function checkInstalled2(stdout, stderr) {
@@ -176,19 +180,26 @@ var checkInstalled = flow('checkInstalled')(
  *   Callback to call with true if box is running, false if not.
  */
 var checkStatus = flow('checkStatus')(
-  // Run "vagrant status" to see if box is running.
+  // Make sure Kalastack directory exists.
   function checkStatus0(callback) {
     this.data.callback = callback;
-    exec('vagrant status', {cwd: KALASTACK_DIR}, this.async());
+    this.data.isRunning = false;
+    fs.exists(KALASTACK_DIR, this.async(as(0)));
+  },
+  // Run "vagrant status" to see if box is running.
+  function checkStatus1(exists) {
+    if (!exists) {
+      this.end();
+    }
+    else {
+      exec('vagrant status', {cwd: KALASTACK_DIR}, this.async());
+    }
   },
   // Parse Vagrant output to determine if box is running.
-  function checkStatus1(stdout, stderr) {
+  function checkStatus2(stdout, stderr) {
     var response = stdout.toString();
     if (response.indexOf('running (virtualbox)') !== -1) {
       this.data.isRunning = true;
-    }
-    else {
-      this.data.isRunning = false;
     }
     this.next();
   },
