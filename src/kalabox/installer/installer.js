@@ -10,7 +10,8 @@ var flow = require('nue').flow,
     installUtils = require('./install-utils'),
     exec = require('child_process').exec,
     url = require('url'),
-    fs = require('fs');
+    fs = require('fs'),
+    box = require('../box');
 
 // "Constants":
 var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg';
@@ -224,8 +225,12 @@ exports.install = flow('installKalabox')(
     exec('tar zxvf ' + KALASTACK_FILENAME, {cwd: KALABOX_DIR}, this.async());
   },
   // @todo Delete Kalastack tar.gz file.
-  // Start box build from Kalabox image.
+  // Add Kalabox hosts config to /etc/hosts.
   function install11(stdout, stderr) {
+    exec('osascript "' + __dirname + '/edit_hosts.scpt" "' + __dirname + '/hosts_config"', this.async());
+  },
+  // Start box build from Kalabox image.
+  function install12(stdout, stderr) {
     console.log('Extracted Kalastack...');
     sendMessage('Building the box...');
     exec('vagrant box add kalabox "' + KALABOX_DIR + KALABOX64_FILENAME + '"', {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
@@ -234,6 +239,17 @@ exports.install = flow('installKalabox')(
   function install13(stdout, stderr) {
     console.log('Kalabox added');
     exec('osascript "' + __dirname + '/spinup_box.scpt" "' + KALABOX_DIR + '/kalastack-2.x"', this.async());
+    // Temporary measure to prevent installer from continuing until "vagrant up" completes in new Terminal.
+    var nextStep = this.async();
+    var moveOn = function() {
+      if (box.isInstalled()) {
+        clearInterval(interval);
+        nextStep();
+      }
+    };
+    var interval = setInterval(function() {
+      box.initialize(moveOn);
+    }, 20000);
   },
   function installEnd(stdout, stderr) {
     if (this.err) {
@@ -241,7 +257,7 @@ exports.install = flow('installKalabox')(
       throw this.err;
     }
     console.log('Box built!');
-    sendMessage('Box built!');
+    io.sockets.emit('installerComplete');
     this.next();
   }
 );
