@@ -100,7 +100,7 @@ var installDMG = flow('installDMG')(
   function installDMG4(stdout, stderr) {
     console.log('DMG mounted.');
     sendMessage('Installing ' + this.data.programName + '...');
-    exec('osascript ' + __dirname + '/install_command.scpt ' + '"' + this.data.packageLocation + '" "/"', this.async());
+    exec('osascript "' + __dirname + '/install_package.scpt" "' + this.data.packageLocation + '" "/"', this.async());
     // @todo Handle user cancelling or failing admin authentication.
   },
   // Unmount DMG after installation.
@@ -190,7 +190,7 @@ exports.install = flow('installKalabox')(
   // Create the .kalabox directory in home.
   function install5() {
     console.log('Vagrant installed.');
-    exec('mkdir -p ' + KALABOX_DIR, this.async());
+    exec('mkdir -p "' + KALABOX_DIR + '"', this.async());
   },
   // Download Kalabox image.
   function install6(stdout, stderr) {
@@ -228,16 +228,12 @@ exports.install = flow('installKalabox')(
   function install11(stdout, stderr) {
     console.log('Extracted Kalastack...');
     sendMessage('Building the box...');
-    exec('vagrant box add kalabox ' + KALABOX_DIR + KALABOX64_FILENAME, {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
-  },
-  // Make sure the "vagrant up" shell script is executable.
-  function install12(stdout, stderr) {
-    exec('chmod +x ' + __dirname + '/vagrant_up.sh', this.async());
+    exec('vagrant box add kalabox "' + KALABOX_DIR + KALABOX64_FILENAME + '"', {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
   },
   // Finish box build with "vagrant up".
   function install13(stdout, stderr) {
     console.log('Kalabox added');
-    exec(__dirname + '/vagrant_up.sh', this.async());
+    exec('osascript "' + __dirname + '/spinup_box.scpt" "' + KALABOX_DIR + '/kalastack-2.x"', this.async());
   },
   function installEnd(stdout, stderr) {
     if (this.err) {
