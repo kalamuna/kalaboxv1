@@ -10,7 +10,8 @@ var fs = require('fs'),
     http = require('http'),
     https = require('https'),
     exec = require('child_process').exec,
-    spawn = require('child_process').spawn;
+    spawn = require('child_process').spawn,
+    logger = require('../../logger');
 
 // State variables:
 var vboxVersion,
@@ -53,16 +54,17 @@ exports.downloadFile = function(file_url, destination, callback) {
       file.write(data, function() {
         downloaded = downloaded + data.length;
         done = (downloaded / filesize) * 100;
-        callback(done);
+        callback(null, done);
       });
     }).on('end', function(data) {
       file.end(function() {
         console.log(file_name + ' downloaded to ' + destination);
-        callback(100);
+        callback(null, 100);
       });
     });
+  }).on('error', function(error) {
+    callback(error, 100);
   });
-  // @todo Handle connection failure.
 };
 
 /**

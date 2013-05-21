@@ -8,7 +8,9 @@ var express = require('express'),
     routes = require('./routes/routes'),
     appjs = require('appjs'),
     utils = require('util'),
-    app = module.exports = express.createServer();
+    app = module.exports = express.createServer(),
+    box = require('./kalabox/box'),
+    logger = require('./logger');
 
 // Initialize socket.io.
 io = require('socket.io').listen(app);
@@ -117,39 +119,41 @@ var statusIcon = appjs.createStatusIcon({
   menu : trayMenu
 });
 
-// Initialize Kalabox and app window.
-var box = require('./kalabox/box');
-box.initialize(function () {
+// Initialize error logging service.
+logger.initialize(function() {
+  // Initialize Kalabox and app window.
+  box.initialize(function () {
 
-  // create window with url: http://localhost:51686/ instead of http://appjs/
-  var window = appjs.createWindow('http://localhost:51686/', {
-    width : 640,
-    height : 490,
-    icons : __dirname + '/public/icons'
-  });
-
-  // show the window after initialization
-  window.on('create', function() {
-    window.frame.show();
-    window.frame.center();
-    window.frame.setMenuBar(menubar);
-  });
-
-  // add require/process/module to the window global object for debugging from the
-  // DevTools
-  window.on('ready', function() {
-    window.require = require;
-    window.process = process;
-    window.module = module;
-    window.addEventListener('keydown', function(e) {
-      if (e.keyIdentifier === 'F12') {
-        window.frame.openDevTools();
-      }
+    // create window with url: http://localhost:51686/ instead of http://appjs/
+    var window = appjs.createWindow('http://localhost:51686/', {
+      width : 640,
+      height : 490,
+      icons : __dirname + '/public/icons'
     });
-  });
 
-  window.on('close', function() {
-    console.log("Window Closed");
-  });
+    // show the window after initialization
+    window.on('create', function() {
+      window.frame.show();
+      window.frame.center();
+      window.frame.setMenuBar(menubar);
+    });
 
+    // add require/process/module to the window global object for debugging from the
+    // DevTools
+    window.on('ready', function() {
+      window.require = require;
+      window.process = process;
+      window.module = module;
+      window.addEventListener('keydown', function(e) {
+        if (e.keyIdentifier === 'F12') {
+          window.frame.openDevTools();
+        }
+      });
+    });
+
+    window.on('close', function() {
+      console.log("Window Closed");
+    });
+
+  });
 });

@@ -11,7 +11,8 @@ var flow = require('nue').flow,
     exec = require('child_process').exec,
     url = require('url'),
     fs = require('fs'),
-    box = require('../box');
+    box = require('../box'),
+    logger = require('../../logger');
 
 // "Constants":
 var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg';
@@ -34,13 +35,18 @@ vagrantUrlParsed.packageLocation = '/Volumes/Vagrant/Vagrant.pkg';
 // Helper functions:
 function downloadAndReport(url, destination, callback) {
   // Download file via the utils.
-  installUtils.downloadFile(url, destination, function(percentDone) {
+  installUtils.downloadFile(url, destination, function(error, percentDone) {
     if (percentDone < 100) {
       // Notify client of progress.
       io.sockets.emit('installer', { complete: percentDone });
     }
     else {
-      callback();
+      if (error) {
+        callback(error);
+      }
+      else {
+        callback(null);
+      }
     }
   });
 }
@@ -115,8 +121,8 @@ var installDMG = flow('installDMG')(
   },
   function installDMGEnd(stdout, stderr) {
     if (this.err) {
-      console.log(this.err.message);
-      throw this.err;
+      this.data.callback({message: this.err.message});
+      this.err = null;
     }
     this.data.callback();
     this.next();
@@ -253,8 +259,9 @@ exports.install = flow('installKalabox')(
   },
   function installEnd(stdout, stderr) {
     if (this.err) {
-      console.log(this.err.message);
-      throw this.err;
+      logger.error('Error during installation routine: ' + this.err.message);
+      this.err = null;
+      this.next();
     }
     console.log('Box built!');
     io.sockets.emit('installerComplete');
