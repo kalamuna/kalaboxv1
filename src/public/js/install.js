@@ -32,5 +32,9 @@
   socket.on('installerComplete', function(data) {
     window.location.href = '/dash';
   });
+  // On error, redirect to error page.
+  socket.on('appError', function(data) {
+    window.location.href = '/error';
+  });
 
 })(jQuery, io.connect('http://localhost'));

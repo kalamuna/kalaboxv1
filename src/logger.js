@@ -22,16 +22,29 @@ exports = module.exports = new (winston.Logger)({
   ]
 });
 
+// Connect to Socket.io so we can emit an error event.
+var socket;
+exports.on('logging', function(transport, level, msg, meta) {
+  // Send message to frontend via event on error.
+  if (level == 'error') {
+    socket.emit('appError');
+  }
+});
+
 /**
  * Initializes the logger, creating the log file if it doesn't exists.
  *
  * @param function callback
  *   Function to call once the initialization completes.
+ * @param object io
+ *   IO event emitter dependency.
  */
 exports.initialize = flow('initialize')(
-  // Check if Kalabox directory exists.
-  function initialize0(callback) {
+  function initialize0(callback, io) {
     this.data.callback = callback;
+    // Configure Socket.io dependency.
+    socket = io.sockets;
+    // Check if Kalabox directory exists.
     fs.exists(KALABOX_DIR, this.async(as(0)));
   },
   // If directory doesn't exist, create it.
@@ -65,7 +78,44 @@ exports.initialize = flow('initialize')(
     process.on('uncaughtException', function(err) {
       exports.error('Uncaught Exception\n' + '\nStack:\n' + err.stack);
     });
+
     this.data.callback();
     this.next();
+  }
+);
+
+/**
+ * Loads contents of the log file.
+ *
+ * @param function callback
+ *   Function to call with the contents of the log file.
+ */
+exports.loadLog = flow('loadLog')(
+  // Check if log file exists.
+  function loadLog0(callback) {
+    this.data.callback = callback;
+    fs.exists(LOG_FILE, this.async(as(0)));
+  },
+  // Read in the file.
+  function loadLog1(exists) {
+    if (!exists) {
+      this.end();
+    }
+    else {
+      fs.readFile(LOG_FILE, this.async());
+    }
+  },
+  // Return log contents.
+  function loadLogEnd(contents) {
+    if (this.err) {
+      exports.error('Error loading log file: ' + this.err.message);
+      this.err = null;
+      this.next();
+      this.data.callback();
+      return;
+    }
+    if (contents) {
+      this.data.callback(contents);
+    }
   }
 );

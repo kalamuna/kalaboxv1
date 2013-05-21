@@ -6,7 +6,8 @@
 // Dependencies:
 var installer = require('../kalabox/installer/installer'),
     box = require('../kalabox/box'),
-    dash = require('../kalabox/dash');
+    dash = require('../kalabox/dash'),
+    logger = require('../logger');
 
 exports.index = function(req, res) {
   if (box.isInstalled()) {
@@ -31,4 +32,13 @@ exports.dash = function(req, res) {
     title : 'Kalabox'
   });
   dash.initialize();
+};
+
+exports.errorPage = function(req, res) {
+  logger.loadLog(function(contents) {
+    res.render('error', {
+      title : 'Kalabox',
+      logContents: contents
+    });
+  });
 };

@@ -263,8 +263,10 @@ exports.install = flow('installKalabox')(
       this.err = null;
       this.next();
     }
-    console.log('Box built!');
-    io.sockets.emit('installerComplete');
-    this.next();
+    else {
+      console.log('Box built!');
+      io.sockets.emit('installerComplete');
+      this.next();
+    }
   }
 );

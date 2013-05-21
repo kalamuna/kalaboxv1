@@ -42,6 +42,7 @@ app.configure('production', function() {
 app.get('/', routes.index);
 app.get('/install', routes.install);
 app.get('/dash', routes.dash);
+app.get('/error', routes.errorPage);
 
 /**
  * Setup AppJS
@@ -156,4 +157,4 @@ logger.initialize(function() {
     });
 
   });
-});
+}, io);
