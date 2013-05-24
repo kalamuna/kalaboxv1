@@ -42,7 +42,13 @@ function downloadAndReport(url, destination, callback) {
     }
     else {
       if (error) {
-        callback(error);
+        installUtils.checkInternet(function(hasInternet) {
+          if (!hasInternet) {
+            error.message = 'No internet';
+            io.sockets.emit('noInternet');
+          }
+          callback(error);
+        });
       }
       else {
         callback(null);
@@ -259,7 +265,9 @@ exports.install = flow('installKalabox')(
   },
   function installEnd(stdout, stderr) {
     if (this.err) {
-      logger.error('Error during installation routine: ' + this.err.message);
+      if (this.err.message == 'No internet') {
+        logger.error('Error during installation routine: ' + this.err.message);
+      }
       this.err = null;
       this.next();
     }

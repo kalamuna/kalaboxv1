@@ -42,3 +42,9 @@ exports.errorPage = function(req, res) {
     });
   });
 };
+
+exports.noInternet = function(req, res) {
+  res.render('no_internet', {
+    title : 'Kalabox'
+  });
+};

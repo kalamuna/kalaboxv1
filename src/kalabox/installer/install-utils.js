@@ -112,6 +112,22 @@ exports.checkVagrant = function(callback) {
 };
 
 /**
+ * Check if we have access to the internet
+ * @param  function callback 
+ *   Callback to pass an output true if Google resolves, or false if not.
+ */
+exports.checkInternet = function(callback) {
+  require('dns').resolve('www.google.com', function(err) {
+    if (err !== null) {
+      callback(false);
+    }
+    else {
+      callback(true);
+    }
+  });
+};
+
+/**
  * Compares two version strings.
  *
  * Based on: http://jsfiddle.net/Xv9WL/16/

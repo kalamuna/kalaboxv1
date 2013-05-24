@@ -36,5 +36,8 @@
   socket.on('appError', function(data) {
     window.location.href = '/error';
   });
+  socket.on('noInternet', function() {
+    window.location.href = '/no-internet';
+  });
 
 })(jQuery, io.connect('http://localhost'));
