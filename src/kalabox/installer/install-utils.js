@@ -11,6 +11,8 @@ var fs = require('fs'),
     https = require('https'),
     exec = require('child_process').exec,
     spawn = require('child_process').spawn,
+    flow = require('nue').flow,
+    as = require('nue').as,
     logger = require('../../logger');
 
 // State variables:
@@ -27,45 +29,70 @@ var vboxVersion,
  * @param  function callback
  *   Callback to pass progress to.
  */
-exports.downloadFile = function(file_url, destination, callback) {
-  // Get URL details from the full URL.
-  var parsedUrl = url.parse(file_url);
-  var options = {
-    host : parsedUrl.host,
-    port : 80,
-    path : parsedUrl.pathname
-  };
-  var file_name = parsedUrl.pathname.split('/').pop();
+exports.downloadFile = flow('writeFile')(
+  // Check if there is already a file at the destination location
+  function writeFile0(file_url, destination, callback) {
+    // Get URL details from the full URL.
+    var parsedUrl = url.parse(file_url);
+    this.data.options = {
+      host : parsedUrl.host,
+      port : 80,
+      path : parsedUrl.pathname
+    };
+    this.data.file_name = parsedUrl.pathname.split('/').pop();
 
-  // Determine if we're downloading over http or https.
-  var httpInterface = http;
-  if (parsedUrl.protocol == 'https:') {
-    httpInterface = https;
-    options.port = 443;
-  }
+    // Determine if we're downloading over http or https.
+    this.data.httpInterface = http;
+    if (parsedUrl.protocol == 'https:') {
+      this.data.httpInterface = https;
+      this.data.options.port = 443;
+    }
+    this.data.destination = destination;
+    this.data.callback = callback;
 
+    fs.exists(this.data.destination + this.data.file_name, this.async(as(0)));
+  },
   // Create stream and start the download.
-  var file = fs.createWriteStream(destination + file_name);
-  httpInterface.get(options, function(res) {
+  function writeFile1(exists){
+    if(exists){
+      console.log('File already downloaded');
+      this.end();
+      return;
+    }
+
+    this.data.file = fs.createWriteStream(this.data.destination + this.data.file_name);
+    this.data.httpInterface.get(this.data.options, this.async(as(0))).on('error', function(error) {
+      this.data.callback(error, 100);
+    });
+  },
+  // Report on the downloading progress
+  function writeFile2(res) {
     var filesize = res.headers['content-length'];
     var downloaded = 0;
     var done = 0;
+    var that = this;
     res.on('data', function(data) {
-      file.write(data, function() {
+      that.data.file.write(data, function() {
         downloaded = downloaded + data.length;
         done = (downloaded / filesize) * 100;
-        callback(null, done);
+        that.data.callback(null, done);
       });
-    }).on('end', function(data) {
-      file.end(function() {
-        console.log(file_name + ' downloaded to ' + destination);
-        callback(null, 100);
-      });
-    });
-  }).on('error', function(error) {
-    callback(error, 100);
-  });
-};
+    }).on('end', this.async(as(0)));
+  },
+  function writeFile3(data) {
+    this.data.file.end(this.async());
+  },
+  function writeFileEnd() {
+    if (this.err) {
+      this.data.callback({message: this.err.message});
+      this.err = null;
+      return;
+    }
+
+    console.log(this.data.file_name + ' downloaded to ' + this.data.destination);
+    this.data.callback(null, 100);
+  }
+);
 
 /**
  * Checks if VirtualBox is installed.
@@ -113,7 +140,7 @@ exports.checkVagrant = function(callback) {
 
 /**
  * Check if we have access to the internet
- * @param  function callback 
+ * @param  function callback
  *   Callback to pass an output true if Google resolves, or false if not.
  */
 exports.checkInternet = function(callback) {
