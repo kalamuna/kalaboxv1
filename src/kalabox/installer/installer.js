@@ -236,19 +236,22 @@ exports.install = flow('installKalabox')(
     }
     exec('tar zxvf ' + KALASTACK_FILENAME, {cwd: KALABOX_DIR}, this.async());
   },
-  // @todo Delete Kalastack tar.gz file.
-  // Add Kalabox hosts config to /etc/hosts.
+  // Delete Kalastack tar.gz file.
   function install11(stdout, stderr) {
+    exec('rm ' + KALASTACK_FILENAME, {cwd: KALABOX_DIR}, this.async());
+  },
+  // Add Kalabox hosts config to /etc/hosts.
+  function install12(stdout, stderr) {
     exec('osascript "' + __dirname + '/edit_hosts.scpt" "' + __dirname + '/hosts_config"', this.async());
   },
   // Start box build from Kalabox image.
-  function install12(stdout, stderr) {
+  function install13(stdout, stderr) {
     console.log('Extracted Kalastack...');
     sendMessage('Building the box...');
     exec('vagrant box add kalabox "' + KALABOX_DIR + KALABOX64_FILENAME + '"', {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
   },
   // Finish box build with "vagrant up".
-  function install13(stdout, stderr) {
+  function install14(stdout, stderr) {
     console.log('Kalabox added');
     exec('osascript "' + __dirname + '/spinup_box.scpt" "' + KALABOX_DIR + '/kalastack-2.x"', this.async());
     // Temporary measure to prevent installer from continuing until "vagrant up" completes in new Terminal.
