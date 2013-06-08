@@ -94,6 +94,51 @@ exports.downloadFile = flow('writeFile')(
   }
 );
 
+exports.downloadKalastack = flow('downloadKalastack')(
+  function downloadKalastack0(kalabox_dir, kalastack_filename, kalastack_url, callback) {
+    this.data.kalastack_url = kalastack_url;
+    this.data.kalabox_dir = kalabox_dir;
+    this.data.kalastack_filename = kalastack_filename;
+    this.data.callback = callback;
+
+    fs.exists(this.data.kalabox_dir + this.data.kalastack_filename, this.async(as(0)));
+  },
+  // See if Kalastack is already downloaded
+  function downloadKalastack1(exists) {
+    if (exists) {
+      console.log('Kalastack already downloaded');
+      this.end();
+      return;
+    }
+    exec('curl -L -o ' + this.data.kalastack_filename + ' ' + this.data.kalastack_url, {cwd: this.data.kalabox_dir}, this.async());
+  },
+  // Verify Kalastack download
+  function downloadKalastack2(stdout, stderr) {
+    fs.exists(this.data.kalabox_dir + this.data.kalastack_filename, this.async(as(0)));
+  },
+  // Un-tar Kalastack
+  function downloadKalastack3(exists) {
+    if (!exists) {
+      this.endWith({message: 'Failed to download Kalastack archive.'});
+      return;
+    }
+    exec('tar zxvf ' + this.data.kalastack_filename, {cwd: this.data.kalabox_dir}, this.async());
+  },
+  // Delete Kalastack tar.gz file.
+  function downloadKalastack4(stdout, stderr) {
+    exec('rm ' + this.kalastack_filename, {cwd: this.kalabox_dir}, this.async());
+  },
+  function downloadKalastackEnd() {
+    if (this.err) {
+      this.data.callback({message: this.err.message});
+      this.err = null;
+      return;
+    }
+
+    this.data.callback();
+  }
+);
+
 /**
  * Checks if VirtualBox is installed.
  *
