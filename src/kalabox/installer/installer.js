@@ -12,7 +12,8 @@ var flow = require('nue').flow,
     url = require('url'),
     fs = require('fs'),
     box = require('../box'),
-    logger = require('../../logger');
+    logger = require('../../logger'),
+    taskManager = require('../utils/task-runner/task-manager');
 
 // "Constants":
 var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg';
@@ -113,7 +114,10 @@ var installDMG = flow('installDMG')(
   function installDMG4(stdout, stderr) {
     console.log('DMG mounted.');
     sendMessage('Installing ' + this.data.programName + '...');
-    exec('osascript "' + __dirname + '/install_package.scpt" "' + this.data.packageLocation + '" "/"', this.async());
+    taskManager.executeAdminTask('installPackage', {
+      location: this.data.packageLocation,
+      targetVolume: '/'
+    }, this.async());
     // @todo Handle user cancelling or failing admin authentication.
   },
   // Unmount DMG after installation.

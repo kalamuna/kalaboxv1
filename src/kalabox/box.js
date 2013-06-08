@@ -164,8 +164,8 @@ var checkInstalled = flow('checkInstalled')(
   },
   function checkInstalledEnd() {
     if (this.err) {
-      console.log(this.err.message);
-      throw this.err;
+      this.data.installed = false;
+      this.err = null;
     }
     // Execute callback with the result.
     this.data.callback(this.data.installed);
@@ -205,8 +205,8 @@ var checkStatus = flow('checkStatus')(
   },
   function checkStatusEnd() {
     if (this.err) {
-      console.log(this.err.message);
-      throw this.err;
+      this.data.isRunning = false;
+      this.err = null;
     }
     console.log('Box running: ' + this.data.isRunning);
     // Execute callback with the result.
