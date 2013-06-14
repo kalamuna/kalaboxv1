@@ -232,16 +232,25 @@ exports.install = flow('installKalabox')(
   function install9() {
     exec('osascript "' + __dirname + '/edit_hosts.scpt" "' + __dirname + '/hosts_config"', this.async());
   },
-  // Start box build from Kalabox image.
+  // Check to make sure a kalabox isn't already in Vagrant.
   function install10(stdout, stderr) {
-    console.log('Extracted Kalastack...');
-    sendMessage('Building the box...');
-    exec('vagrant box add kalabox "' + KALABOX_DIR + KALABOX64_FILENAME + '"', {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
+    exec('vagrant box list', this.async());
+  },
+  // Start box build from Kalabox image if necessary.
+  function install11(stdout, stderr) {
+    var response = stdout.toString();
+    if (response.indexOf('kalabox (virtualbox)') !== -1) {
+      this.next();
+    } else {
+      console.log('Extracted Kalastack...');
+      sendMessage('Building the box...');
+      exec('vagrant box add kalabox "' + KALABOX_DIR + KALABOX64_FILENAME + '"', {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
+    }
   },
   // Finish box build with "vagrant up".
-  function install11(stdout, stderr) {
+  function install12(stdout, stderr) {
     console.log('Kalabox added');
-    exec('osascript "' + __dirname + '/spinup_box.scpt" "' + KALABOX_DIR + '/kalastack-2.x"', this.async());
+    exec('osascript "' + __dirname + '/spinup_box.scpt" "' + KALABOX_DIR + 'kalastack-2.x"', this.async());
     // Temporary measure to prevent installer from continuing until "vagrant up" completes in new Terminal.
     var nextStep = this.async();
     var moveOn = function() {
