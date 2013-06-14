@@ -13,7 +13,7 @@ var flow = require('nue').flow,
 
 // "Constants":
 var KALABOX_DIR = process.env.HOME + '/.kalabox/',
-    KALASTACK_DIR = KALABOX_DIR + 'kalastack-2.x',
+    KALASTACK_DIR = KALABOX_DIR + 'kalastack-2.0-alpha3',
     KALABOX_IP = '192.168.42.10';
 
 // State data:

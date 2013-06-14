@@ -9,7 +9,7 @@ var box = require('./box'),
 
 // "Constants":
 var KALABOX_DIR = process.env.HOME + '/.kalabox/',
-    KALASTACK_DIR = KALABOX_DIR + 'kalastack-2.x';
+    KALASTACK_DIR = KALABOX_DIR + 'kalastack-2.0-alpha3';
 
 // Variables:
 var socket;
@@ -41,6 +41,22 @@ function handleSSHRequest(data) {
   exec('osascript ' + __dirname + '/utils/scpts/start_ssh.scpt "' + KALASTACK_DIR + '"');
 }
 
+function handleServiceRequest(data) {
+  // If box not running, don't open a service.
+  if (!box.isRunning()) {
+    return;
+  }
+
+  console.log(data);
+  var serviceURL = 'php.kala';
+  if (data.requestType == 'webGrindButton') {
+    serviceURL = 'grind.kala';
+  }
+
+  // Launch the service in a new Terminal window.
+  exec('osascript -e \'open location "http://' + serviceURL + '"\'');
+}
+
 function handleFoldersRequest(data) {
   // If box not running, don't open folders.
   if (!box.isRunning()) {
@@ -69,6 +85,7 @@ exports.initialize = function() {
     socket.on('startRequest', handleStartRequest);
     socket.on('stopRequest', handleStopRequest);
     socket.on('sshRequest', handleSSHRequest);
+    socket.on('openServiceRequest', handleServiceRequest);
     socket.on('foldersRequest', handleFoldersRequest);
   });
   // Bind handlers for communication events coming from other modules.

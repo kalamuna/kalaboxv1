@@ -40,6 +40,26 @@ var dash = (function($, ko, socket) {
     }
   };
 
+  // PHPMyAdmin button:
+  self.phpMyAdminButton = {
+    disabled: ko.observable(true),
+    onClick: function() {
+      if (boxRunning()) {
+        socket.emit('openServiceRequest', {'requestType': 'phpMyAdminButton'});
+      }
+    }
+  };
+
+  // WebGrind Button
+  self.webGrindButton = {
+    disabled: ko.observable(true),
+    onClick: function() {
+      if (boxRunning()) {
+        socket.emit('openServiceRequest', {'requestType': 'webGrindButton'});
+      }
+    }
+  };
+
   // Shared Folders button:
   self.foldersButton = {
     disabled: ko.observable(true),
@@ -73,6 +93,8 @@ var dash = (function($, ko, socket) {
     self.powerButton.label('Stop');
     self.powerButton.disabled(false);
     self.sshButton.disabled(false);
+    self.phpMyAdminButton.disabled(false);
+    self.webGrindButton.disabled(false);
     self.foldersButton.disabled(false);
   });
   socket.on('boxStopped', function(data) {
@@ -80,6 +102,8 @@ var dash = (function($, ko, socket) {
     self.powerButton.label('Start');
     self.powerButton.disabled(false);
     self.sshButton.disabled(true);
+    self.phpMyAdminButton.disabled(true);
+    self.webGrindButton.disabled(true);
     self.foldersButton.disabled(true);
   });
 
