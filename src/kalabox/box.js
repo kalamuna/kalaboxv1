@@ -157,7 +157,8 @@ var checkInstalled = flow('checkInstalled')(
   function checkInstalled2(stdout, stderr) {
     var response = stdout.toString();
     if ((response.indexOf('running (virtualbox)') !== -1) ||
-        (response.indexOf('poweroff (virtualbox)') !== -1)) {
+        (response.indexOf('poweroff (virtualbox)') !== -1) ||
+        (response.indexOf('aborted (virtualbox)') !== -1)) {
       this.data.installed = true;
     }
     this.next();
