@@ -24,7 +24,8 @@ var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg';
     KALABOX_DIR = process.env.HOME + '/.kalabox/',
     KALABOX64_URL = 'http://files.kalamuna.com/kalabox64.box',
     KALABOX64_FILENAME = 'kalabox64.box',
-    KALASTACK_URL = 'https://codeload.github.com/kalamuna/kalastack/tar.gz/2.x',
+    KALASTACK_DIR = 'kalastack-2.0-alpha3',
+    KALASTACK_URL = 'https://codeload.github.com/kalamuna/kalastack/tar.gz/2.0-alpha3',
     KALASTACK_FILENAME = 'kalastack.tar.gz';
 
 // Installer file info:
@@ -226,11 +227,11 @@ exports.install = flow('installKalabox')(
     }
     console.log('Downloaded Kalabox image.');
     sendMessage('Downloading Kalastack...');
-    installUtils.downloadKalastack(KALABOX_DIR, KALASTACK_FILENAME, KALASTACK_URL, this.async());
+    installUtils.downloadKalastack(KALABOX_DIR, KALASTACK_FILENAME, KALASTACK_URL, KALASTACK_DIR, this.async());
   },
-  // Add Kalabox hosts config to /etc/hosts.
+  // Download Vagrant host updater plugin.
   function install9() {
-    exec('osascript "' + __dirname + '/edit_hosts.scpt" "' + __dirname + '/hosts_config"', this.async());
+    exec('vagrant plugin install vagrant-hostsupdater', this.async());
   },
   // Check to make sure a kalabox isn't already in Vagrant.
   function install10(stdout, stderr) {
@@ -244,13 +245,13 @@ exports.install = flow('installKalabox')(
     } else {
       console.log('Extracted Kalastack...');
       sendMessage('Building the box...');
-      exec('vagrant box add kalabox "' + KALABOX_DIR + KALABOX64_FILENAME + '"', {cwd: KALABOX_DIR + 'kalastack-2.x'}, this.async());
+      exec('vagrant box add kalabox "' + KALABOX_DIR + KALABOX64_FILENAME + '"', {cwd: KALABOX_DIR + KALASTACK_DIR}, this.async());
     }
   },
   // Finish box build with "vagrant up".
   function install12(stdout, stderr) {
     console.log('Kalabox added');
-    exec('osascript "' + __dirname + '/spinup_box.scpt" "' + KALABOX_DIR + 'kalastack-2.x"', this.async());
+    exec('osascript "' + __dirname + '/spinup_box.scpt" "' + KALABOX_DIR + KALASTACK_DIR + '"', this.async());
     // Temporary measure to prevent installer from continuing until "vagrant up" completes in new Terminal.
     var nextStep = this.async();
     var moveOn = function() {

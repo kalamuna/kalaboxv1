@@ -95,13 +95,13 @@ exports.downloadFile = flow('writeFile')(
 );
 
 exports.downloadKalastack = flow('downloadKalastack')(
-  function downloadKalastack0(kalabox_dir, kalastack_filename, kalastack_url, callback) {
+  function downloadKalastack0(kalabox_dir, kalastack_filename, kalastack_url, kalastackDir, callback) {
     this.data.kalastack_url = kalastack_url;
     this.data.kalabox_dir = kalabox_dir;
     this.data.kalastack_filename = kalastack_filename;
     this.data.callback = callback;
 
-    fs.exists(this.data.kalabox_dir + 'kalastack-2.x', this.async(as(0)));
+    fs.exists(kalabox_dir + kalastackDir, this.async(as(0)));
   },
   // See if Kalastack is already downloaded
   function downloadKalastack1(exists) {
