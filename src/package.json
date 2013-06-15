@@ -1,12 +1,13 @@
 {
-    "name": "kalabox"
-  , "version": "0.0.1"
-  , "private": true
-  , "dependencies": {
-      "express": "2.5.8"
-    , "ejs": ">= 0.0.1"
-    , "socket.io": "0.9.14"
-    , "nue": "0.7.x"
-    , "winston": "0.7.x"
+  "name": "kalabox",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "2.5.8",
+    "ejs": ">= 0.0.1",
+    "socket.io": "0.9.14",
+    "nue": "0.7.x",
+    "winston": "0.7.x",
+    "ssh2": "~0.2.9"
   }
 }
