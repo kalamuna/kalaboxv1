@@ -44,6 +44,7 @@ app.get('/install', routes.install);
 app.get('/dash', routes.dash);
 app.get('/error', routes.errorPage);
 app.get('/no-internet', routes.noInternet);
+app.post('/drush-upload', routes.drushUpload);
 
 /**
  * Setup AppJS

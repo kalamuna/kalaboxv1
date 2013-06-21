@@ -7,6 +7,7 @@
 var installer = require('../kalabox/installer/installer'),
     box = require('../kalabox/box'),
     dash = require('../kalabox/dash'),
+    drushUpload = require('../kalabox/utils/drush-upload'),
     logger = require('../logger');
 
 exports.index = function(req, res) {
@@ -47,4 +48,8 @@ exports.noInternet = function(req, res) {
   res.render('no_internet', {
     title : 'Kalabox'
   });
+};
+
+exports.drushUpload = function(req, res) {
+  drushUpload.upload(req.body.drushFile);
 };
