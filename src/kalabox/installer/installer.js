@@ -13,7 +13,8 @@ var flow = require('nue').flow,
     fs = require('fs'),
     box = require('../box'),
     logger = require('../../logger'),
-    taskManager = require('../utils/task-runner/task-manager');
+    taskManager = require('../utils/task-runner/task-manager'),
+    config = require('../../config');
 
 // "Constants":
 var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg';
@@ -21,11 +22,12 @@ var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg';
     TEMP_DIR = '/tmp/',
     VAGRANT_URL = 'http://files.kalamuna.com/vagrant-macosx-1.1.2.dmg',
     VAGRANT_VERSION = '1.1.2',
-    KALABOX_DIR = process.env.HOME + '/.kalabox/',
+    VAGRANT_PLUGINS = config.get('VAGRANT_PLUGINS'),
+    KALABOX_DIR = config.get('KALABOX_DIR'),
     KALABOX64_URL = 'http://files.kalamuna.com/kalabox64.box',
     KALABOX64_FILENAME = 'kalabox64.box',
-    KALASTACK_DIR = 'kalastack-2.0-alpha3',
-    KALASTACK_URL = 'https://codeload.github.com/kalamuna/kalastack/tar.gz/2.0-alpha3',
+    KALASTACK_DIR = config.get('KALASTACK_DIR'),
+    KALASTACK_URL = config.get('KALASTACK_URL'),
     KALASTACK_FILENAME = 'kalastack.tar.gz';
 
 // Installer file info:
@@ -229,12 +231,21 @@ exports.install = flow('installKalabox')(
     sendMessage('Downloading Kalastack...');
     installUtils.downloadKalastack(KALABOX_DIR, KALASTACK_FILENAME, KALASTACK_URL, KALASTACK_DIR, this.async());
   },
-  // Download Vagrant host updater plugin.
+  // Download Vagrant plugins.
   function install9() {
-    exec('vagrant plugin install vagrant-hostsupdater', this.async());
+    console.log('Extracted Kalastack...');
+    sendMessage('Building the box...');
+    if (typeof VAGRANT_PLUGINS.length === 'undefined' || VAGRANT_PLUGINS.length < 1) {
+      this.next();
+    }
+    else {
+      this.asyncEach(1)(VAGRANT_PLUGINS, function(plugin, group) {
+        exec('vagrant plugin install ' + plugin, {cwd: KALASTACK_DIR}, group.async());
+      });
+    }
   },
   // Check to make sure a kalabox isn't already in Vagrant.
-  function install10(stdout, stderr) {
+  function install10() {
     exec('vagrant box list', this.async());
   },
   // Start box build from Kalabox image if necessary.
@@ -243,15 +254,13 @@ exports.install = flow('installKalabox')(
     if (response.indexOf('kalabox (virtualbox)') !== -1) {
       this.next();
     } else {
-      console.log('Extracted Kalastack...');
-      sendMessage('Building the box...');
-      exec('vagrant box add kalabox "' + KALABOX_DIR + KALABOX64_FILENAME + '"', {cwd: KALABOX_DIR + KALASTACK_DIR}, this.async());
+      exec('vagrant box add kalabox "' + KALABOX_DIR + KALABOX64_FILENAME + '"', {cwd: KALASTACK_DIR}, this.async());
     }
   },
   // Finish box build with "vagrant up".
   function install12(stdout, stderr) {
     console.log('Kalabox added');
-    exec('osascript "' + __dirname + '/spinup_box.scpt" "' + KALABOX_DIR + KALASTACK_DIR + '"', this.async());
+    exec('osascript "' + __dirname + '/spinup_box.scpt" "' + KALASTACK_DIR + '"', this.async());
     // Temporary measure to prevent installer from continuing until "vagrant up" completes in new Terminal.
     var nextStep = this.async();
     var moveOn = function() {

@@ -8,10 +8,11 @@ var winston = require('winston'),
     flow = require('nue').flow,
     as = require('nue').as,
     fs = require('fs'),
-    exec = require('child_process').exec;
+    exec = require('child_process').exec,
+    config = require('./config');
 
 // "Constants":
-var KALABOX_DIR = process.env.HOME + '/.kalabox/',
+var KALABOX_DIR = config.get('KALABOX_DIR'),
     LOG_FILE = KALABOX_DIR + 'kalabox.log';
 
 // Create a new logger instance that writes to the console and log file.

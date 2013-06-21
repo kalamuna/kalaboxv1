@@ -5,11 +5,12 @@
 
 // Dependencies:
 var box = require('./box'),
-    exec = require('child_process').exec;
+    exec = require('child_process').exec,
+    config = require('../config');
 
 // "Constants":
-var KALABOX_DIR = process.env.HOME + '/.kalabox/',
-    KALASTACK_DIR = KALABOX_DIR + 'kalastack-2.0-alpha3';
+var KALABOX_DIR = config.get('KALABOX_DIR'),
+    KALASTACK_DIR = config.get('KALASTACK_DIR');
 
 // Variables:
 var socket;
