@@ -99,9 +99,10 @@ exports.downloadKalastack = flow('downloadKalastack')(
     this.data.kalastack_url = kalastack_url;
     this.data.kalabox_dir = kalabox_dir;
     this.data.kalastack_filename = kalastack_filename;
+    this.data.kalastackDir = kalastackDir;
     this.data.callback = callback;
 
-    fs.exists(kalabox_dir + kalastackDir, this.async(as(0)));
+    fs.exists(kalastackDir, this.async(as(0)));
   },
   // See if Kalastack is already downloaded
   function downloadKalastack1(exists) {
@@ -116,19 +117,23 @@ exports.downloadKalastack = flow('downloadKalastack')(
   function downloadKalastack2(stdout, stderr) {
     fs.exists(this.data.kalabox_dir + this.data.kalastack_filename, this.async(as(0)));
   },
-  // Un-tar Kalastack
+  // Create Kalastack directory
   function downloadKalastack3(exists) {
     if (!exists) {
       this.endWith({message: 'Failed to download Kalastack archive.'});
       return;
     }
-    exec('tar zxvf ' + this.data.kalastack_filename, {cwd: this.data.kalabox_dir}, this.async());
+    fs.mkdir(this.data.kalastackDir, '0755', this.async());
+  },
+  // Untar Kalastack.
+  function downloadKalastack4() {
+    exec('tar zxvf ' + this.data.kalastack_filename + ' -C ' + this.data.kalastackDir + ' --strip-components 1', {cwd: this.data.kalabox_dir}, this.async());
   },
   // Delete Kalastack tar.gz file.
-  function downloadKalastack4(stdout, stderr) {
+  function downloadKalastack5(stdout, stderr) {
     exec('rm ' + this.data.kalastack_filename, {cwd: this.data.kalabox_dir}, this.async());
   },
-  function downloadKalastackEnd() {
+  function downloadKalastackEnd(stdout, stderr) {
     if (this.err) {
       this.data.callback({message: this.err.message});
       this.err = null;

@@ -9,12 +9,12 @@ var flow = require('nue').flow,
     fs = require('fs'),
     exec = require('child_process').exec,
     http = require('http'),
-    EventEmitter = require('events').EventEmitter;
+    EventEmitter = require('events').EventEmitter,
+    config = require('../config');
 
 // "Constants":
-var KALABOX_DIR = process.env.HOME + '/.kalabox/',
-    KALASTACK_DIR = KALABOX_DIR + 'kalastack-2.0-alpha3',
-    KALABOX_IP = '192.168.42.10';
+var KALABOX_DIR = config.get('KALABOX_DIR'),
+    KALASTACK_DIR = config.get('KALASTACK_DIR');
 
 // State data:
 var installed = false,
