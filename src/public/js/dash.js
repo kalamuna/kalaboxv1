@@ -107,14 +107,79 @@ var dash = (function($, ko, socket) {
     self.foldersButton.disabled(true);
   });
 
+  // Drush alias upload handler and helper functions
+  var drop = function(event) {
+    event.preventDefault();
+    var dt = event.dataTransfer;
+    var files = dt.files;
+    for (var i = 0; i<files.length; i++) {
+        var file = files[i];
+        readFile(file);
+    }
+  };
+
+  function readStart(progressEvent) {
+    console.log('readStart',progressEvent);
+  }
+
+  function readEnd(progressEvent) {
+    console.log('readEnd',progressEvent,this);
+    var fileReader = this;
+    var fileContent = fileReader.result;
+    var fileName = fileReader.file.name;
+    // Note you can not retreive file path, for security reasons.
+    // But you are not supposed to need it, you already have the content ;)
+    console.log('readEnd:',fileName,fileContent);
+//    if (boxRunning()) {
+    socket.emit('drushUpload', {'name': fileName, 'content': fileContent});
+ //   }
+
+
+    var output = '<li>' + fileName + '</li>';
+    document.getElementById('list').innerHTML = '<ul>' + output + '</ul>';
+  }
+
+  function readError(progressEvent) {
+    console.log('readError',progressEvent);
+    switch(progressEvent.target.error.code) {
+        case progressEvent.target.error.NOT_FOUND_ERR:
+            alert('File not found!');
+            break;
+        case progressEvent.target.error.NOT_READABLE_ERR:
+            alert('File not readable!');
+            break;
+        case progressEvent.target.error.ABORT_ERR:
+            break;
+        default:
+            alert('Unknow Read error.');
+    }
+  }
+
+  function readFile(file) {
+    var reader = new FileReader();
+    reader.file = file; // We need it later (filename)
+    reader.addEventListener('loadstart', readStart, false);
+    reader.addEventListener('loadend', readEnd, false);
+    reader.addEventListener('error', readError, false);
+    reader.readAsBinaryString(file);
+  }
+
   // Return public interface.
   return {
     initialize: function() {
+      // Make the window accept drag-and-drop alias files
+      window.addEventListener("drop", drop);
+      // Knock-out magic
       ko.applyBindings(self);
     }
   };
 
 })(jQuery, ko, io.connect('http://localhost'));
+
+
+
+
+
 
 // Initialize dashboard when page finishes loading.
 jQuery(function() {

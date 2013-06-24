@@ -49,7 +49,3 @@ exports.noInternet = function(req, res) {
     title : 'Kalabox'
   });
 };
-
-exports.drushUpload = function(req, res) {
-  drushUpload.upload(req.body.drushFile);
-};

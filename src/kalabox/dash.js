@@ -6,7 +6,8 @@
 // Dependencies:
 var box = require('./box'),
     exec = require('child_process').exec,
-    config = require('../config');
+    config = require('../config'),
+    drushUpload = require('./utils/drush-upload.js');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -66,6 +67,10 @@ function handleFoldersRequest(data) {
   exec('open .', {cwd: process.env.HOME + '/kalabox'});
 }
 
+function handleDrushUpload(data) {
+  drushUpload.upload(data.name, data.content);
+}
+
 // Module communication handlers:
 
 function handleStart() {
@@ -88,6 +93,7 @@ exports.initialize = function() {
     socket.on('sshRequest', handleSSHRequest);
     socket.on('openServiceRequest', handleServiceRequest);
     socket.on('foldersRequest', handleFoldersRequest);
+    socket.on('drushUpload', handleDrushUpload);
   });
   // Bind handlers for communication events coming from other modules.
   box.on('start', handleStart);
