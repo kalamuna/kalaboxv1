@@ -100,6 +100,7 @@ exports.startBox = flow('startBox')(
     }
     // Store running state and execute the callback.
     running = true;
+    exports.emit('start');
     this.data.callback();
     this.next();
   }
@@ -124,6 +125,7 @@ exports.stopBox = flow('stopBox')(
     }
     // Store running state and execute the callback.
     running = false;
+    exports.emit('stop');
     this.data.callback();
     this.next();
   }

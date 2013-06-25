@@ -8,23 +8,107 @@ var connector = require('./connector'),
     as = require('nue').as;
 
 // Data objects:
-var socket;
+var socket,
+    statusChecker;
 
-exports.initialize = flow('initialize')(
-  function initialize0() {
-    // Grab the socket.io connection when it's established.
-    io.sockets.on('connection', function (newSocket) {
-      socket = newSocket;
+// Services to check:
+var services = [
+  {
+    name: 'nginx',
+    message: '* nginx is running',
+    running: null
+  },
+  {
+    name: 'mysql',
+    message: 'mysql start/running',
+    running: null
+  }
+];
+
+/**
+ * Begins checking of service statuses.
+ */
+exports.startChecking = function() {
+  if (!statusChecker) {
+    statusChecker = setInterval(checkAllServices, 20000);
+  }
+};
+
+/**
+ * Stops checking of service statuses.
+ */
+exports.stopChecking = function() {
+  clearInterval(statusChecker);
+  statusChecker = null;
+};
+
+/**
+ * Initializes the module.
+ */
+exports.initialize = function(startChecking) {
+  // Grab the socket.io connection when it's established.
+  io.sockets.on('connection', function(newSocket) {
+    socket = newSocket;
+  });
+  // If box is running, start checking statuses.
+  if (startChecking) {
+    exports.startChecking();
+  }
+};
+
+/**
+ * Runs the status check for every service, storing any state changes, as well as
+ * emitting change events to notify the UI.
+ */
+var checkAllServices = flow('checkAllServices')(
+  function checkAllServices0() {console.log('checking services...');
+    // Check each service's status.
+    this.asyncEach(1)(services, function(service, group) {
+      checkService(service, group.async(as(0)));
     });
+  },
+  function checkAllServices1(statuses) {
+    // Check all current statuses against the returned statuses.
+    for (var i = 0, length = services.length; i < length; i++) {
+      var service = services[i];
+      var status = statuses[i];
+      // If service's status has changed, notify the client and store the new status.
+      if (service.running != status) {
+        service.running = status;
+        if (socket) {
+          socket.emit('serviceStatusChanged', { name: service.name, running: status });
+        }
+      }
+    }
+    this.next();
   }
 );
 
-var checkNginx = flow('checkNginx')(
-  function checkNginx0(callback) {
+/**
+ * Checks the state (running or not) of a particular service.
+ *
+ * @param object service
+ *   Service object containing name and message properties.
+ * @param function callback
+ *   Callback to pass true or false to depending on whether service is running.
+ */
+var checkService = flow('checkService')(
+  function checkService0(service, callback) {
+    this.data.service = service;
     this.data.callback = callback;
-    connector.getConnection(this.async());
+    // Run service status command.
+    connector.runCommand('service ' + service.name + ' status', this.async());
   },
-  function checkNginx1(connection) {
-    connection.exec('service status nginx');
+  function checkService1(response) {
+    if (this.err) {
+      this.err = null;
+      this.data.callback(false);
+    }
+    else {
+      // Parse response to see if service is running.
+      response = response.toString();
+      this.data.callback(response.indexOf(this.data.service.message) !== -1);
+    }
+    this.next();
   }
 );

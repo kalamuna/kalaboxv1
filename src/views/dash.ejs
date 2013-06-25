@@ -30,19 +30,11 @@
                 </tr>
               </thead>
               <tbody data-bind="foreach: statusDisplays">
-                <tr data-bind="css: {success: $root.boxRunning, error: $root.boxStopped}">
-                  <td data-bind="text: name"></td>
+                <tr data-bind="css: {success: running, error: notRunning}">
+                  <td data-bind="text: title"></td>
                   <td data-bind="text: message"></td>
                 </tr>
               </tbody>
-              <tr class="success">
-                <td>nginx</td>
-                <td>Running</td>
-              </tr>
-              <tr class="success">
-                <td>MySQL</td>
-                <td>Running</td>
-              </tr>
               <tr class="success">
                 <td>SSH Keys</td>
                 <td>Installed</td>

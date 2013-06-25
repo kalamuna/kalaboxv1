@@ -7,7 +7,8 @@
 var box = require('./box'),
     exec = require('child_process').exec,
     config = require('../config'),
-    drushUpload = require('./utils/drush-upload.js');
+    drushUpload = require('./utils/drush-upload'),
+    services = require('./vm/services');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -94,8 +95,16 @@ exports.initialize = function() {
     socket.on('openServiceRequest', handleServiceRequest);
     socket.on('foldersRequest', handleFoldersRequest);
     socket.on('drushUpload', handleDrushUpload);
+    // If box running, make sure UI knows about it.
+    if (box.isRunning()) {
+      handleStart();
+    }
   });
   // Bind handlers for communication events coming from other modules.
   box.on('start', handleStart);
   box.on('stop', handleStop);
+  // Start services monitor and bind it to box events.
+  box.on('start', services.startChecking);
+  box.on('stop', services.stopChecking);
+  services.initialize(box.isRunning());
 };

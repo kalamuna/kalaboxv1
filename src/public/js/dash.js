@@ -71,21 +71,39 @@ var dash = (function($, ko, socket) {
   };
 
   // Status displays:
-  self.statusDisplays = ko.observableArray();
-  function getDisplayStatus() {
-    if (boxRunning()) {
-      return 'Running';
+  self.statusDisplays = [];
+  var services = {};
+  (function() {
+    var serviceDefinitions = [
+      {name: 'box', title: 'Kalabox'},
+      {name: 'nginx', title: 'nginx'},
+      {name: 'mysql', title: 'MySQL'}
+    ];
+    function getDisplayStatus() {
+      if (this.running()) {
+        return 'Running';
+      }
+      return 'Stopped';
     }
-    return 'Stopped';
-  }
-  function addStatusDisplay(display) {
-    display.message = ko.computed({read: getDisplayStatus, owner: display});
-    self.statusDisplays.push(display);
-  }
-  var boxStatusDisplay = {
-    name: 'Kalabox'
-  };
-  addStatusDisplay(boxStatusDisplay);
+    function isNotRunning() {
+      return !this.running();
+    }
+    for (var i = 0, length = serviceDefinitions.length; i < length; i++) {
+      var service = {
+        title: serviceDefinitions[i].title,
+        running: ko.observable(false)
+      };
+      service.message = ko.computed({read: getDisplayStatus, owner: service});
+      service.notRunning = ko.computed({read: isNotRunning, owner: service});
+      services[serviceDefinitions[i].name] = service;
+    }
+    for (var serviceName in services) {
+      if (!services.hasOwnProperty(serviceName)) {
+        continue;
+      }
+      self.statusDisplays.push(services[serviceName]);
+    }
+  })();
 
   // Server event handlers.
   socket.on('boxStarted', function(data) {
@@ -96,6 +114,10 @@ var dash = (function($, ko, socket) {
     self.phpMyAdminButton.disabled(false);
     self.webGrindButton.disabled(false);
     self.foldersButton.disabled(false);
+    // Mark all services as started.
+    for (var i = 0, length = self.statusDisplays.length; i < length; i++) {
+      self.statusDisplays[i].running(true);
+    }
   });
   socket.on('boxStopped', function(data) {
     boxRunning(false);
@@ -105,6 +127,16 @@ var dash = (function($, ko, socket) {
     self.phpMyAdminButton.disabled(true);
     self.webGrindButton.disabled(true);
     self.foldersButton.disabled(true);
+    // Mark all services as stopped.
+    for (var i = 0, length = self.statusDisplays.length; i < length; i++) {
+      self.statusDisplays[i].running(false);
+    }
+  });
+  socket.on('serviceStatusChanged', function(data) {
+    var service = data.name;
+    if (services[service]) {
+      services[service].running(data.running);
+    }
   });
 
   // Drush alias upload handler and helper functions
@@ -175,11 +207,6 @@ var dash = (function($, ko, socket) {
   };
 
 })(jQuery, ko, io.connect('http://localhost'));
-
-
-
-
-
 
 // Initialize dashboard when page finishes loading.
 jQuery(function() {
