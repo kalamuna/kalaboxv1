@@ -17,11 +17,11 @@ var flow = require('nue').flow,
     config = require('../../config');
 
 // "Constants":
-var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg';
+var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg',
     VBOX_VERSION = '4.2.8',
     TEMP_DIR = '/tmp/',
-    VAGRANT_URL = 'http://files.kalamuna.com/vagrant-macosx-1.1.2.dmg',
-    VAGRANT_VERSION = '1.1.2',
+    VAGRANT_VERSION = config.get('VAGRANT_VERSION'),
+    VAGRANT_URL = 'http://files.kalamuna.com/vagrant-macosx-' + VAGRANT_VERSION + '.dmg',
     VAGRANT_PLUGINS = config.get('VAGRANT_PLUGINS'),
     KALABOX_DIR = config.get('KALABOX_DIR'),
     KALABOX64_URL = 'http://files.kalamuna.com/kalabox64.box',

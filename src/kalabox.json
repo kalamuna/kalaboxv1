@@ -5,5 +5,6 @@
   "VAGRANT_PLUGINS": [
     "vagrant-hostsupdater",
     "vagrant-vbguest"
-  ]
+  ],
+  "VAGRANT_VERSION": "1.2.2"
 }
