@@ -70,7 +70,7 @@ function startAdminProcess(callback) {
     return;
   }
   // Prompt the user for password to start the admin task runner.
-  adminProcess = spawn('osascript', ['-e', 'do shell script "../../../../bin/node admin-task-runner.js" with administrator privileges'], {cwd: __dirname});
+  adminProcess = spawn('osascript', ['-e', 'do shell script "\'' + process.execPath + '\' admin-task-runner.js" with administrator privileges'], {cwd: __dirname});
   // When the Admin Task Runner reports it has started, signal the callback to continue.
   receiver.on('adminProcessStarted', function(message, data) {
     adminProcessRunning = true;
