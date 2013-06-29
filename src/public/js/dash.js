@@ -138,69 +138,49 @@ var dash = (function($, ko, socket) {
       services[service].running(data.running);
     }
   });
+  // On error, redirect to error page.
+  socket.on('appError', function(data) {
+    window.location.href = '/error';
+  });
 
-  // Drush alias upload handler and helper functions
-  var drop = function(event) {
+  // Drush alias upload handler and helper functions:
+  self.configError = ko.observable('');
+  self.configSuccess = ko.observable('');
+  function handleAliasUpload(event) {
     event.preventDefault();
-    var dt = event.dataTransfer;
-    var files = dt.files;
-    for (var i = 0; i<files.length; i++) {
-        var file = files[i];
-        readFile(file);
+    var files = event.dataTransfer.files;
+    // Don't upload if there's more than one file.
+    if (files.length > 1) {
+      self.configError('Please upload only one file at a time.');
+      return;
     }
-  };
-
-  function readStart(progressEvent) {
-    console.log('readStart',progressEvent);
-  }
-
-  function readEnd(progressEvent) {
-    console.log('readEnd',progressEvent,this);
-    var fileReader = this;
-    var fileContent = fileReader.result;
-    var fileName = fileReader.file.name;
-    // Note you can not retreive file path, for security reasons.
-    // But you are not supposed to need it, you already have the content ;)
-    console.log('readEnd:',fileName,fileContent);
-//    if (boxRunning()) {
-    socket.emit('drushUpload', {'name': fileName, 'content': fileContent});
- //   }
-
-
-    var output = '<li>' + fileName + '</li>';
-    document.getElementById('list').innerHTML = '<ul>' + output + '</ul>';
-  }
-
-  function readError(progressEvent) {
-    console.log('readError',progressEvent);
-    switch(progressEvent.target.error.code) {
-        case progressEvent.target.error.NOT_FOUND_ERR:
-            alert('File not found!');
-            break;
-        case progressEvent.target.error.NOT_READABLE_ERR:
-            alert('File not readable!');
-            break;
-        case progressEvent.target.error.ABORT_ERR:
-            break;
-        default:
-            alert('Unknow Read error.');
-    }
-  }
-
-  function readFile(file) {
+    // Read in the file.
+    var file = files[0];
     var reader = new FileReader();
-    reader.file = file; // We need it later (filename)
-    reader.addEventListener('loadstart', readStart, false);
-    reader.addEventListener('loadend', readEnd, false);
+    reader.addEventListener('loadend', sendAliasUpload, false);
     reader.addEventListener('error', readError, false);
     reader.readAsBinaryString(file);
   }
 
+  function sendAliasUpload(progressEvent) {
+    var fileReader = this;
+    var fileContent = fileReader.result;
+    socket.emit('drushUpload', {'content': fileContent});
+  }
+
+  function readError(progressEvent) {
+    self.configError('Unable to read the file provided.');
+  }
+
+  socket.on('drushUploadComplete', function() {
+    self.configSuccess('Drush aliases uploaded successfully!');
+  });
+
   // Return public interface.
   return {
     initialize: function() {
-      // Make the window accept drag-and-drop alias files
-      window.addEventListener("drop", drop);
+      // Make the window accept drag-and-drop alias files.
+      document.getElementById('alias-file-drop').addEventListener('drop', handleAliasUpload);
       // Knock-out magic
       ko.applyBindings(self);
     }

@@ -7,8 +7,9 @@
 var box = require('./box'),
     exec = require('child_process').exec,
     config = require('../config'),
-    drushUpload = require('./utils/drush-upload'),
-    services = require('./vm/services');
+    drushUpload = require('./vm/drush-upload'),
+    services = require('./vm/services'),
+    logger = require('../logger');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -69,7 +70,13 @@ function handleFoldersRequest(data) {
 }
 
 function handleDrushUpload(data) {
-  drushUpload.upload(data.name, data.content);
+  drushUpload.upload(data.content, function(error) {
+    if (error) {
+      logger.error('Unable to upload Drush aliases file: ' + error.message);
+      return;
+    }
+    socket.emit('drushUploadComplete');
+  });
 }
 
 // Module communication handlers:

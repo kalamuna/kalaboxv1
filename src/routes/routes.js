@@ -7,7 +7,6 @@
 var installer = require('../kalabox/installer/installer'),
     box = require('../kalabox/box'),
     dash = require('../kalabox/dash'),
-    drushUpload = require('../kalabox/utils/drush-upload'),
     logger = require('../logger');
 
 exports.index = function(req, res) {

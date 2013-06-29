@@ -3,19 +3,13 @@
     <div class="tabbable">
       <!-- Only required for left/right tabs -->
       <ul class="nav nav-pills">
-        <li class="active"><a href="#home" data-toggle="tab">Home</a>
-        </li>
-        <li><a href="#sites" data-toggle="tab">Local Sites</a>
-
-        <li><a href="#pantheon" data-toggle="tab">Pantheon</a>
-        </li>
-
+        <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
+        <!--<li><a href="#sites" data-toggle="tab">Local Sites</a></li>-->
+        <!--<li><a href="#pantheon" data-toggle="tab">Pantheon</a></li>-->
         <li><a href="#tools" data-toggle="tab">Tools</a></li>
         <li><a href="#code" data-toggle="tab">Commands</a></li>
-
-        <li><a href="#deploy" data-toggle="tab">Deploy</a>
-        </li>
-        </li>
+        <!--<li><a href="#deploy" data-toggle="tab">Deploy</a></li>-->
+        <li><a href="#config" data-toggle="tab">Configure</a></li>
       </ul>
       <hr>
 
@@ -106,8 +100,6 @@
               </div>
               <div class="clearfix"></div>
             </div>
-            <div id="drop_zone">Drop files here</div>
-            <output id="list"></output>
           </div>
         </div>
 
@@ -216,6 +208,16 @@
             </div>
           </div>
         </div>
+
+        <div class="tab-pane" id="config">
+          <div style="height: 315px;">
+            <h2>Configure Your Box</h2>
+            <div class="alert alert-error" data-bind="text: configError, visible: configError() !== ''"></div>
+            <div class="alert alert-success" data-bind="text: configSuccess, visible: configSuccess() !== ''"></div>
+            <h3>Drush aliases:</h3>
+            <div id="alias-file-drop" class="well">Drag here to upload.</div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -226,29 +228,3 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/libs/knockout-2.2.1.js"></script>
 <script src="/js/dash.js"></script>
-<script type="text/javascript">
-  $('#kalademo-progress').hide();
-  $('#kalademo-launch').hide();
-
-  $("#kalademo-build").click(function() {
-    $("#kalademo-build").hide();
-    $('#kalademo-progress').show();
-
-    var progress = setInterval(function() {
-      var $bar = $('.bar');
-
-      if ($bar.width()==200) {
-          clearInterval(progress);
-          $('.progress').removeClass('active');
-          setTimeout(function(){
-            $('#kalademo-progress').hide();
-            $("#kalademo-launch").show();
-          }, 2000);
-      } else {
-          $bar.width($bar.width()+1);
-      }
-
-    }, 200);
-
-  });
-</script>
