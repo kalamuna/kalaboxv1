@@ -10,7 +10,8 @@ var flow = require('nue').flow,
     exec = require('child_process').exec,
     http = require('http'),
     EventEmitter = require('events').EventEmitter,
-    config = require('../config');
+    config = require('../config'),
+    taskManager = require('./utils/task-runner/task-manager');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -90,8 +91,11 @@ exports.startBox = flow('startBox')(
   // Run "vagrant up" to start the Kalabox.
   function startBox0(callback) {
     this.data.callback = callback;
-    exec('osascript ' + __dirname + '/utils/scpts/start_box.scpt "' + KALASTACK_DIR + '"', this.async());
-    //exec('vagrant up --no-provision', {cwd: KALASTACK_DIR}, this.async());
+    //exec('osascript ' + __dirname + '/utils/scpts/start_box.scpt "' + KALASTACK_DIR + '"', this.async());
+    taskManager.executeAdminTask('startBox', {
+      cwd: KALASTACK_DIR,
+      user: process.env.USER
+    }, this.async());
   },
   function startBoxEnd(stdout, stderr) {
     if (this.err) {

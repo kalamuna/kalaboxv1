@@ -25,7 +25,7 @@ commandReceiver.on('installPackage', function(message, data) {
 
 // When task runner requests box start, run "vagrant up".
 commandReceiver.on('startBox', function(message, data) {
-  exec('vagrant up --no-provision', {cwd: data.cwd}, function(error, stdout, stderr) {
+  exec('sudo echo \'something something something complete\' && sudo -u "' + data.user + '" vagrant up --no-provision', {cwd: data.cwd}, function(error, stdout, stderr) {
     var response = {};
     if (error) {
       response.error = error;
