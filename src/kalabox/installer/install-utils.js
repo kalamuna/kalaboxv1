@@ -59,8 +59,8 @@ exports.downloadFile = flow('writeFile')(
       this.end();
       return;
     }
-
-    this.data.file = fs.createWriteStream(this.data.destination + this.data.file_name);
+    // Download as an "incomplete" file.
+    this.data.file = fs.createWriteStream(this.data.destination + this.data.file_name + '.incomplete');
     this.data.httpInterface.get(this.data.options, this.async(as(0))).on('error', function(error) {
       this.data.callback(error, 100);
     });
@@ -81,6 +81,11 @@ exports.downloadFile = flow('writeFile')(
   },
   function writeFile3(data) {
     this.data.file.end(this.async());
+  },
+  // Move the completed file download to a permenant path.
+  function writeFile4(data) {
+    exec('mv ' + this.data.destination + this.data.file_name + '.incomplete ' +
+      this.data.destination + this.data.file_name, this.async());
   },
   function writeFileEnd() {
     if (this.err) {
