@@ -104,7 +104,8 @@
         </div>
 
         <div class="tab-pane" id="tools">
-          <div style="height: 315px;">
+          <div style="height: 370px;">
+            <div class="alert alert-error" data-bind="text: toolsError, visible: toolsError() !== ''"></div>
             <table class="table table-striped">
               <thead>
                 <tr>
@@ -116,13 +117,15 @@
               <tr class="">
                 <td>Welcome</td>
                 <td>start.kala</td>
-                <td><a href="http://start.kala" target="_blank">Launch</a>
+                <td>
+                  <a href="#" data-bind="click: startSiteButton.onClick, disable: startSiteButton.disabled" target="_blank">Launch</a>
                 </td>
               </tr>
               <tr class="">
                 <td>phpMyAdmin</td>
                 <td>php.kala</td>
-                <td><a href="#" data-bind="click: phpMyAdminButton.onClick, disable: phpMyAdminButton.disabled" target="_blank">Launch</a>
+                <td>
+                  <a href="#" data-bind="click: phpMyAdminButton.onClick, disable: phpMyAdminButton.disabled" target="_blank">Launch</a>
                 </td>
               </tr>
               <tr class="">
@@ -130,22 +133,6 @@
                 <td>grind.kala</td>
                 <td><a href="#" data-bind="click: webGrindButton.onClick, disable: webGrindButton.disabled" target="_blank">Launch</a>
                 </td>
-              </tr>
-              <tr class="">
-                <td>xdebug</td>
-                <td>host.kala</td>
-                <td><a href="http://grind.kala" target="_blank">Info</a>
-                </td>
-              </tr>
-              <tr class="">
-                <td>APC</td>
-                <td>Running</td>
-                <td><a href="http://apc.kala" target="_blank">Info</a></td>
-              </tr>
-              <tr class="">
-                <td>Version Control</td>
-                <td>git</td>
-                <td><a href="http://drush.ws" target="_blank">Info</a></td>
               </tr>
               <tr class="info">
                 <td>Max Warp</td>

@@ -52,9 +52,17 @@ function handleServiceRequest(data) {
   }
 
   console.log(data);
-  var serviceURL = 'php.kala';
-  if (data.requestType == 'webGrindButton') {
-    serviceURL = 'grind.kala';
+  var serviceURL = '';
+  switch (data.requestType) {
+    case 'phpMyAdminButton':
+      serviceURL = 'php.kala';
+      break;
+    case 'webGrindButton':
+      serviceURL = 'grind.kala';
+      break;
+    case 'startSiteButton':
+      serviceURL = 'start.kala';
+      break;
   }
 
   // Launch the service in a new Terminal window.

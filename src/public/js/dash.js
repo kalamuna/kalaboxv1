@@ -36,6 +36,20 @@ var dash = (function($, ko, socket) {
     onClick: function() {
       if (boxRunning()) {
         socket.emit('sshRequest', {});
+      } else {
+        self.toolsError('The box is not running. Fire this puppy up to gain shell access.');
+      }
+    }
+  };
+
+  // start.kala button
+  self.startSiteButton = {
+    disabled: ko.observable(true),
+    onClick: function() {
+      if (boxRunning()) {
+        socket.emit('openServiceRequest', {'requestType': 'startSiteButton'});
+      } else {
+        self.toolsError('The box is not running. Fire this puppy up to see your site.');
       }
     }
   };
@@ -46,6 +60,8 @@ var dash = (function($, ko, socket) {
     onClick: function() {
       if (boxRunning()) {
         socket.emit('openServiceRequest', {'requestType': 'phpMyAdminButton'});
+      } else {
+        self.toolsError('The box is not running. Fire this puppy up to use PHPMyAdmin.');
       }
     }
   };
@@ -56,6 +72,8 @@ var dash = (function($, ko, socket) {
     onClick: function() {
       if (boxRunning()) {
         socket.emit('openServiceRequest', {'requestType': 'webGrindButton'});
+      } else {
+        self.toolsError('The box is not running. Fire this puppy up to use WebGrind.');
       }
     }
   };
@@ -66,6 +84,8 @@ var dash = (function($, ko, socket) {
     onClick: function() {
       if (boxRunning()) {
         socket.emit('foldersRequest', {});
+      } else {
+        self.toolsError('The box is not running. Fire this puppy up to see your files.');
       }
     }
   };
@@ -106,10 +126,12 @@ var dash = (function($, ko, socket) {
   })();
 
   // Server event handlers.
+  self.toolsError = ko.observable('');
   socket.on('boxStarted', function(data) {
     boxRunning(true);
     self.powerButton.label('Stop');
     self.powerButton.disabled(false);
+    self.startSiteButton.disabled(false);
     self.sshButton.disabled(false);
     self.phpMyAdminButton.disabled(false);
     self.webGrindButton.disabled(false);
@@ -123,6 +145,7 @@ var dash = (function($, ko, socket) {
     boxRunning(false);
     self.powerButton.label('Start');
     self.powerButton.disabled(false);
+    self.startSiteButton.disabled(true);
     self.sshButton.disabled(true);
     self.phpMyAdminButton.disabled(true);
     self.webGrindButton.disabled(true);
