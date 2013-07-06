@@ -117,9 +117,13 @@ exports.startBox = flow('startBox')(
  *   Callback to call once the box has stopped.
  */
 exports.stopBox = flow('stopBox')(
-  // Run "vagrant halt" to power down the box.
   function stopBox0(callback) {
     this.data.callback = callback;
+    // Get sudo access.
+    sudoRunner.runCommand('echo', ['Do you believe in life after love?'], this.async(as(0)));
+  },
+  function stopBox1(output) {
+    // Run "vagrant halt" to power down the box.
     exec('vagrant halt', {cwd: KALASTACK_DIR}, this.async());
   },
   function stopBoxEnd(stdout, stderr) {
