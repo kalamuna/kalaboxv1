@@ -44,6 +44,7 @@ app.get('/install', routes.install);
 app.get('/dash', routes.dash);
 app.get('/error', routes.errorPage);
 app.get('/no-internet', routes.noInternet);
+app.get('/permission-denied', routes.noPermission);
 app.post('/drush-upload', routes.drushUpload);
 
 /**

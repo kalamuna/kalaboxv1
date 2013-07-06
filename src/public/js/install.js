@@ -43,6 +43,8 @@ var install = (function($, ko, socket) {
   });
   // Launch modal when we need permission to install a program.
   socket.on('getPermission', function(data) {
+    var options = ({keyboard: 'false', show: 'false'});
+    $modal.modal(options);
     $modal.modal('show');
   });
   socket.on('noPermission', function() {
@@ -53,7 +55,6 @@ var install = (function($, ko, socket) {
   self.permissionGrantedButton = {
     // Send permission request data back to the backend.
     onClick: function() {
-      console.log('WE GOT CLICKED');
       socket.emit('permissionResponse', {'value': true});
       $modal.modal('hide');
     }
@@ -63,7 +64,6 @@ var install = (function($, ko, socket) {
   self.permissionDeniedButton = {
     // Send permission request data back to the backend.
     onClick: function() {
-      console.log('WE GOT NO CLICKED');
       socket.emit('permissionResponse', {'value': false});
       $modal.modal('hide');
     }
