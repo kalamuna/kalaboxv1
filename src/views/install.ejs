@@ -12,5 +12,20 @@
   </div>
 </div>
 
+<div class="modal hide fade">
+  <div class="modal-header">
+    <h3>Can We Install VirtualBox For You?</h3>
+  </div>
+  <div class="modal-body">
+    <p>We noticed that your system uses an unsupported version of VirtualBox and would like to upgrade it. Doing so should have no impact on your existing virtual boxes. May we proceed?</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-bind="click: permissionDeniedButton.onClick">No</a>
+    <a href="#" class="btn btn-primary" data-bind="click: permissionGrantedButton.onClick">Yes</a>
+  </div>
+</div>
+
 <script src="/socket.io/socket.io.js"></script>
+<script src="/js/libs/knockout-2.2.1.js"></script>
+<script src="/js/libs/bootstrap-modal.js"></script>
 <script src="/js/install.js"></script>

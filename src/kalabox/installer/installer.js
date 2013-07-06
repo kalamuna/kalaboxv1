@@ -30,6 +30,9 @@ var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg',
     KALASTACK_URL = config.get('KALASTACK_URL'),
     KALASTACK_FILENAME = 'kalastack.tar.gz';
 
+// "Variables":
+var socket;
+
 // Installer file info:
 var vboxUrlParsed = url.parse(VBOX_URL);
 vboxUrlParsed.packageLocation = '/Volumes/VirtualBox/VirtualBox.pkg';
@@ -65,6 +68,37 @@ function sendMessage(message) {
   io.sockets.emit('installer', { message: message });
 }
 
+var installPermission = flow('installPermission')(
+  // Activate the permission request modal.
+  function installPermission0(programName, callback) {
+    this.data.programName = programName;
+    this.data.callback = callback;
+    io.sockets.emit('getPermission', { programName: this.data.programName});
+    socket.on('permissionResponse', this.async(as(0)));
+  },
+  // If given permission, proceed. Otherwise, gracefully kill install.
+  function installPermission1(permissionResponse) {
+    if (permissionResponse.value !== true) {
+      this.data.permissionGranted = permissionResponse.value;
+      io.sockets.emit('noPermission');
+      this.endWith({message: "We don't have permission to install " + this.data.programName + ", aborting install."});
+      return;
+    } else {
+      this.data.permissionGranted = true;
+      this.next();
+    }
+
+  },
+  function installPermissionEnd() {
+    if (this.err) {
+      this.data.callback({ message: this.err.message });
+      this.err = null;
+    }
+    this.data.callback(this.data.permissionGranted);
+    this.next();
+  }
+);
+
 /**
  * Downloads and installs a DMG file.
  *
@@ -80,7 +114,7 @@ function sendMessage(message) {
  *   Callback to invoke on completion.
  */
 var installDMG = flow('installDMG')(
-  // Begin installation process.
+  // Ask for permission to download.
   function installDMG0(fileUrl, destination, packageLocation, programName, callback) {
     this.data.fileUrl = fileUrl;
     this.data.destination = destination;
@@ -88,23 +122,31 @@ var installDMG = flow('installDMG')(
     this.data.packageLocation = packageLocation;
     this.data.programName = programName;
     this.data.callback = callback;
-    // We will be downloading the files to a directory, so make sure it's there
-    // This step is not required if you have manually created the directory.
-    var mkdir = 'mkdir -p ' + destination;
-    var child = exec(mkdir, this.async());
+
+    installPermission(programName, this.async());
+  },
+  // Begin installation process.
+  function installDMG1(permissionGranted) {
+    if (permissionGranted) {
+      var mkdir = 'mkdir -p ' + destination;
+      var child = exec(mkdir, this.async());
+    } else {
+      this.endWith({message: 'Permission Denied! User likes their ' + this.data.programName + ' version too much to part ways with it. Re-run installer if you change your mind.'});
+      return;
+    }
   },
   // Start downloads.
-  function installDMG1() {
-    // Download vbox.
+  function installDMG2() {
+    // Download DMG.
     sendMessage('Downloading ' + this.data.programName + '...');
     downloadAndReport(this.data.fileUrl.href, this.data.destination, this.async());
   },
   // Confirm download succeeded.
-  function installDMG2() {
+  function installDMG3() {
     fs.exists(this.data.destination + this.data.fileName, this.async(as(0)));
   },
   // Mount disk image.
-  function installDMG3(exists) {
+  function installDMG4(exists) {
     if (!exists) {
       this.endWith({message: 'Software DMG does not exist!'});
       return;
@@ -114,7 +156,7 @@ var installDMG = flow('installDMG')(
     exec('hdiutil attach ' + this.data.destination + this.data.fileName, this.async());
   },
   // Execute installer.
-  function installDMG4(stdout, stderr) {
+  function installDMG5(stdout, stderr) {
     console.log('DMG mounted.');
     sendMessage('Installing ' + this.data.programName + '...');
     taskManager.executeAdminTask('installPackage', {
@@ -124,7 +166,7 @@ var installDMG = flow('installDMG')(
     // @todo Handle user cancelling or failing admin authentication.
   },
   // Unmount DMG after installation.
-  function installDMG5(stdout, stderr) {
+  function installDMG6(stdout, stderr) {
     console.log('Installed!');
     sendMessage('Installed! Ejecting image...');
     var mountPoint = this.data.packageLocation.split('/');
@@ -145,7 +187,7 @@ var installDMG = flow('installDMG')(
 /**
  * Route handler that installs Kalabox.
  */
-exports.install = flow('installKalabox')(
+var install = flow('installKalabox')(
   // Check if VBox and Vagrant are installed.
   parallel('installGetVersions')(
     function install0() {
@@ -205,6 +247,9 @@ exports.install = flow('installKalabox')(
     else {
       this.next();
     }
+
+    installDMG(vagrantUrlParsed, TEMP_DIR, vagrantUrlParsed.packageLocation, 'Vagrant', this.async());
+
   },
   // @todo Verify that VBox and Vagrant were installed successfully.
   // Create the .kalabox directory in home.
@@ -288,3 +333,14 @@ exports.install = flow('installKalabox')(
     }
   }
 );
+
+/**
+ * Initializes the controller, binding to events from client and other modules.
+ */
+exports.initialize = function() {
+  // Bind handlers for communication events coming from the client.
+  io.sockets.on('connection', function (newSocket) {
+    socket = newSocket;
+  });
+  install();
+};

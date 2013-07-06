@@ -24,7 +24,7 @@ exports.install = function(req, res) {
   res.render('install', {
     title : 'Boot this Box!'
   });
-  installer.install();
+  installer.initialize();
 };
 
 exports.dash = function(req, res) {
@@ -48,3 +48,13 @@ exports.noInternet = function(req, res) {
     title : 'Kalabox'
   });
 };
+
+exports.noPermission = function(req, res) {
+  res.render('permission_denied', {
+    title : 'Kalabox'
+  });
+};
+
+
+
+

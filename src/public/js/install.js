@@ -3,12 +3,14 @@
  * Front-end interaction for the installer routine.
  */
 
-(function($, socket) {
+var install = (function($, ko, socket) {
   "use strict";
+  var self = {};
 
   // DOM elements:
   var $progressBar = $('.bar'),
       $statusMessage = $('.lead'),
+      $modal = $('.modal'),
       progress = 0;
 
   // Server event handlers:
@@ -39,5 +41,47 @@
   socket.on('noInternet', function() {
     window.location.href = '/no-internet';
   });
+  // Launch modal when we need permission to install a program.
+  socket.on('getPermission', function(data) {
+    $modal.modal('show');
+  });
+  socket.on('noPermission', function() {
+    window.location.href = '/permission-denied';
+  });
 
-})(jQuery, io.connect('http://localhost'));
+  // Declare the permissionButton view.
+  self.permissionGrantedButton = {
+    // Send permission request data back to the backend.
+    onClick: function() {
+      console.log('WE GOT CLICKED');
+      socket.emit('permissionResponse', {'value': true});
+      $modal.modal('hide');
+    }
+  };
+
+  // Declare the permissionButton view.
+  self.permissionDeniedButton = {
+    // Send permission request data back to the backend.
+    onClick: function() {
+      console.log('WE GOT NO CLICKED');
+      socket.emit('permissionResponse', {'value': false});
+      $modal.modal('hide');
+    }
+  };
+
+
+  // Return public interface.
+  return {
+    initialize: function() {
+      // Knock-out magic
+      ko.applyBindings(self);
+    }
+  };
+
+})(jQuery, ko, io.connect('http://localhost'));
+
+
+// Initialize dashboard when page finishes loading.
+jQuery(function() {
+  install.initialize();
+});
