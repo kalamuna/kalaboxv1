@@ -11,7 +11,7 @@ var flow = require('nue').flow,
     http = require('http'),
     EventEmitter = require('events').EventEmitter,
     config = require('../config'),
-    taskManager = require('./utils/task-runner/task-manager');
+    sudoRunner = require('./utils/task-runner/sudo-runner');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -88,14 +88,14 @@ exports.isRunning = function() {
  *   Callback to call once the box has started.
  */
 exports.startBox = flow('startBox')(
-  // Run "vagrant up" to start the Kalabox.
   function startBox0(callback) {
     this.data.callback = callback;
-    //exec('osascript ' + __dirname + '/utils/scpts/start_box.scpt "' + KALASTACK_DIR + '"', this.async());
-    taskManager.executeAdminTask('startBox', {
-      cwd: KALASTACK_DIR,
-      user: process.env.USER
-    }, this.async());
+    // Get sudo access.
+    sudoRunner.runCommand('echo', ['something something something complete!'], this.async(as(0)));
+  },
+  function startBox1(output) {
+    // Run "vagrant up" to start the Kalabox.
+    exec('vagrant up --no-provision', {cwd: KALASTACK_DIR}, this.async());
   },
   function startBoxEnd(stdout, stderr) {
     if (this.err) {
