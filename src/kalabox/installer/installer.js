@@ -14,7 +14,8 @@ var flow = require('nue').flow,
     box = require('../box'),
     logger = require('../../logger'),
     taskManager = require('../utils/task-runner/task-manager'),
-    config = require('../../config');
+    config = require('../../config'),
+    sudoRunner = require('../utils/task-runner/sudo-runner');
 
 // "Constants":
 var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg',
@@ -302,23 +303,20 @@ var install = flow('installKalabox')(
       exec('vagrant box add kalabox "' + KALABOX_DIR + KALABOX64_FILENAME + '"', {cwd: KALASTACK_DIR}, this.async());
     }
   },
-  // Finish box build with "vagrant up".
+  // Run a sudo command to get authentication.
   function install12(stdout, stderr) {
     console.log('Kalabox added');
-    exec('osascript "' + __dirname + '/spinup_box.scpt" "' + KALASTACK_DIR + '"', this.async());
-    // Temporary measure to prevent installer from continuing until "vagrant up" completes in new Terminal.
-    var nextStep = this.async();
-    var moveOn = function() {
-      if (box.isInstalled()) {
-        clearInterval(interval);
-        nextStep();
-      }
-    };
-    var interval = setInterval(function() {
-      box.initialize(moveOn);
-    }, 20000);
+    sudoRunner.runCommand('echo', ['something something something darkside!'], this.async(as(0)));
   },
-  function installEnd(stdout, stderr) {
+  // Finish box build with "vagrant up".
+  function install13(output) {
+    exec('vagrant up', {cwd: KALASTACK_DIR}, this.async());
+  },
+  // Reinitialize the box module.
+  function install14(stdout, stderr) {
+    box.initialize(this.async());
+  },
+  function installEnd() {
     if (this.err) {
       if (this.err.message == 'No internet') {
         logger.error('Error during installation routine: ' + this.err.message);
