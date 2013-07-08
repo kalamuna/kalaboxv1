@@ -123,13 +123,12 @@ var installDMG = flow('installDMG')(
     this.data.packageLocation = packageLocation;
     this.data.programName = programName;
     this.data.callback = callback;
-
-    installPermission(programName, this.async());
+    installPermission(programName, this.async(as(0)));
   },
   // Begin installation process.
   function installDMG1(permissionGranted) {
-    if (permissionGranted) {
-      var mkdir = 'mkdir -p ' + destination;
+    if (permissionGranted == true) {
+      var mkdir = 'mkdir -p ' + this.data.destination;
       var child = exec(mkdir, this.async());
     } else {
       this.endWith({message: 'Permission Denied! User likes their ' + this.data.programName + ' version too much to part ways with it. Re-run installer if you change your mind.'});
@@ -248,9 +247,6 @@ var install = flow('installKalabox')(
     else {
       this.next();
     }
-
-    installDMG(vagrantUrlParsed, TEMP_DIR, vagrantUrlParsed.packageLocation, 'Vagrant', this.async());
-
   },
   // @todo Verify that VBox and Vagrant were installed successfully.
   // Create the .kalabox directory in home.
@@ -339,6 +335,6 @@ exports.initialize = function() {
   // Bind handlers for communication events coming from the client.
   io.sockets.on('connection', function (newSocket) {
     socket = newSocket;
+    install();
   });
-  install();
 };

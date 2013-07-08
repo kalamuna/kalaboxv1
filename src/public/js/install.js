@@ -44,6 +44,22 @@ var install = (function($, ko, socket) {
   // Launch modal when we need permission to install a program.
   socket.on('getPermission', function(data) {
     var options = ({keyboard: 'false', show: 'false'});
+    var title = '';
+    var message = '';
+    console.log(data);
+    if (data.programName == 'VirtualBox') {
+      title = "<h3>May We Install VirtualBox For You?</h3>";
+      message = "<p>We noticed that your system uses an unsupported " +
+      "version of VirtualBox and would like to upgrade it to. Doing so should " +
+      "have no impact on your existing virtual boxes. May we proceed?</p>";
+    } else {
+      title = "<h3>May We Install Vagrant For You?</h3>";
+      message = "<p>We noticed that your system uses an unsupported " +
+      "version of Vagrant and would like to change it. Doing so should " +
+      "have no impact on your Vagrant environments. May we proceed?</p>";
+    }
+    $('.modal .modal-header').prepend(title);
+    $('.modal .modal-body').prepend(message);
     $modal.modal(options);
     $modal.modal('show');
   });
