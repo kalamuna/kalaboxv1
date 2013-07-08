@@ -36,7 +36,7 @@ exports.upload = flow('uploadDrushFile')(
   function uploadDrushFile2(sftp) {
     sftp = sftp[0];
     this.data.sftp = sftp;
-    var stream = sftp.createWriteStream('/var/www/.drush/' + ALIAS_FILE);
+    var stream = sftp.createWriteStream('/etc/drush/aliases/' + ALIAS_FILE);
     stream.write(this.data.fileContent, this.async());
   },
   function uploadDrushFileEnd() {

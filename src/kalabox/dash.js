@@ -24,7 +24,9 @@ function handleStartRequest(data) {
   console.log('Start request received.');
   box.startBox(function() {
     console.log('Box started');
-    socket.emit('boxStarted');
+    if (socket) {
+      socket.emit('boxStarted');
+    }
   });
 }
 
@@ -32,7 +34,9 @@ function handleStopRequest(data) {
   console.log('Stop request received.');
   box.stopBox(function() {
     console.log('Box stopped');
-    socket.emit('boxStopped');
+    if (socket) {
+      socket.emit('boxStopped');
+    }
   });
 }
 
@@ -83,18 +87,24 @@ function handleDrushUpload(data) {
       logger.error('Unable to upload Drush aliases file: ' + error.message);
       return;
     }
-    socket.emit('drushUploadComplete');
+    if (socket) {
+      socket.emit('drushUploadComplete');
+    }
   });
 }
 
 // Module communication handlers:
 
 function handleStart() {
-  socket.emit('boxStarted');
+  if (socket) {
+    socket.emit('boxStarted');
+  }
 }
 
 function handleStop() {
-  socket.emit('boxStopped');
+  if (socket) {
+    socket.emit('boxStopped');
+  }
 }
 
 /**

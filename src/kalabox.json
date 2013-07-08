@@ -1,7 +1,7 @@
 {
   "KALABOX_DIR": "$HOME/.kalabox/",
   "KALASTACK_DIR": "$HOME/.kalabox/kalastack/",
-  "KALASTACK_URL": "https://codeload.github.com/kalamuna/kalastack/tar.gz/2.0-beta4",
+  "KALASTACK_URL": "https://codeload.github.com/kalamuna/kalastack/tar.gz/2.0-beta6",
   "VAGRANT_PLUGINS": [
     "vagrant-hostsupdater",
     "vagrant-vbguest"

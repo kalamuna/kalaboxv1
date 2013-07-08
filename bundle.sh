@@ -18,7 +18,7 @@ function usage() {
     echo "  -o, --open      Runs the application immediately after build"
     # TODO:
     # echo "  -t --test       Tests the application before bundling it"
-    echo "  --name=         Your desired application file name (defaults to: MyApp)"
+    echo "  --name=         Your desired application file name (defaults to: Kalabox)"
     echo "  --displayname=, --display-name=, --bundle-display-name="
     echo "                  Your desired application display name (defaults to file name)"
     echo "  --bundle-identifier=, --identifier="
@@ -69,7 +69,7 @@ done
 
 # Optional app bundle name.
 if [[ -z ${APPNAME} ]]; then
-	APPNAME='MyApp';
+	APPNAME='Kalabox';
 fi;
 
 if [[ -z ${DISPLAY_NAME} ]]; then
