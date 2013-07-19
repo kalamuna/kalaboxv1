@@ -60,68 +60,17 @@ app.listen(51686);
 /**
  * Window options; menus, icons, etc.
  */
-var menubar = appjs.createMenu([{
-  label : '&File',
-  submenu : [{
-    label : 'E&xit',
-    action : function() {
-      window.close();
-    }
-  }]
-}, {
-  label : '&Window',
-  submenu : [{
-    label : 'Fullscreen',
-    action : function(item) {
-      window.frame.fullscreen();
-      console.log(item.label + " called.");
-    }
-  }, {
-    label : 'Minimize',
-    action : function() {
-      window.frame.minimize();
-    }
-  }, {
-    label : 'Maximize',
-    action : function() {
-      window.frame.maximize();
-    }
-  }, {
-    label : ''// separator
-  }, {
-    label : 'Restore',
-    action : function() {
-      window.frame.restore();
-    }
-  }]
-}]);
-
-menubar.on('select', function(item) {
-  console.log("menu item " + item.label + " clicked");
-});
-
-var trayMenu = appjs.createMenu([{
-  label : 'Show',
-  action : function() {
-    window.frame.show();
+var menubar = appjs.createMenu([
+  {
+    label: '&File',
+    submenu: [{
+      label: '&Quit Kalabox',
+      action: function() {
+        window.close();
+      }
+    }]
   }
-}, {
-  label : 'Minimize',
-  action : function() {
-    window.frame.hide();
-  }
-}, {
-  label : 'Exit',
-  action : function() {
-    window.close();
-  }
-}]);
-
-var statusIcon = appjs.createStatusIcon({
-  icon : './data/content/icons/32.png',
-  tooltip : 'AppJS Hello World',
-  menu : trayMenu
-});
+]);
 
 // Initialize error logging service.
 logger.initialize(function() {
@@ -154,10 +103,7 @@ logger.initialize(function() {
         }
       });
     });
-
-    window.on('close', function() {
-      console.log("Window Closed");
-    });
+    app.window = window;
 
   });
 }, io);
