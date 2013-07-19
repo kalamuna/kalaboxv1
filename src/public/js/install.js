@@ -43,7 +43,7 @@ var install = (function($, ko, socket) {
   });
   // Launch modal when we need permission to install a program.
   socket.on('getPermission', function(data) {
-    var options = ({keyboard: 'false', show: 'false'});
+    var options = ({keyboard: 'false', show: 'false', backdrop: 'static'});
     var title = '';
     var message = '';
     console.log(data);
