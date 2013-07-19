@@ -71,14 +71,9 @@ function sendMessage(message) {
 
 var installPermission = flow('installPermission')(
   // Activate the permission request modal.
-  function installPermission0(programName, validVersion, callback) {
+  function installPermission0(programName, callback) {
     this.data.programName = programName;
-    this.data.validVersion = callback;
     this.data.callback = callback;
-    if (this.data.validVersion === true) {
-      this.endWith({message: "We don't have permission to install " + this.data.programName + ", aborting install."});
-      return;
-    }
     io.sockets.emit('getPermission', { programName: this.data.programName});
     socket.on('permissionResponse', this.async(as(0)));
   },
