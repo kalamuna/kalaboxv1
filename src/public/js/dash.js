@@ -90,6 +90,14 @@ var dash = (function($, ko, socket) {
     }
   };
 
+    // Shared Folders button:
+  self.helpButton = {
+    disabled: ko.observable(false),
+    onClick: function() {
+      socket.emit('helpRequest', {});
+    }
+  };
+
   // Status displays:
   self.statusDisplays = [];
   var services = {};

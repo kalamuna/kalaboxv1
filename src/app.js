@@ -10,7 +10,8 @@ var express = require('express'),
     utils = require('util'),
     app = module.exports = express.createServer(),
     box = require('./kalabox/box'),
-    logger = require('./logger');
+    logger = require('./logger'),
+    exec = require('child_process').exec;
 
 // Initialize socket.io.
 io = require('socket.io').listen(app);
@@ -44,6 +45,7 @@ app.get('/install', routes.install);
 app.get('/dash', routes.dash);
 app.get('/error', routes.errorPage);
 app.get('/no-internet', routes.noInternet);
+app.get('/help', routes.helpPage);
 app.get('/permission-denied', routes.noPermission);
 app.post('/drush-upload', routes.drushUpload);
 
@@ -67,6 +69,15 @@ var menubar = appjs.createMenu([
       label: '&Quit Kalabox',
       action: function() {
         app.window.close();
+      }
+    }]
+  },
+  {
+    label: 'Help',
+    submenu: [{
+      label: 'Kalabox help',
+      action: function() {
+        exec('osascript -e \'open location "http://localhost:51686/help"\'');
       }
     }]
   }

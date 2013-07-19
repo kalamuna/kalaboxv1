@@ -69,7 +69,7 @@ function handleServiceRequest(data) {
       break;
   }
 
-  // Launch the service in a new Terminal window.
+  // Launch the service in the user's default browser.
   exec('osascript -e \'open location "http://' + serviceURL + '"\'');
 }
 
@@ -79,6 +79,12 @@ function handleFoldersRequest(data) {
     return;
   }
   exec('open .', {cwd: process.env.HOME + '/kalabox'});
+}
+
+function handleHelpRequest(data) {
+  console.log('respond to help request');
+  // Launch the help documents in the user's default browser.
+  exec('osascript -e \'open location "http://localhost:51686/help"\'');
 }
 
 function handleDrushUpload(data) {
@@ -119,6 +125,7 @@ exports.initialize = function() {
     socket.on('sshRequest', handleSSHRequest);
     socket.on('openServiceRequest', handleServiceRequest);
     socket.on('foldersRequest', handleFoldersRequest);
+    socket.on('helpRequest', handleHelpRequest);
     socket.on('drushUpload', handleDrushUpload);
     // If box running, make sure UI knows about it.
     if (box.isRunning()) {

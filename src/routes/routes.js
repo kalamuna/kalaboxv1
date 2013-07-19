@@ -49,6 +49,12 @@ exports.noInternet = function(req, res) {
   });
 };
 
+exports.helpPage = function(req, res) {
+  res.render('help_index', {
+    title : 'Help'
+  });
+};
+
 exports.noPermission = function(req, res) {
   res.render('permission_denied', {
     title : 'Kalabox'
