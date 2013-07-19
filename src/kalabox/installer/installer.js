@@ -81,13 +81,11 @@ var installPermission = flow('installPermission')(
   function installPermission1(permissionResponse) {
     if (permissionResponse.value !== true) {
       this.data.permissionGranted = permissionResponse.value;
-      io.sockets.emit('noPermission');
-      this.endWith({message: "We don't have permission to install " + this.data.programName + ", aborting install."});
-      return;
     } else {
       this.data.permissionGranted = true;
-      this.next();
     }
+
+    this.next();
 
   },
   function installPermissionEnd() {
@@ -136,7 +134,7 @@ var installDMG = flow('installDMG')(
       var mkdir = 'mkdir -p ' + this.data.destination;
       var child = exec(mkdir, this.async());
     } else {
-      this.endWith({message: 'Permission Denied! User likes their ' + this.data.programName + ' version too much to part ways with it. Re-run installer if you change your mind.'});
+      io.sockets.emit('noPermission');
       return;
     }
   },
