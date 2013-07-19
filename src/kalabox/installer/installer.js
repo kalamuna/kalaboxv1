@@ -179,7 +179,9 @@ var installDMG = flow('installDMG')(
       this.data.callback({message: this.err.message});
       this.err = null;
     }
-    this.data.callback();
+    else {
+      this.data.callback();
+    }
     this.next();
   }
 );
@@ -314,7 +316,7 @@ var install = flow('installKalabox')(
   },
   function installEnd() {
     if (this.err) {
-      if (this.err.message == 'No internet') {
+      if (this.err.message != 'No internet') {
         logger.error('Error during installation routine: ' + this.err.message);
       }
       this.err = null;

@@ -75,7 +75,9 @@ exports.downloadFile = flow('writeFile')(
       that.data.file.write(data, function() {
         downloaded = downloaded + data.length;
         done = (downloaded / filesize) * 100;
-        that.data.callback(null, done);
+        if (done < 100) {
+          that.data.callback(null, done);
+        }
       });
     }).on('end', this.async(as(0)));
   },
@@ -89,7 +91,7 @@ exports.downloadFile = flow('writeFile')(
   },
   function writeFileEnd() {
     if (this.err) {
-      this.data.callback({message: this.err.message});
+      this.data.callback({message: this.err.message}, 100);
       this.err = null;
       return;
     }
