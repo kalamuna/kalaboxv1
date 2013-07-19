@@ -66,7 +66,7 @@ var menubar = appjs.createMenu([
     submenu: [{
       label: '&Quit Kalabox',
       action: function() {
-        window.close();
+        app.window.close();
       }
     }]
   }
