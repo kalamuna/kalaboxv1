@@ -71,9 +71,14 @@ function sendMessage(message) {
 
 var installPermission = flow('installPermission')(
   // Activate the permission request modal.
-  function installPermission0(programName, callback) {
+  function installPermission0(programName, validVersion, callback) {
     this.data.programName = programName;
+    this.data.validVersion = callback;
     this.data.callback = callback;
+    if (this.data.validVersion === true) {
+      this.endWith({message: "We don't have permission to install " + this.data.programName + ", aborting install."});
+      return;
+    }
     io.sockets.emit('getPermission', { programName: this.data.programName});
     socket.on('permissionResponse', this.async(as(0)));
   },
@@ -116,18 +121,23 @@ var installPermission = flow('installPermission')(
  */
 var installDMG = flow('installDMG')(
   // Ask for permission to download.
-  function installDMG0(fileUrl, destination, packageLocation, programName, callback) {
+  function installDMG0(fileUrl, destination, packageLocation, programName, validVersion, callback) {
     this.data.fileUrl = fileUrl;
     this.data.destination = destination;
     this.data.fileName = fileUrl.pathname.split('/').pop();
     this.data.packageLocation = packageLocation;
     this.data.programName = programName;
+    this.data.validVersion = validVersion;
     this.data.callback = callback;
-    installPermission(programName, this.async(as(0)));
+    if (this.data.validVersion === true) {
+      this.next(true);
+    } else {
+      installPermission(programName, this.async(as(0)));
+    }
   },
   // Begin installation process.
   function installDMG1(permissionGranted) {
-    if (permissionGranted == true) {
+    if (permissionGranted === true) {
       var mkdir = 'mkdir -p ' + this.data.destination;
       var child = exec(mkdir, this.async());
     } else {
@@ -203,6 +213,8 @@ var install = flow('installKalabox')(
   function install2(versions) {
     this.data.vboxInstalled = false;
     this.data.vagrantInstalled = false;
+    this.data.vboxValidVersion = true;
+    this.data.vagrantValidVersion = true;
     var vboxVersion = versions[0];
     var vagrantVersion = versions[1];
     // Parse and compare VBox version string.
@@ -213,6 +225,8 @@ var install = flow('installKalabox')(
         // Make sure VBox version is greater than or equal to required.
         if (installUtils.compareVersions(vboxVersion, VBOX_VERSION) >= 0) {
           this.data.vboxInstalled = true;
+        } else {
+          this.data.vboxValidVersion = false;
         }
       }
     }
@@ -224,6 +238,8 @@ var install = flow('installKalabox')(
         // Make sure Vagrant version equals required.
         if (installUtils.compareVersions(vagrantVersion, VAGRANT_VERSION) === 0) {
           this.data.vagrantInstalled = true;
+        } else {
+          this.data.vagrantValidVersion = false;
         }
       }
     }
@@ -234,7 +250,7 @@ var install = flow('installKalabox')(
   // Download and install VBox.
   function install3() {
     if (!this.data.vboxInstalled) {
-      installDMG(vboxUrlParsed, TEMP_DIR, vboxUrlParsed.packageLocation, 'VirtualBox', this.async());
+      installDMG(vboxUrlParsed, TEMP_DIR, vboxUrlParsed.packageLocation, this.data.vboxValidVersion, 'VirtualBox', this.async());
     }
     else {
       this.next();
@@ -244,7 +260,7 @@ var install = flow('installKalabox')(
   function install4() {
     console.log('VirtualBox Installed');
     if (!this.data.vagrantInstalled) {
-      installDMG(vagrantUrlParsed, TEMP_DIR, vagrantUrlParsed.packageLocation, 'Vagrant', this.async());
+      installDMG(vagrantUrlParsed, TEMP_DIR, vagrantUrlParsed.packageLocation, this.data.vagrantValidVersion, 'Vagrant', this.async());
     }
     else {
       this.next();
