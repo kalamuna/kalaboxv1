@@ -1,7 +1,19 @@
-.centered{
+.centered {
   margin-right: auto;
   margin-left: auto;
   display: block;
+}
+
+button.btn.first {
+  margin-left: 0px;
+}
+
+button.btn.last {
+  margin-right: 0px;
+}
+
+button.btn {
+  margin: 0px 3px;
 }
 
 img.kalalogo {
