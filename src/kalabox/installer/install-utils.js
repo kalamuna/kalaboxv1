@@ -86,8 +86,7 @@ exports.downloadFile = flow('writeFile')(
   },
   // Move the completed file download to a permenant path.
   function writeFile4(data) {
-    exec('mv ' + this.data.destination + this.data.file_name + '.incomplete ' +
-      this.data.destination + this.data.file_name, this.async());
+    fs.rename(this.data.destination + this.data.file_name + '.incomplete', this.data.destination + this.data.file_name, this.async());
   },
   function writeFileEnd() {
     if (this.err) {
