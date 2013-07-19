@@ -245,7 +245,7 @@ var install = flow('installKalabox')(
   // Download and install VBox.
   function install3() {
     if (!this.data.vboxInstalled) {
-      installDMG(vboxUrlParsed, TEMP_DIR, vboxUrlParsed.packageLocation, this.data.vboxValidVersion, 'VirtualBox', this.async());
+      installDMG(vboxUrlParsed, TEMP_DIR, vboxUrlParsed.packageLocation, 'VirtualBox', this.data.vboxValidVersion, this.async());
     }
     else {
       this.next();
@@ -255,7 +255,7 @@ var install = flow('installKalabox')(
   function install4() {
     console.log('VirtualBox Installed');
     if (!this.data.vagrantInstalled) {
-      installDMG(vagrantUrlParsed, TEMP_DIR, vagrantUrlParsed.packageLocation, this.data.vagrantValidVersion, 'Vagrant', this.async());
+      installDMG(vagrantUrlParsed, TEMP_DIR, vagrantUrlParsed.packageLocation, 'Vagrant', this.data.vagrantValidVersion, this.async());
     }
     else {
       this.next();
