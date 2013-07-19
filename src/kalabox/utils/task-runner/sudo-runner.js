@@ -30,7 +30,7 @@ exports.runCommand = flow('runCommand')(
   function runCommand1(data) {
     // If no password found, get it from user.
     if (data.error) {
-      getPassword(this.async(as(0)));
+      getPassword(this.async());
     }
     // If password, go to running the command.
     else {
@@ -43,9 +43,13 @@ exports.runCommand = flow('runCommand')(
     this.data.output = '';
     var that = this;
     command.stderr.on('data', function(data) {
+      data = data.toString();
       // If command asking for password, enter it.
-      if (data.toString().indexOf('Password:') !== -1) {
+      if (data.indexOf('Password:') !== -1) {
         command.stdin.write(password + '\n');
+      }
+      else if (data.indexOf('Sorry, try again.') !== -1) {
+        that.data.wrongPass = true;
       }
     });
     command.stdout.on('data', function(data) {
@@ -54,12 +58,54 @@ exports.runCommand = flow('runCommand')(
     });
     command.on('exit', this.async({code: as(0), signal: as(1)}));
   },
-  function runCommandEnd(data) {
-    if (this.err) {
-      console.log(this.err.message);
-      throw this.err;
+  function runCommand3() {
+    // If user gave the wrong pass, start everything over.
+    var that = this;
+    if (this.data.wrongPass) {
+      exports.removeKey(function(error) {
+        if (error) {console.log('Error: ' + error);
+          that.endWith(error);
+          return;
+        }
+        exports.runCommand(that.data.command, that.data.args, that.data.callback);
+      });
     }
-    this.data.callback(this.data.output);
+    else {
+      this.next();
+    }
+  },
+  function runCommandEnd() {
+    if (this.err) {
+      this.data.callback(this.err);
+      this.err = null;
+    }
+    else {
+      this.data.callback(null, this.data.output);
+    }
+    this.next();
+  }
+);
+
+/**
+ * Removes the sudo key from the user's keychain.
+ *
+ * @param function callback
+ *   Function to call when finished, sending error if one occured.
+ */
+exports.removeKey = flow('removeKey')(
+  function removeKey0(callback) {
+    this.data.callback = callback;
+    exec('security delete-generic-password -s Kalabox', this.async());
+  },
+  function removeKeyEnd(stdout, stderr) {
+    if (this.err) {
+      this.data.callback({message: this.err.message});
+      this.err = null;
+    }
+    else {
+      this.data.callback();
+    }
+    this.next();
   }
 );
 
@@ -72,24 +118,26 @@ exports.runCommand = flow('runCommand')(
 var getPassword = flow('getPassword')(
   function getPassword0(callback) {
     this.data.callback = callback;
+    this.data.password = '';
     // Get password from the user.
     exec('osascript sudo-pass.scpt', {cwd: __dirname}, this.async());
   },
   function getPassword1(stdout, stderr) {
     var password = stdout.toString().match(/text returned:(.+), button returned/);
-    if (!password[1]) {
-      this.endWith({message: 'Unable to retrieve password.'});
+    if (password && password[1]) {
+      password = password[1];
+      this.data.password = password;
     }
-    password = password[1];
-    this.data.password = password;
     // Add password to keychain.
-    exec('security add-generic-password -a "' + process.env.USER + '" -s Kalabox -w "' + password + '"', this.async());
+    exec('security add-generic-password -a "' + process.env.USER + '" -s Kalabox -w "' + this.data.password + '"', this.async());
   },
   function getPasswordEnd(stdout, stderr) {
     if (this.err) {
-      console.log(this.err.message);
-      throw this.err;
+      this.data.callback(this.err);
+      this.err = null;
     }
-    this.data.callback(this.data.password);
+    else {
+      this.data.callback(null, this.data.password);
+    }
   }
 );

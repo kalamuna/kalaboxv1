@@ -149,6 +149,9 @@ var dash = (function($, ko, socket) {
       self.statusDisplays[i].running(true);
     }
   });
+  socket.on('boxStartCanceled', function(data) {
+    self.powerButton.disabled(false);
+  });
   socket.on('boxStopped', function(data) {
     boxRunning(false);
     self.powerButton.label('Start');
@@ -162,6 +165,11 @@ var dash = (function($, ko, socket) {
     for (var i = 0, length = self.statusDisplays.length; i < length; i++) {
       self.statusDisplays[i].running(false);
     }
+  });
+  socket.on('boxStopCanceled', function(data) {
+    self.powerButton.disabled(false);
+    self.sshButton.disabled(false);
+    self.foldersButton.disabled(false);
   });
   socket.on('serviceStatusChanged', function(data) {
     var service = data.name;

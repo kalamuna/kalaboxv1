@@ -12,9 +12,11 @@ describe('The Sudo Runner', function() {
   // Test running a command.
   it('can run a command', function() {
     var runFinished = false,
-        output;
+        output,
+        error;
     runs(function() {
-      sudoRunner.runCommand('echo', ['testy test test'], function(stdout) {
+      sudoRunner.runCommand('echo', ['testy test test'], function(err, stdout) {
+        error = err;
         runFinished = true;
         output = stdout;
       });
@@ -24,7 +26,27 @@ describe('The Sudo Runner', function() {
     }, 'command to finish.', 30000);
     runs(function() {
       expect(typeof output).toBe('string');
+      expect(error).toBeNull();
       console.log('Response:\n' + output + '\n');
+    });
+  });
+
+  it('can remove key from keychain', function() {
+    var runFinished = false,
+        error;
+    runs(function() {
+      sudoRunner.removeKey(function(err) {
+        runFinished = true;
+        error = err;
+      });
+    });
+    waitsFor(function() {
+      return runFinished;
+    }, 'command to finish.', 30000);
+    runs(function() {
+      // Only checks that there was no error.
+      // You should manually verify the key is no longer in keychain.
+      expect(error).toBeUndefined();
     });
   });
 

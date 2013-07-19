@@ -22,7 +22,13 @@ var socket;
 
 function handleStartRequest(data) {
   console.log('Start request received.');
-  box.startBox(function() {
+  box.startBox(function(error) {
+    if (error) {
+      if (socket) {
+        socket.emit('boxStartCanceled');
+      }
+      return;
+    }
     console.log('Box started');
     if (socket) {
       socket.emit('boxStarted');
@@ -32,7 +38,13 @@ function handleStartRequest(data) {
 
 function handleStopRequest(data) {
   console.log('Stop request received.');
-  box.stopBox(function() {
+  box.stopBox(function(error) {
+    if (error) {
+      if (socket) {
+        socket.emit('boxStopCanceled');
+      }
+      return;
+    }
     console.log('Box stopped');
     if (socket) {
       socket.emit('boxStopped');
@@ -55,7 +67,6 @@ function handleServiceRequest(data) {
     return;
   }
 
-  console.log(data);
   var serviceURL = '';
   switch (data.requestType) {
     case 'phpMyAdminButton':

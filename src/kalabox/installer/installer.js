@@ -313,7 +313,7 @@ var install = flow('installKalabox')(
   // Run a sudo command to get authentication.
   function install12(stdout, stderr) {
     console.log('Kalabox added');
-    sudoRunner.runCommand('echo', ['something something something darkside!'], this.async(as(0)));
+    sudoRunner.runCommand('echo', ['something something something darkside!'], this.async());
   },
   // Finish box build with "vagrant up".
   function install13(output) {
@@ -325,8 +325,12 @@ var install = flow('installKalabox')(
   },
   function installEnd() {
     if (this.err) {
-      if (this.err.message != 'No internet') {
+      var userCanceled = (this.err.message.indexOf('User canceled') !== -1);
+      if (this.err.message != 'No internet' && !userCanceled) {
         logger.error('Error during installation routine: ' + this.err.message);
+      }
+      if (userCanceled) {
+        io.sockets.emit('noPermission');
       }
       this.err = null;
       this.next();

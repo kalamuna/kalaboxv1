@@ -91,7 +91,7 @@ exports.startBox = flow('startBox')(
   function startBox0(callback) {
     this.data.callback = callback;
     // Get sudo access.
-    sudoRunner.runCommand('echo', ['something something something complete!'], this.async(as(0)));
+    sudoRunner.runCommand('echo', ['something something something complete!'], this.async());
   },
   function startBox1(output) {
     // Run "vagrant up" to start the Kalabox.
@@ -99,13 +99,21 @@ exports.startBox = flow('startBox')(
   },
   function startBoxEnd(stdout, stderr) {
     if (this.err) {
-      console.log(this.err.message);
-      throw this.err;
+      if (this.err.message.indexOf('User canceled') !== -1) {
+        this.data.callback(this.err);
+        this.err = null;
+      }
+      else {
+        console.log(this.err.message);
+        throw this.err;
+      }
     }
-    // Store running state and execute the callback.
-    running = true;
-    exports.emit('start');
-    this.data.callback();
+    else {
+      // Store running state and execute the callback.
+      running = true;
+      exports.emit('start');
+      this.data.callback();
+    }
     this.next();
   }
 );
@@ -120,7 +128,7 @@ exports.stopBox = flow('stopBox')(
   function stopBox0(callback) {
     this.data.callback = callback;
     // Get sudo access.
-    sudoRunner.runCommand('echo', ['Do you believe in life after love?'], this.async(as(0)));
+    sudoRunner.runCommand('echo', ['Do you believe in life after love?'], this.async());
   },
   function stopBox1(output) {
     // Run "vagrant halt" to power down the box.
@@ -128,13 +136,21 @@ exports.stopBox = flow('stopBox')(
   },
   function stopBoxEnd(stdout, stderr) {
     if (this.err) {
-      console.log(this.err.message);
-      throw this.err;
+      if (this.err.message.indexOf('User canceled') !== -1) {
+        this.data.callback(this.err);
+        this.err = null;
+      }
+      else {
+        console.log(this.err.message);
+        throw this.err;
+      }
     }
-    // Store running state and execute the callback.
-    running = false;
-    exports.emit('stop');
-    this.data.callback();
+    else {
+      // Store running state and execute the callback.
+      running = false;
+      exports.emit('stop');
+      this.data.callback();
+    }
     this.next();
   }
 );
