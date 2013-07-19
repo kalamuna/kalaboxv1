@@ -4,16 +4,19 @@
   display: block;
 }
 
-button.btn.first {
-  margin-left: 0px;
+.equidistant-row {
+  text-align: justify;
+  min-width: 100%;
 }
 
-button.btn.last {
-  margin-right: 0px;
+.equidistant-row .btn {
+  display: inline-block;
 }
 
-button.btn {
-  margin: 0px 3px;
+.equidistant-row:after {
+  content: '';
+  width: 100%;
+  display: inline-block;
 }
 
 img.kalalogo {
