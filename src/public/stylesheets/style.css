@@ -1,3 +1,14 @@
+.centered{
+  margin-right: auto;
+  margin-left: auto;
+  display: block;
+}
+
+img.kalalogo {
+  width: 250px;
+  height: 250px;
+}
+
 .jumbotron {
   margin: 40px 0;
   text-align: center;
