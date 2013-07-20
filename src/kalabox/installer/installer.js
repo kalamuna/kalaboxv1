@@ -336,7 +336,7 @@ var install = flow('installKalabox')(
   },
   // Download Kalabox image.
   function install6(stdout, stderr) {
-    progressWeight = 800;
+    progressWeight = 1000;
     if (!this.data.baseboxExists) {
       sendMessage('Downloading Stuff...');
       downloadAndReport(KALABOX64_URL, KALABOX_DIR, this.async());
@@ -399,7 +399,7 @@ var install = flow('installKalabox')(
   // Finish box build with "vagrant up".
   function install13(output) {
     // @todo make this abstract in the future
-    progressWeight = 400;
+    progressWeight = 200;
     //fauxProgress();
     exec('vagrant up', {cwd: KALASTACK_DIR}, this.async());
   },
