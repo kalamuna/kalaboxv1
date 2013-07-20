@@ -13,11 +13,17 @@ var fs = require('fs'),
     spawn = require('child_process').spawn,
     flow = require('nue').flow,
     as = require('nue').as,
-    logger = require('../../logger');
+    logger = require('../../logger'),
+    config = require('../../config');
+
+// "Constants":
+var KALABOX_DIR = config.get('KALABOX_DIR'),
+    KALABOX64_FILENAME = 'kalabox64.box';
 
 // State variables:
 var vboxVersion,
-    vagrantVersion;
+    vagrantVersion,
+    baseboxStatus;
 
 /**
  * Downloads a file from the Internet.
@@ -192,6 +198,21 @@ exports.checkVagrant = function(callback) {
       callback(stdout);
     }
   });
+};
+
+/**
+ * Checks if the basebox exists.
+ *
+ * @param  function callback
+ *   Callback to pass an output array with version if installed, or false if not.
+ */
+exports.checkbaseBox = function(callback) {
+  if (baseboxStatus) {
+    callback(baseboxStatus);
+    return;
+  }
+
+  fs.exists(KALABOX_DIR + KALABOX64_FILENAME, callback);
 };
 
 /**

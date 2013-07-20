@@ -32,7 +32,10 @@ var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg',
     KALASTACK_FILENAME = 'kalastack.tar.gz';
 
 // "Variables":
-var socket;
+var socket,
+    progressRunning = 0,
+    progressFinal = 1600,
+    progressWeight;
 
 // Installer file info:
 var vboxUrlParsed = url.parse(VBOX_URL);
@@ -46,7 +49,11 @@ function downloadAndReport(url, destination, callback) {
   installUtils.downloadFile(url, destination, function(error, percentDone) {
     if (percentDone < 100) {
       // Notify client of progress.
-      io.sockets.emit('installer', { complete: percentDone });
+      installProgress = false;
+      if (url.indexOf('dmg') !== -1) {
+        installProgress = true;
+      }
+      sendProgress(percentDone, installProgress);
     }
     else {
       if (error) {
@@ -67,6 +74,35 @@ function downloadAndReport(url, destination, callback) {
 
 function sendMessage(message) {
   io.sockets.emit('installer', { message: message });
+}
+
+function sendProgress(progress, install) {
+  progressBump = progressWeight / 100;
+  if (install) {
+    //realPercent = (progressRunning + (((progress * (progressWeight) / progressFinal) * 100) * .90);
+    realPercent = (progressRunning + ((((progress * progressBump) / progressFinal)) * 100) * .90);
+  }
+  else {
+    realPercent = progressRunning + (((progress * progressBump) / progressFinal)) * 100;
+  }
+  io.sockets.emit('installer', { complete: realPercent });
+}
+
+function fauxProgress() {
+  fauxer = setInterval(repeatFauxProgress, 1000);
+  up = 0;
+  function repeatFauxProgress() {
+    up = up + (1/20);
+    console.log("vagup " + up);
+    sendProgress(up, true);
+    if (up > 90) {
+      clearInterval(fauxer);
+    }
+  }
+}
+
+function decreaseProgressFinal(progress) {
+  progressFinal = progressFinal - progress;
 }
 
 var installPermission = flow('installPermission')(
@@ -141,7 +177,7 @@ var installDMG = flow('installDMG')(
   // Start downloads.
   function installDMG2() {
     // Download DMG.
-    sendMessage('Downloading ' + this.data.programName + '...');
+    sendMessage('Downloading Stuff...');
     downloadAndReport(this.data.fileUrl.href, this.data.destination, this.async());
   },
   // Confirm download succeeded.
@@ -155,13 +191,13 @@ var installDMG = flow('installDMG')(
       return;
     }
     console.log('Software downloaded!');
-    sendMessage('Mounting ' + this.data.programName + ' image...');
+    sendMessage('Configuring Things...');
     exec('hdiutil attach ' + this.data.destination + this.data.fileName, this.async());
   },
   // Execute installer.
   function installDMG5(stdout, stderr) {
     console.log('DMG mounted.');
-    sendMessage('Installing ' + this.data.programName + '...');
+    sendMessage('Configuring Things...');
     taskManager.executeAdminTask('installPackage', {
       location: this.data.packageLocation,
       targetVolume: '/'
@@ -171,7 +207,7 @@ var installDMG = flow('installDMG')(
   // Unmount DMG after installation.
   function installDMG6(stdout, stderr) {
     console.log('Installed!');
-    sendMessage('Installed! Ejecting image...');
+    sendMessage('Configuring Things...');
     var mountPoint = this.data.packageLocation.split('/');
     mountPoint.pop();
     mountPoint = mountPoint.join('/');
@@ -200,16 +236,21 @@ var install = flow('installKalabox')(
     },
     function install1() {
       installUtils.checkVagrant(this.async(as(0)));
+    },
+    function install2() {
+      installUtils.checkbaseBox(this.async(as(0)));
     }
   ),
-  // Check installed versions against required versions.
-  function install2(versions) {
+  // Check installed results against required versions.
+  function install2(results) {
     this.data.vboxInstalled = false;
     this.data.vagrantInstalled = false;
+    this.data.baseboxExists = false;
     this.data.vboxValidVersion = true;
     this.data.vagrantValidVersion = true;
-    var vboxVersion = versions[0];
-    var vagrantVersion = versions[1];
+    var vboxVersion = results[0];
+    var vagrantVersion = results[1];
+    var baseboxStatus = results[2];
     // Parse and compare VBox version string.
     if (vboxVersion !== false && typeof vboxVersion[0] === 'string') {
       vboxVersion = vboxVersion[0].match(/^(\d+\.\d+\.\d+)r\d*\s*$/);
@@ -236,39 +277,75 @@ var install = flow('installKalabox')(
         }
       }
     }
+    // Simple true/false if basebox exists
+    if (baseboxStatus === "false") {
+      this.data.baseboxExists = false;
+    }
+    else if (baseboxStatus === "true") {
+      this.data.baseboxExists = true;
+    }
     console.log("VBox installed: " + this.data.vboxInstalled);
     console.log("Vagrant installed: " + this.data.vagrantInstalled);
+    console.log("Basebox exists: " + this.data.baseboxExists);
     this.next();
   },
   // Download and install VBox.
   function install3() {
+    progressWeight = 300;
     if (!this.data.vboxInstalled) {
+      console.log("Vbox not installed " + progressFinal);
       installDMG(vboxUrlParsed, TEMP_DIR, vboxUrlParsed.packageLocation, 'VirtualBox', this.data.vboxValidVersion, this.async());
     }
     else {
+      decreaseProgressFinal(progressWeight);
+      console.log("VBox already installed " + progressFinal);
       this.next();
     }
   },
   // Download and install Vagrant.
   function install4() {
-    console.log('VirtualBox Installed');
+    // Virtual Box not previously installed
+    if (!this.data.vboxInstalled) {
+      console.log('VirtualBox Installed');
+      progressRunning = progressRunning + ((progressWeight / progressFinal) * 100);
+      sendProgress(progressRunning);
+    }
+    progressWeight = 100;
+    // Start Vagrant Install
     if (!this.data.vagrantInstalled) {
+      console.log("Vagrant not already installed" + progressFinal);
       installDMG(vagrantUrlParsed, TEMP_DIR, vagrantUrlParsed.packageLocation, 'Vagrant', this.data.vagrantValidVersion, this.async());
     }
     else {
+      decreaseProgressFinal(progressWeight);
+      console.log("Vagrant already installed " + progressFinal);
       this.next();
     }
   },
   // @todo Verify that VBox and Vagrant were installed successfully.
   // Create the .kalabox directory in home.
   function install5() {
-    console.log('Vagrant installed.');
+    // Vagrant not previously installed
+    if (!this.data.vagrantInstalled) {
+      progressRunning = progressRunning + ((progressWeight / progressFinal) * 100);
+      sendProgress(progressRunning);
+      console.log('Vagrant installed.');
+    }
+    // Create Kalabox dir
     exec('mkdir -p "' + KALABOX_DIR + '"', this.async());
   },
   // Download Kalabox image.
   function install6(stdout, stderr) {
-    sendMessage('Downloading the Kalabox Ubuntu image...');
-    downloadAndReport(KALABOX64_URL, KALABOX_DIR, this.async());
+    progressWeight = 800;
+    if (!this.data.baseboxExists) {
+      sendMessage('Downloading Stuff...');
+      downloadAndReport(KALABOX64_URL, KALABOX_DIR, this.async());
+    }
+    else {
+      decreaseProgressFinal(progressWeight);
+      console.log("Box already DLed " + progressFinal);
+      this.next();
+    }
   },
   // Verify Kalabox was downloaded.
   function install7() {
@@ -281,7 +358,11 @@ var install = flow('installKalabox')(
       return;
     }
     console.log('Downloaded Kalabox image.');
-    sendMessage('Downloading Kalastack...');
+    if (!this.data.baseboxExists) {
+      progressRunning = progressRunning + ((progressWeight / progressFinal) * 100);
+    }
+
+    sendMessage('Downloading Stuff...');
     installUtils.downloadKalastack(KALABOX_DIR, KALASTACK_FILENAME, KALASTACK_URL, KALASTACK_DIR, this.async());
   },
   // Download Vagrant plugins.
@@ -317,10 +398,14 @@ var install = flow('installKalabox')(
   },
   // Finish box build with "vagrant up".
   function install13(output) {
+    // @todo make this abstract in the future
+    progressWeight = 400;
+    //fauxProgress();
     exec('vagrant up', {cwd: KALASTACK_DIR}, this.async());
   },
   // Reinitialize the box module.
   function install14(stdout, stderr) {
+    //clearInterval(fauxer);
     box.initialize(this.async());
   },
   function installEnd() {
@@ -336,6 +421,8 @@ var install = flow('installKalabox')(
       this.next();
     }
     else {
+      progressRunning = progressRunning + ((progressWeight / progressFinal) * 100);
+      sendProgress(progressRunning);
       console.log('Box built!');
       io.sockets.emit('installerComplete');
       this.next();
