@@ -22,7 +22,8 @@ var installed = false,
     running = false;
 
 // Variables:
-var statusChecker; // Holds reference to interval running the status checker.
+var statusChecker, // Holds reference to interval running the status checker.
+    appWindow; // Holds reference to the actual OS window.
 
 // Make this module an instance of EventEmitter so we can emit events.
 exports = module.exports = new EventEmitter();
@@ -60,6 +61,17 @@ exports.initialize = flow('initialize')(
     this.next();
   }
 );
+
+/**
+ * Sets a reference to the app window object so the box can get info about the app's state.
+ *
+ * @param object window
+ *   The window object that AppJS created.
+ */
+exports.setWindow = function(window) {
+  appWindow = window;
+  window.on('close', handleAppQuit);
+};
 
 /**
  * Reports the installation status of Kalabox.
@@ -263,3 +275,20 @@ repeatStatusCheck.storeCheck = function(isRunning) {
     }
   }
 };
+
+/**
+ * Runs cleanup tasks when the user quits the app.
+ */
+var handleAppQuit = flow('handleAppQuit')(
+  function handleAppQuit0() {
+    // Remove the sudo key from the keychain.
+    sudoRunner.removeKey(this.async());
+  },
+  function handleAppQuitEnd() {
+    if (this.err) {
+      console.log(this.err.message);
+      throw this.err;
+    }
+    this.next();
+  }
+);

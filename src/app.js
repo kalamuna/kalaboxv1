@@ -116,6 +116,6 @@ logger.initialize(function() {
       });
     });
     app.window = window;
-
+    box.setWindow(window);
   });
 }, io);
