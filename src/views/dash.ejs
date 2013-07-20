@@ -6,7 +6,7 @@
         <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
         <!--<li><a href="#sites" data-toggle="tab">Local Sites</a></li>-->
         <!--<li><a href="#pantheon" data-toggle="tab">Pantheon</a></li>-->
-        <li><a href="#tools" data-toggle="tab">Tools</a></li>
+        <!--<li><a href="#tools" data-toggle="tab">Tools</a></li>-->
         <!--<li><a href="#code" data-toggle="tab">Commands</a></li>-->
         <!--<li><a href="#deploy" data-toggle="tab">Deploy</a></li>-->
         <li><a href="#config" data-toggle="tab">Configure</a></li>
@@ -19,8 +19,14 @@
             <a href="#" data-bind="click: startSiteButton.onClick, disable: startSiteButton.disabled" target="_blank">
               <img src="/images/kalaboxv2.png" class="centered kalalogo">
             </a>
-            <p class="lead text-center" style="margin-top: 10px;">Oh
-              Hello There.</p>
+            <p class="lead text-center" style="margin-top: 10px;">
+              Oh Hello There.
+            </p>
+            <div class="equidistant-row service-links">
+              <a href="#" data-bind="click: phpMyAdminButton.onClick, disable: phpMyAdminButton.disabled" target="_blank">DB</a> |
+              <a href="#" data-bind="click: webGrindButton.onClick, disable: webGrindButton.disabled" target="_blank">Grind</a> |
+              <a href="http://www.youtube.com/watch?v=g3rFNbSKpEE" target="_blank">Engage</a>
+            </div>
           </div>
           <div class="span6">
             <table class="table">
@@ -66,10 +72,10 @@
                 data-bind="click: foldersButton.onClick, disable: foldersButton.disabled">
                 Shared Folders
               </button>
-              <button href="#" class="btn btn-primary"
+              <a href="#" class="btn-help"
                 data-bind="click: helpButton.onClick">
-                Help
-              </button>
+                <i class="icon-question-sign icon-3"></i>
+              </a>
             </div>
           </div>
 

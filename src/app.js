@@ -91,7 +91,7 @@ logger.initialize(function() {
     // create window with url: http://localhost:51686/ instead of http://appjs/
     var window = appjs.createWindow('http://localhost:51686/', {
       width : 700,
-      height : 490,
+      height : 520,
       resizable: false,
       icons : __dirname + '/public/icons'
     });

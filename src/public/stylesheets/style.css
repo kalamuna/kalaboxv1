@@ -1,12 +1,25 @@
+a.btn-help {
+  text-decoration: none;
+}
+
+.icon-question-sign.icon-3 {
+  font-size: 30px;
+  vertical-align: bottom;
+}
+
 .centered {
   margin-right: auto;
   margin-left: auto;
   display: block;
 }
 
+div.service-links.equidistant-row {
+  max-width: 200px;
+  margin: 0 auto;
+}
+
 .equidistant-row {
   text-align: justify;
-  min-width: 100%;
 }
 
 .equidistant-row .btn {
@@ -22,6 +35,7 @@
 img.kalalogo {
   width: 250px;
   height: 250px;
+  margin-top: 10px;
 }
 
 .jumbotron {
