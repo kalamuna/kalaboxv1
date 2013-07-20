@@ -399,7 +399,6 @@ var install = flow('installKalabox')(
   // Finish box build with "vagrant up".
   function install13(output) {
     // @todo make this abstract in the future
-    progressWeight = 200;
     //fauxProgress();
     exec('vagrant up', {cwd: KALASTACK_DIR}, this.async());
   },
@@ -421,8 +420,7 @@ var install = flow('installKalabox')(
       this.next();
     }
     else {
-      progressRunning = progressRunning + ((progressWeight / progressFinal) * 100);
-      sendProgress(progressRunning);
+      sendProgress(100);
       console.log('Box built!');
       io.sockets.emit('installerComplete');
       this.next();
