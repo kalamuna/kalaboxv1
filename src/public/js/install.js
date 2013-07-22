@@ -11,7 +11,10 @@ var install = (function($, ko, socket) {
   var $progressBar = $('.bar'),
       $statusMessage = $('.lead'),
       $modal = $('.modal'),
+      $icono = $('#icoco'),
       progress = 0;
+
+
 
   // Server event handlers:
 
@@ -28,6 +31,14 @@ var install = (function($, ko, socket) {
     // If installer sent a message, update the message text.
     if (data.message) {
       $statusMessage.text(data.message);
+    }
+    // If installer sent an icon, update the icon text.
+    if (data.icon && data.kalacolor) {
+      $icono.removeClass();
+      $icono.children().removeClass();
+      $icono.addClass(data.kalacolor);
+      $icono.children().addClass(data.icon);
+      $icono.children().addClass('icon-massive');
     }
   });
   // When the installer reports it has completed, send user to the dash.

@@ -81,13 +81,32 @@ img.kalalogo {
   font-size: 280px;
 }
 
+.icon-kalabox {
+  width: 280px;
+  height: 280px;
+  background-image: url('/images/kalaboxv2-ico.png');
+  background-repeat: no-repeat;
+  display: block;
+  margin: auto;
+}
+
 .kalawrap {
   padding-left: 20px;
   padding-right: 20px;
 }
 
-#icoco {
+.install #icoco {
+  padding-top: 25px;
+  padding-bottom: 15px;
+}
 
+.install .lead {
+  margin-bottom: 40px;
+  font-size: 30px;
+}
+
+.start .jumbotron {
+  margin: 70px 0;
 }
 
 .btn-massive {
