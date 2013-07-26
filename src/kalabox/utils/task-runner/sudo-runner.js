@@ -98,13 +98,13 @@ exports.removeKey = flow('removeKey')(
     exec('security delete-generic-password -s Kalabox', this.async());
   },
   function removeKeyEnd(stdout, stderr) {
-    if (this.err) {
+    if (this.err && this.err.message.indexOf('The specified item could not be found in the keychain.') === -1) {
       this.data.callback({message: this.err.message});
-      this.err = null;
     }
     else {
       this.data.callback();
     }
+    this.err = null;
     this.next();
   }
 );

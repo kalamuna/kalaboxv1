@@ -60,7 +60,3 @@ exports.noPermission = function(req, res) {
     title : 'Kalabox'
   });
 };
-
-
-
-

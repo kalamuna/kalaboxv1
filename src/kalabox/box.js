@@ -63,17 +63,6 @@ exports.initialize = flow('initialize')(
 );
 
 /**
- * Sets a reference to the app window object so the box can get info about the app's state.
- *
- * @param object window
- *   The window object that AppJS created.
- */
-exports.setWindow = function(window) {
-  appWindow = window;
-  window.on('close', handleAppQuit);
-};
-
-/**
  * Reports the installation status of Kalabox.
  *
  * @return bool
@@ -163,6 +152,41 @@ exports.stopBox = flow('stopBox')(
       exports.emit('stop');
       this.data.callback();
     }
+    this.next();
+  }
+);
+
+/**
+ * Runs cleanup tasks.
+ *
+ * @param function callback
+ *   Function to call after cleanup completes.
+ */
+exports.cleanUp = flow('cleanUp')(
+  function cleanUp0(callback) {
+    this.data.callback = callback;
+    // Shut down the VM if it's running.
+    if (running) {
+      exports.stopBox(this.async());
+    }
+    else {
+      this.next();
+    }
+  },
+  function cleanUp1() {
+    // Remove the sudo key from the keychain.
+    sudoRunner.removeKey(this.async());
+  },
+  function cleanUpEnd() {
+    if (this.err) {
+      if (this.err.message.indexOf('User canceled') !== -1) {
+        this.err = null;
+      }
+      else {
+        throw this.err;
+      }
+    }
+    this.data.callback();
     this.next();
   }
 );
@@ -275,20 +299,3 @@ repeatStatusCheck.storeCheck = function(isRunning) {
     }
   }
 };
-
-/**
- * Runs cleanup tasks when the user quits the app.
- */
-var handleAppQuit = flow('handleAppQuit')(
-  function handleAppQuit0() {
-    // Remove the sudo key from the keychain.
-    sudoRunner.removeKey(this.async());
-  },
-  function handleAppQuitEnd() {
-    if (this.err) {
-      console.log(this.err.message);
-      throw this.err;
-    }
-    this.next();
-  }
-);

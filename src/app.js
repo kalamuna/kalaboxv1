@@ -116,6 +116,11 @@ logger.initialize(function() {
       });
     });
     app.window = window;
-    box.setWindow(window);
+    // Make sure box can clean up after itself when the user quits.
+    process.on('SIGTERM', function() {
+      box.cleanUp(function() {
+        process.exit();
+      });
+    });
   });
 }, io);
