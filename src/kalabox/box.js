@@ -11,7 +11,8 @@ var flow = require('nue').flow,
     http = require('http'),
     EventEmitter = require('events').EventEmitter,
     config = require('../config'),
-    sudoRunner = require('./utils/task-runner/sudo-runner');
+    sudoRunner = require('./utils/task-runner/sudo-runner'),
+    connector = require('./vm/connector');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -91,6 +92,8 @@ exports.isRunning = function() {
 exports.startBox = flow('startBox')(
   function startBox0(callback) {
     this.data.callback = callback;
+    // Halt status checking.
+    clearInterval(statusChecker);
     // Get sudo access.
     sudoRunner.runCommand('echo', ['something something something complete!'], this.async());
   },
@@ -98,7 +101,21 @@ exports.startBox = flow('startBox')(
     // Run "vagrant up" to start the Kalabox.
     exec('vagrant up --no-provision', {cwd: KALASTACK_DIR}, this.async());
   },
-  function startBoxEnd(stdout, stderr) {
+  function startBox2(stdout, stderr) {
+    // Wait until box is ready before proceeding.
+    var that = this;
+    var checkingReady = setInterval(function() {
+      checkReady(function(ready) {
+        if (ready) {
+          clearInterval(checkingReady);
+          that.next();
+        }
+      });
+    }, 5000);
+  },
+  function startBoxEnd() {
+    // Restart status checking.
+    statusChecker = setInterval(repeatStatusCheck, 10000);
     if (this.err) {
       if (this.err.message.indexOf('User canceled') !== -1) {
         this.data.callback(this.err);
@@ -299,3 +316,29 @@ repeatStatusCheck.storeCheck = function(isRunning) {
     }
   }
 };
+
+/**
+ * Determines if the box is ready by checking if the NFS shared directory has mounted.
+ *
+ * @param function callback
+ *   Function to call with true if box is ready, false if not.
+ */
+var checkReady = flow('checkReady')(
+  function checkReady0(callback) {
+    this.data.callback = callback;
+    connector.runCommand('mount', this.async());
+  },
+  function checkReadyEnd(response) {
+    if (this.err) {
+      this.err = null;
+      this.data.callback(false);
+    }
+    else {
+      // Parse response to see if mount exists.
+      response = response.toString();
+      var nfs_mount = '/kalabox/www on /var/www type nfs';
+      this.data.callback(response.indexOf(nfs_mount) !== -1);
+    }
+    this.next();
+  }
+);
