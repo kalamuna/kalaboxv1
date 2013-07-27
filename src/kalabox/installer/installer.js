@@ -13,7 +13,6 @@ var flow = require('nue').flow,
     fs = require('fs'),
     box = require('../box'),
     logger = require('../../logger'),
-    taskManager = require('../utils/task-runner/task-manager'),
     config = require('../../config'),
     sudoRunner = require('../utils/task-runner/sudo-runner');
 
@@ -191,11 +190,7 @@ var installDMG = flow('installDMG')(
     console.log('DMG mounted.');
     sendMessage('Configuring Things...');
     sendIcon('icon-cog', 'kalablue');
-    taskManager.executeAdminTask('installPackage', {
-      location: this.data.packageLocation,
-      targetVolume: '/'
-    }, this.async());
-    // @todo Handle user cancelling or failing admin authentication.
+    sudoRunner.runCommand('installer', ['-pkg', this.data.packageLocation, '-target', '/'], this.async());
   },
   // Unmount DMG after installation.
   function installDMG6(stdout, stderr) {
