@@ -23,10 +23,17 @@ var socket;
 function handleStartRequest(data) {
   console.log('Start request received.');
   box.startBox(function(error) {
-    if (error) {
+    if (error && error.userCanceled) {
       if (socket) {
         socket.emit('boxStartCanceled');
       }
+      return;
+    }
+    else if (error && error.vmError) {
+      if (socket) {
+        socket.emit('vmError');
+      }
+      logger.warn(error.message);
       return;
     }
     console.log('Box started');
@@ -39,10 +46,17 @@ function handleStartRequest(data) {
 function handleStopRequest(data) {
   console.log('Stop request received.');
   box.stopBox(function(error) {
-    if (error) {
+    if (error && error.userCanceled) {
       if (socket) {
         socket.emit('boxStopCanceled');
       }
+      return;
+    }
+    else if (error && error.vmError) {
+      if (socket) {
+        socket.emit('vmError');
+      }
+      logger.warn(error.message);
       return;
     }
     console.log('Box stopped');

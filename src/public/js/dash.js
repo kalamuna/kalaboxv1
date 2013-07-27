@@ -13,6 +13,12 @@ var dash = (function($, ko, socket) {
   self.boxRunning = boxRunning;
   self.boxStopped = boxStopped;
 
+  // Modal element:
+  var $modal = $('#dash-modal');
+  $modal.modal({show: false});
+  $modal.$title = $modal.find('.modal-title');
+  $modal.$body = $modal.find('.modal-body');
+
   // Start/stop button:
   self.powerButton = {
     label: ko.observable('Start'),
@@ -180,6 +186,16 @@ var dash = (function($, ko, socket) {
   // On error, redirect to error page.
   socket.on('appError', function(data) {
     window.location.href = '/error';
+  });
+  // On virtual machine error, show modal with message.
+  socket.on('vmError', function(data) {
+    self.powerButton.disabled(false);
+    $modal.$title.text('Uh Oh!');
+    $modal.$body.text(
+      'Looks like the box wasn\'t quite ready. Please try again in a moment. ' +
+      'If the problem persists, please let us know at errors@kalamuna.com.'
+    );
+    $modal.modal('show');
   });
 
   // Drush alias upload handler and helper functions:

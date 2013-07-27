@@ -99,9 +99,15 @@ exports.startBox = flow('startBox')(
   },
   function startBox1(output) {
     // Run "vagrant up" to start the Kalabox.
-    exec('vagrant up --no-provision', {cwd: KALASTACK_DIR}, this.async());
+    exec('vagrant up --no-provision', {cwd: KALASTACK_DIR}, this.async(as(0)));
   },
-  function startBox2(stdout, stderr) {
+  function startBox2(error) {
+    // Check for Vagrant error.
+    if (error) {
+      var vagrantError = new Error(error.message);
+      vagrantError.vmError = true;
+      this.endWith(vagrantError);
+    }
     // Wait until box is ready before proceeding.
     var that = this;
     var checkingReady = setInterval(function() {
@@ -117,8 +123,16 @@ exports.startBox = flow('startBox')(
     // Restart status checking.
     statusChecker = setInterval(repeatStatusCheck, 10000);
     if (this.err) {
+      var error;
       if (this.err.message.indexOf('User canceled') !== -1) {
-        this.data.callback(this.err);
+        error = new Error();
+        error.userCanceled = true;
+      }
+      if (this.err.vmError) {
+        error = this.err;
+      }
+      if (error) {
+        this.data.callback(error);
         this.err = null;
       }
       else {
@@ -150,12 +164,25 @@ exports.stopBox = flow('stopBox')(
   },
   function stopBox1(output) {
     // Run "vagrant halt" to power down the box.
-    exec('vagrant halt', {cwd: KALASTACK_DIR}, this.async());
+    exec('vagrant halt', {cwd: KALASTACK_DIR}, this.async(as(0)));
   },
-  function stopBoxEnd(stdout, stderr) {
+  function stopBoxEnd(vagrantError) {
+    // Check for Vagrant error.
+    if (vagrantError) {
+      vagrantError.vmError = true;
+      this.err = vagrantError;
+    }
     if (this.err) {
+      var error;
       if (this.err.message.indexOf('User canceled') !== -1) {
-        this.data.callback(this.err);
+        error = new Error();
+        error.userCanceled = true;
+      }
+      if (this.err.vmError) {
+        error = this.err;
+      }
+      if (error) {
+        this.data.callback(error);
         this.err = null;
       }
       else {
