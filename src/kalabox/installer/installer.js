@@ -28,7 +28,8 @@ var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg',
     KALABOX64_FILENAME = 'kalabox64.box',
     KALASTACK_DIR = config.get('KALASTACK_DIR'),
     KALASTACK_URL = config.get('KALASTACK_URL'),
-    KALASTACK_FILENAME = 'kalastack.tar.gz';
+    KALASTACK_FILENAME = 'kalastack.tar.gz',
+    LICENSE_FILE = __dirname + '/../../LICENSE.txt';
 
 // "Variables":
 var socket,
@@ -94,6 +95,11 @@ function decreaseProgressFinal(progress) {
   progressFinal = progressFinal - progress;
 }
 
+/**
+ * Get permission to install a specific program
+ *
+ * @param  string programName   Name of the program in text.
+ */
 var installPermission = flow('installPermission')(
   // Activate the permission request modal.
   function installPermission0(programName, callback) {
@@ -416,12 +422,90 @@ var install = flow('installKalabox')(
 );
 
 /**
+ * Loads the license agreement.
+ * @todo Could we combine this with the logic loading the error
+ * log?
+ *
+ * @param function callback
+ *   Function to call with the contents of the log file.
+ */
+exports.loadLicense = flow('loadLicense')(
+  // Check if LICENSE.txt exists.
+  function loadLicense0(callback) {
+    this.data.callback = callback;
+    fs.exists(LICENSE_FILE, this.async(as(0)));
+  },
+  // Read in the file.
+  function loadLicense1(exists) {
+    if (!exists) {
+      this.end();
+    }
+    else {
+      fs.readFile(LICENSE_FILE, this.async());
+    }
+  },
+  // Return log contents.
+  function loadLicenseEnd(contents) {
+    if (this.err) {
+      exports.error('Error loading log file: ' + this.err.message);
+      this.err = null;
+      this.next();
+      this.data.callback();
+      return;
+    }
+    if (contents) {
+      this.data.callback(contents);
+    }
+  }
+);
+
+
+// Flow for getting user's sign off on the license.
+// @todo: Perhaps combine this with the Vagrant/Vbox upload logic
+// to reduce code duplication.
+var getUserLicenseAcceptance = flow('getUserLicenseAcceptance')(
+  // Activate the license review modal.
+  function getUserLicenseAcceptance0(callback) {
+    this.data.callback = callback;
+    io.sockets.emit('licenseReview');
+    socket.on('permissionResponse', this.async(as(0)));
+  },
+  // If given permission, proceed. Otherwise, gracefully kill install.
+  function getUserLicenseAcceptance1(permissionResponse) {
+    if (permissionResponse.value !== true) {
+      this.data.permissionGranted = permissionResponse.value;
+    } else {
+      this.data.permissionGranted = true;
+    }
+
+    this.next();
+
+  },
+  function getUserLicenseAcceptanceEnd() {
+    if (this.err) {
+      this.data.callback({ message: this.err.message });
+      this.err = null;
+    }
+    this.data.callback(this.data.permissionGranted);
+    this.next();
+  }
+);
+
+/**
  * Initializes the controller, binding to events from client and other modules.
  */
 exports.initialize = function() {
   // Bind handlers for communication events coming from the client.
   io.sockets.on('connection', function (newSocket) {
     socket = newSocket;
-    install();
+    // Before we start install, have the user accept the license agreement.
+    getUserLicenseAcceptance(function(userAccepted) {
+      if (userAccepted) {
+        install();
+      } else {
+        io.sockets.emit('noPermission');
+        return;
+      }
+    });
   });
 };

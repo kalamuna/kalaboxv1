@@ -12,7 +12,7 @@
   </div>
 </div>
 
-<div class="modal hide fade" role="dialog">
+<div class="dependency-install modal hide fade" role="dialog">
   <div class="modal-header">
   </div>
   <div class="modal-body">
@@ -20,6 +20,20 @@
   <div class="modal-footer">
     <a href="#" class="btn" data-bind="click: permissionDeniedButton.onClick">No</a>
     <a href="#" class="btn btn-primary" data-bind="click: permissionGrantedButton.onClick">Yes</a>
+  </div>
+</div>
+
+<div class="license modal hide fade" role="dialog">
+  <div class="modal-header">
+    <h3>Kalabox End User License Agreement</h3>
+  </div>
+  <div class="modal-body">
+    <p>Before the fun starts, please review the following agreement.</p>
+    <textarea disabled class="license-agreement"><%= licenseAgreement %></textarea>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-bind="click: permissionDeniedButton.onClick">Decline</a>
+    <a href="#" class="btn btn-primary" data-bind="click: permissionGrantedButton.onClick">Accept</a>
   </div>
 </div>
 

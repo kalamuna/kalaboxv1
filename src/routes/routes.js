@@ -21,8 +21,11 @@ exports.index = function(req, res) {
 };
 
 exports.install = function(req, res) {
-  res.render('install', {
-    title : 'Boot this Box!'
+  installer.loadLicense(function(licenseText) {
+    res.render('install', {
+      title : 'Boot this Box!',
+      licenseAgreement : licenseText,
+    });
   });
   installer.initialize();
 };

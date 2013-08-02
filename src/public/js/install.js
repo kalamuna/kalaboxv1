@@ -10,7 +10,8 @@ var install = (function($, ko, socket) {
   // DOM elements:
   var $progressBar = $('.bar'),
       $statusMessage = $('.lead'),
-      $modal = $('.modal'),
+      $dependencyInstallModal = $('.dependency-install.modal'),
+      $licenseModal = $('.license.modal'),
       $icono = $('#icoco'),
       progress = 0;
 
@@ -71,11 +72,18 @@ var install = (function($, ko, socket) {
     }
     $('.modal .modal-header').prepend(title);
     $('.modal .modal-body').prepend(message);
-    $modal.modal(options);
-    $modal.modal('show');
+    $dependencyInstallModal.modal(options);
+    $dependencyInstallModal.modal('show');
   });
   socket.on('noPermission', function() {
     window.location.href = '/permission-denied';
+  });
+
+  // Launch modal so the user can review the user license.
+  socket.on('licenseReview', function(data) {
+    var options = ({keyboard: 'false', show: 'false', backdrop: 'static'});
+    $licenseModal.modal(options);
+    $licenseModal.modal('show');
   });
 
   // Declare the permissionButton view.
@@ -83,7 +91,8 @@ var install = (function($, ko, socket) {
     // Send permission request data back to the backend.
     onClick: function() {
       socket.emit('permissionResponse', {'value': true});
-      $modal.modal('hide');
+      $dependencyInstallModal.modal('hide');
+      $licenseModal.modal('hide');
     }
   };
 
@@ -92,7 +101,8 @@ var install = (function($, ko, socket) {
     // Send permission request data back to the backend.
     onClick: function() {
       socket.emit('permissionResponse', {'value': false});
-      $modal.modal('hide');
+      $dependencyInstallModal.modal('hide');
+      $licenseModal.modal('hide');
     }
   };
 

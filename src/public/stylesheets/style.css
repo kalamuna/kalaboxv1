@@ -1,3 +1,8 @@
+.license.modal textarea.license-agreement {
+  height: 225px;
+  width: 515px;
+}
+
 a.btn-help {
   text-decoration: none;
 }
