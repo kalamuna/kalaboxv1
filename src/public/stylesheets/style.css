@@ -89,7 +89,8 @@ img.kalalogo {
 .icon-kalabox {
   width: 280px;
   height: 280px;
-  background-image: url('/images/kalaboxv2-ico.png');
+  background-image: url('/images/kalabox-logo.svg');
+  background-size: 280px 280px;
   background-repeat: no-repeat;
   display: block;
   margin: auto;
