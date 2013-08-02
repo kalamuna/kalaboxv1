@@ -1,6 +1,8 @@
 /**
  * @file
  * Establishes an error logging service for Kalabox using the Winston module.
+ *
+ * Copyright 2013 Kalamuna LLC
  */
 
 // Dependencies:

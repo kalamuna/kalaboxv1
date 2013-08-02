@@ -1,6 +1,8 @@
 /**
  * @file
  * UI support for the Kalabox dashboard.
+ *
+ * Copyright 2013 Kalamuna LLC
  */
 var dash = (function($, ko, socket) {
   var self = {};

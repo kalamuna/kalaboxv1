@@ -1,6 +1,8 @@
 /**
  * @file
  * Runs sudo commands with the necessary administrative password.
+ *
+ * Copyright 2013 Kalamuna LLC
  */
 
 // Dependencies:

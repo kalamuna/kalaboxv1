@@ -1,6 +1,8 @@
 /**
  * @file
  * Server controller for the Kalabox dashboard.
+ *
+ * Copyright 2013 Kalamuna LLC
  */
 
 // Dependencies:

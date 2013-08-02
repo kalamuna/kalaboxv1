@@ -1,6 +1,8 @@
 /**
  * @file
  * Front-end interaction for the installer routine.
+ *
+ * Copyright 2013 Kalamuna LLC
  */
 
 var install = (function($, ko, socket) {

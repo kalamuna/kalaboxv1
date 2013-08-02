@@ -1,6 +1,8 @@
 /**
  * @file
  * Control flow for the Kalabox installer.
+ *
+ * Copyright 2013 Kalamuna LLC
  */
 
 // Dependencies:

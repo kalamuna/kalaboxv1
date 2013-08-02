@@ -1,6 +1,8 @@
 /**
  * @file
  * Handles transportation of Drush aliases from local maching into Kalabox.
+ *
+ * Copyright 2013 Kalamuna LLC
  */
 
 // Dependencies:

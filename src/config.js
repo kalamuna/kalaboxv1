@@ -1,6 +1,8 @@
 /**
  * @file
  * Module to retrieve configuration variables from JSON config file.
+ *
+ * Copyright 2013 Kalamuna LLC
  */
 
 // Dependencies:

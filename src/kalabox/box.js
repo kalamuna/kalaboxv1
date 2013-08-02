@@ -1,6 +1,8 @@
 /**
  * @file
  * Defines a model and behavior for the user's Kalabox, storing state info.
+ *
+ * Copyright 2013 Kalamuna LLC
  */
 
 // Dependencies:

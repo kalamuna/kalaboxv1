@@ -1,5 +1,7 @@
 /**
  * Monitors the statuses of services running on the Kalabox.
+ *
+ * Copyright 2013 Kalamuna LLC
  */
 
 // Dependencies:

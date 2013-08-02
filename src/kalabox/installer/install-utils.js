@@ -1,6 +1,8 @@
 /**
  * @file
  * Functionality related to installing Kalabox.
+ *
+ * Copyright 2013 Kalamuna LLC
  */
 
 

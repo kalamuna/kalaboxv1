@@ -1,5 +1,7 @@
 /**
  * Manages the SSH connection to the Kalabox virtual machine.
+ *
+ * Copyright 2013 Kalamuna LLC
  */
 
 // Dependencies:

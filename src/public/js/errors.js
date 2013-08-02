@@ -1,6 +1,8 @@
 /**
  * @file
  * Front-end interaction for the error page.
+ *
+ * Copyright 2013 Kalamuna LLC
  */
 
 (function($) {
