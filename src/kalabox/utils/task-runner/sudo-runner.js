@@ -25,16 +25,24 @@ exports.runCommand = flow('runCommand')(
     this.data.args = args;
     this.data.callback = callback;
     // Get password from keychain.
-    exec('security find-generic-password -s Kalabox -w', this.async({error: as(0), stdout: as(1)}));
+    exec('security find-generic-password -s Kalabox -g', this.async({error: as(0), stdout: as(1), stderr: as(2)}));
   },
   function runCommand1(data) {
+    var password;
+    // If no error, get password from cli output.
+    if (!data.error && data.stderr) {
+      var foundPass = data.stderr.toString().match(/^password: "(.+)"$/m);
+      if (foundPass && foundPass[1]) {
+        password = foundPass[1];
+      }
+    }
     // If no password found, get it from user.
-    if (data.error) {
+    if (!password) {
       getPassword(this.async());
     }
     // If password, go to running the command.
     else {
-      this.next(data.stdout.toString());
+      this.next(password);
     }
   },
   function runCommand2(password) {
