@@ -74,12 +74,29 @@ var dash = (function($, ko, socket) {
     }
   };
 
-    // Shared Folders button:
+  // Shared Folders button:
   self.helpButton = {
     disabled: ko.observable(false),
     onClick: function() {
-      socket.emit('helpRequest', {});
+      socket.emit('urlRequest', {url: 'http://localhost:51686/help'});
     }
+  };
+
+  // Sites lists:
+  self.builtSites = ko.observableArray();
+  self.unbuiltSites = ko.observableArray();
+
+  function getSitesLists() {
+    var connection = $.getJSON('/sites-list');
+    connection.done(function(data) {
+      self.builtSites(data.builtSites);
+      self.unbuiltSites(data.unbuiltSites);
+    });
+    // @todo Add error handling.
+  }
+
+  self.openSite = function(site) {
+    socket.emit('urlRequest', {url: 'http://' + site.uri});
   };
 
   // Status displays:
@@ -130,6 +147,8 @@ var dash = (function($, ko, socket) {
     for (var i = 0, length = self.statusDisplays.length; i < length; i++) {
       self.statusDisplays[i].running(true);
     }
+    // Load sites lists.
+    getSitesLists();
   });
   socket.on('boxStartCanceled', function(data) {
     self.powerButton.disabled(false);
@@ -145,6 +164,9 @@ var dash = (function($, ko, socket) {
     for (var i = 0, length = self.statusDisplays.length; i < length; i++) {
       self.statusDisplays[i].running(false);
     }
+    // Clear sites lists.
+    self.builtSites.removeAll();
+    self.unbuiltSites.removeAll();
   });
   socket.on('boxStopCanceled', function(data) {
     self.powerButton.disabled(false);

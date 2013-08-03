@@ -138,3 +138,9 @@ small {
   height: 200px;
   margin: 0 auto;
 }
+
+/* Sites page */
+
+.no-sites {
+  text-align: center;
+}

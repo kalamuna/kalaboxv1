@@ -9,7 +9,8 @@
 var installer = require('../kalabox/installer/installer'),
     box = require('../kalabox/box'),
     dash = require('../kalabox/dash'),
-    logger = require('../logger');
+    logger = require('../logger'),
+    sitesManager = require('../kalabox/vm/sites-manager');
 
 exports.index = function(req, res) {
   if (box.isInstalled()) {
@@ -63,5 +64,16 @@ exports.helpPage = function(req, res) {
 exports.noPermission = function(req, res) {
   res.render('permission_denied', {
     title : 'Kalabox'
+  });
+};
+
+exports.sitesList = function(req, res) {
+  sitesManager.getSitesList(function(error, sites) {
+    if (error || !sites) {
+      res.send(500, { error: 'Unable to load sites.' });
+    }
+    else {
+      res.send(sites);
+    }
   });
 };

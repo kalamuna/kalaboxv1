@@ -4,7 +4,7 @@
       <!-- Only required for left/right tabs -->
       <ul class="nav nav-pills">
         <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
-        <!--<li><a href="#sites" data-toggle="tab">Local Sites</a></li>-->
+        <li><a href="#sites" data-toggle="tab">Sites</a></li>
         <!--<li><a href="#pantheon" data-toggle="tab">Pantheon</a></li>-->
         <!--<li><a href="#tools" data-toggle="tab">Tools</a></li>-->
         <!--<li><a href="#code" data-toggle="tab">Commands</a></li>-->
@@ -84,16 +84,40 @@
         </div>
 
         <div class="tab-pane" id="sites">
-          <div style="height: 305px;">
-            <div class="text-center">
-              <h1>How Strange!</h1>
-              <p id="info" class="lead">It seems like you have no sites
-                locally.</p>
-              <p class="lead">Do you wish to spin one up?</p>
-              <a class="btn btn-large btn-success btn-massive" href="#">Yes,
-                I do.</a>
-            </div>
+          <div class="no-sites" data-bind="visible: !builtSites().length && !unbuiltSites().length">
+            <h1>How Strange!</h1>
+            <p id="info" class="lead">It seems like you have no sites
+              locally.</p>
+            <p class="lead">Do you wish to spin one up?</p>
+            <a class="btn btn-large btn-success btn-massive" href="#">Yes,
+              I do.</a>
           </div>
+          <table class="table" data-bind="visible: builtSites().length">
+            <thead>
+              <tr>
+                <th>Enabled Sites</th>
+              </tr>
+            </thead>
+            <tbody data-bind="foreach: builtSites">
+              <tr>
+                <td>
+                  <a href="#" data-bind="text: name, click: $root.openSite"></a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <table class="table" data-bind="visible: unbuiltSites().length">
+            <thead>
+              <tr>
+                <th>Sites Available to Build</th>
+              </tr>
+            </thead>
+            <tbody data-bind="foreach: unbuiltSites">
+              <tr>
+                <td data-bind="text: aliasName"></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
         <div class="tab-pane" id="pantheon">

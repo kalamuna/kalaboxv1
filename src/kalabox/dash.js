@@ -86,21 +86,19 @@ function handleServiceRequest(data) {
   var serviceURL = '';
   switch (data.requestType) {
     case 'phpMyAdminButton':
-      serviceURL = 'php.kala';
+      serviceURL = 'http://php.kala';
       break;
     case 'webGrindButton':
-      serviceURL = 'grind.kala';
+      serviceURL = 'http://grind.kala';
       break;
     case 'startSiteButton':
-      serviceURL = 'start.kala';
+      serviceURL = 'http://start.kala';
       break;
     case 'picardButton':
       serviceURL = 'www.youtube.com/watch?v=g3rFNbSKpEE';
       break;
   }
-
-  // Launch the service in the user's default browser.
-  exec('osascript -e \'open location "http://' + serviceURL + '"\'');
+  handleUrlRequest({url: serviceURL});
 }
 
 function handleFoldersRequest(data) {
@@ -111,10 +109,9 @@ function handleFoldersRequest(data) {
   exec('open .', {cwd: process.env.HOME + '/kalabox'});
 }
 
-function handleHelpRequest(data) {
-  console.log('respond to help request');
-  // Launch the help documents in the user's default browser.
-  exec('osascript -e \'open location "http://localhost:51686/help"\'');
+function handleUrlRequest(data) {console.log('URL: ' + data.url);
+  // Launch the url in the user's default browser.
+  exec('osascript -e \'open location "' + data.url + '"\'');
 }
 
 function handleDrushUpload(data) {
@@ -155,8 +152,8 @@ exports.initialize = function() {
     socket.on('sshRequest', handleSSHRequest);
     socket.on('openServiceRequest', handleServiceRequest);
     socket.on('foldersRequest', handleFoldersRequest);
-    socket.on('helpRequest', handleHelpRequest);
     socket.on('drushUpload', handleDrushUpload);
+    socket.on('urlRequest', handleUrlRequest);
     // If box running, make sure UI knows about it.
     if (box.isRunning()) {
       handleStart();

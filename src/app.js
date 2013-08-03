@@ -49,7 +49,7 @@ app.get('/error', routes.errorPage);
 app.get('/no-internet', routes.noInternet);
 app.get('/help', routes.helpPage);
 app.get('/permission-denied', routes.noPermission);
-app.post('/drush-upload', routes.drushUpload);
+app.get('/sites-list', routes.sitesList);
 
 /**
  * Setup AppJS
