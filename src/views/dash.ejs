@@ -16,8 +16,8 @@
       <div class="tab-content">
         <div class="tab-pane active row-fluid" id="home">
           <div class="span6">
-            <a href="#" data-bind="click: startSiteButton.onClick, disable: startSiteButton.disabled" target="_blank">
-              <svg id="logo" class="centered kalalogo" height="268" width="268" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
+            <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="startSiteButton">
+              <svg id="logo" class="centered kalalogo" height="178" width="178" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
                 <image x="0" y="0" height="268" width="268"  xlink:href="/images/kalabox-logo.svg" />
               </svg>
             </a>
@@ -25,9 +25,9 @@
               Oh Hello There.
             </p>
             <div class="equidistant-row service-links">
-              <a href="#" data-bind="click: phpMyAdminButton.onClick, disable: phpMyAdminButton.disabled" target="_blank">DB</a> |
-              <a href="#" data-bind="click: webGrindButton.onClick, disable: webGrindButton.disabled" target="_blank">Grind</a> |
-              <a href="http://www.youtube.com/watch?v=g3rFNbSKpEE" target="_blank">Engage</a>
+              <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="phpMyAdminButton">DB</a> |
+              <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="webGrindButton">Grind</a> |
+              <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="picardButton">Engage</a>
             </div>
           </div>
           <div class="span6">
@@ -116,48 +116,6 @@
               </div>
               <div class="clearfix"></div>
             </div>
-          </div>
-        </div>
-
-        <div class="tab-pane" id="tools">
-          <div style="height: 370px;">
-            <div class="alert alert-error" data-bind="text: toolsError, visible: toolsError() !== ''"></div>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Thing</th>
-                  <th>Stuff</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tr class="">
-                <td>Welcome</td>
-                <td>start.kala</td>
-                <td>
-                  <a href="#" data-bind="click: startSiteButton.onClick, disable: startSiteButton.disabled" target="_blank">Launch</a>
-                </td>
-              </tr>
-              <tr class="">
-                <td>phpMyAdmin</td>
-                <td>php.kala</td>
-                <td>
-                  <a href="#" data-bind="click: phpMyAdminButton.onClick, disable: phpMyAdminButton.disabled" target="_blank">Launch</a>
-                </td>
-              </tr>
-              <tr class="">
-                <td>Webgrind</td>
-                <td>grind.kala</td>
-                <td><a href="#" data-bind="click: webGrindButton.onClick, disable: webGrindButton.disabled" target="_blank">Launch</a>
-                </td>
-              </tr>
-              <tr class="info">
-                <td>Max Warp</td>
-                <td>9</td>
-                <td><a href="http://www.youtube.com/watch?v=g3rFNbSKpEE"
-                  target="_blank">Engage</a></td>
-              </tr>
-            </table>
-
           </div>
         </div>
 

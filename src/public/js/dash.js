@@ -50,38 +50,14 @@ var dash = (function($, ko, socket) {
     }
   };
 
-  // start.kala button
-  self.startSiteButton = {
+  self.serviceButton = {
     disabled: ko.observable(true),
-    onClick: function() {
+    onClick: function(item, event) {
+      var buttonType = $(event.target).attr('target');
       if (boxRunning()) {
-        socket.emit('openServiceRequest', {'requestType': 'startSiteButton'});
+        socket.emit('openServiceRequest', {'requestType': buttonType});
       } else {
-        self.toolsError('The box is not running. Fire this puppy up to see your site.');
-      }
-    }
-  };
-
-  // PHPMyAdmin button:
-  self.phpMyAdminButton = {
-    disabled: ko.observable(true),
-    onClick: function() {
-      if (boxRunning()) {
-        socket.emit('openServiceRequest', {'requestType': 'phpMyAdminButton'});
-      } else {
-        self.toolsError('The box is not running. Fire this puppy up to use PHPMyAdmin.');
-      }
-    }
-  };
-
-  // WebGrind Button
-  self.webGrindButton = {
-    disabled: ko.observable(true),
-    onClick: function() {
-      if (boxRunning()) {
-        socket.emit('openServiceRequest', {'requestType': 'webGrindButton'});
-      } else {
-        self.toolsError('The box is not running. Fire this puppy up to use WebGrind.');
+        self.toolsError('The box is not running. Fire this puppy up to get started.');
       }
     }
   };
@@ -147,11 +123,9 @@ var dash = (function($, ko, socket) {
     boxRunning(true);
     self.powerButton.label('Stop');
     self.powerButton.disabled(false);
-    self.startSiteButton.disabled(false);
     self.sshButton.disabled(false);
-    self.phpMyAdminButton.disabled(false);
-    self.webGrindButton.disabled(false);
     self.foldersButton.disabled(false);
+    self.serviceButton.disabled(false);
     // Mark all services as started.
     for (var i = 0, length = self.statusDisplays.length; i < length; i++) {
       self.statusDisplays[i].running(true);
@@ -164,11 +138,9 @@ var dash = (function($, ko, socket) {
     boxRunning(false);
     self.powerButton.label('Start');
     self.powerButton.disabled(false);
-    self.startSiteButton.disabled(true);
     self.sshButton.disabled(true);
-    self.phpMyAdminButton.disabled(true);
-    self.webGrindButton.disabled(true);
     self.foldersButton.disabled(true);
+    self.serviceButton.disabled(true);
     // Mark all services as stopped.
     for (var i = 0, length = self.statusDisplays.length; i < length; i++) {
       self.statusDisplays[i].running(false);

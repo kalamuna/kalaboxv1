@@ -94,6 +94,9 @@ function handleServiceRequest(data) {
     case 'startSiteButton':
       serviceURL = 'start.kala';
       break;
+    case 'picardButton':
+      serviceURL = 'www.youtube.com/watch?v=g3rFNbSKpEE';
+      break;
   }
 
   // Launch the service in the user's default browser.
