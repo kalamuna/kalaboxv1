@@ -1,12 +1,15 @@
 /**
  * Manages sites on the Kalabox virtual machine.
+ *
+ * Copyright 2013 Kalamuna LLC
  */
 
 // Dependencies:
 var flow = require('nue').flow,
     as = require('nue').as,
     connector = require('./connector'),
-    http = require('http');
+    http = require('http'),
+    host = require('../utils/host');
 
 // "Constants":
 var SITES_SOURCE = 'http://aliases.kala';
@@ -40,6 +43,41 @@ exports.getSitesList = flow('getSitesList')(
     }
     else {
       this.data.callback(null, JSON.parse(this.data.data));
+    }
+    this.next();
+  }
+);
+
+exports.buildSite = flow('buildSite')(
+  function buildSite0(options, callback) {
+    this.data.callback = callback;
+    this.data.options = options;
+    // Build command from site options.
+    var command = 'drush build ';
+    command += options.site;
+    if (options.siteName) {
+      command += ' --site-name="' + options.siteName + '"';
+    }
+    if (options.profile) {
+      command += ' --profile="' + options.profile + '"';
+    }
+    if (options.files) {
+      command += ' --files';
+    }
+    // Run command against VM.
+    connector.runCommand(command, this.async());
+  },
+  function buildSite1(response) {
+    // Add site entry to /etc/hosts.
+    host.addHostsEntry(this.data.options.site, this.async());
+  }
+  function buildSiteEnd() {
+    if (this.err) {
+      this.data.callback(this.err);
+      this.err = null;
+    }
+    else {
+      this.data.callback();
     }
     this.next();
   }
