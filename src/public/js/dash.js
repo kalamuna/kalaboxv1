@@ -50,6 +50,7 @@ var dash = (function($, ko, socket) {
         socket.emit('startRequest', {});
       }
       self.powerButton.disabled(true);
+      self.powerButton.label("<i class=\"icon-spinner icon-spin icon-large\"></i>");
     }
   };
 
@@ -89,7 +90,7 @@ var dash = (function($, ko, socket) {
     }
   };
 
-  // Shared Folders button:
+  // Help button:
   self.helpButton = {
     disabled: ko.observable(false),
     onClick: function() {
@@ -120,8 +121,8 @@ var dash = (function($, ko, socket) {
   (function() {
     var serviceDefinitions = [
       {name: 'box', title: 'Kalabox'},
-      {name: 'nginx', title: 'nginx'},
-      {name: 'mysql', title: 'MySQL'}
+      {name: 'nginx', title: 'Web Server'},
+      {name: 'mysql', title: 'Database'}
     ];
     function getDisplayStatus() {
       if (this.running()) {

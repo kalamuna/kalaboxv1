@@ -25,8 +25,8 @@
               Oh Hello There.
             </p>
             <div class="equidistant-row service-links">
-              <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="phpMyAdminButton">DB</a> |
-              <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="webGrindButton">Grind</a> |
+              <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="phpMyAdminButton">Databases</a> |
+              <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="webGrindButton">Profiler</a> |
               <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="picardButton">Engage</a>
             </div>
           </div>
@@ -44,27 +44,27 @@
                   <td data-bind="text: message"></td>
                 </tr>
               </tbody>
-              <tr class="alert alert-success">
-                <td>SSH Keys</td>
-                <td>Installed</td>
-              </tr>
               <tr class="alert alert-info">
-                <td>Apache Solr</td>
+                <td>Solr Search</td>
                 <td>Coming Soon</td>
               </tr>
-              <tr class="alert alert-info">
-                <td>Webroot</td>
-                <td>~/kalabox/www</td>
+              <tr class="alert alert-success">
+                <td>Sites Enabled</td>
+                <td>0</td>
               </tr>
-              <tr class="alert alert-info">
+              <tr class="alert alert-success">
+                <td>Sites Available</td>
+                <td>0</td>
+              </tr>
+              <tr class="alert alert-success">
                 <td>Happiness</td>
                 <td>Maximal</td>
               </tr>
             </table>
             <div class="equidistant-row">
               <button href="#" class="btn"
-                data-bind="text: powerButton.label, click: powerButton.onClick, disable: powerButton.disabled,
-                css: {'btn-success': $root.boxStopped, 'btn-danger': $root.boxRunning}">
+                data-bind="html: powerButton.label, click: powerButton.onClick, disable: powerButton.disabled,
+                css: {'btn-success': $root.boxStopped, 'btn-danger': $root.boxRunning} ">
               </button>
               <button href="#" class="btn btn-primary"
                 data-bind="click: sshButton.onClick, disable: sshButton.disabled">
@@ -72,7 +72,7 @@
               </button>
               <button href="#" class="btn btn-primary"
                 data-bind="click: foldersButton.onClick, disable: foldersButton.disabled">
-                Shared Folders
+                My Code
               </button>
               <a href="#" class="btn-help"
                 data-bind="click: helpButton.onClick">

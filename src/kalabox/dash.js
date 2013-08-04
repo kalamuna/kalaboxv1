@@ -107,7 +107,7 @@ function handleFoldersRequest(data) {
   if (!box.isRunning()) {
     return;
   }
-  exec('open .', {cwd: process.env.HOME + '/kalabox'});
+  exec('open .', {cwd: process.env.HOME + '/kalabox/www'});
 }
 
 function handleUrlRequest(data) {console.log('URL: ' + data.url);
