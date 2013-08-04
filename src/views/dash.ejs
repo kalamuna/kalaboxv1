@@ -15,7 +15,7 @@
 
       <div class="tab-content">
         <div class="tab-pane active row-fluid" id="home">
-          <div class="span6">
+          <div class="col-6">
             <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="startSiteButton">
               <svg id="logo" class="centered kalalogo" height="268" width="268" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
                 <image x="0" y="0" height="268" width="268"  xlink:href="/images/kalabox-logo.svg" />
@@ -30,7 +30,7 @@
               <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="picardButton">Engage</a>
             </div>
           </div>
-          <div class="span6">
+          <div class="col-6">
             <table class="table">
               <thead>
                 <tr>
@@ -39,24 +39,24 @@
                 </tr>
               </thead>
               <tbody data-bind="foreach: statusDisplays">
-                <tr data-bind="css: {success: running, error: notRunning}">
+                <tr data-bind="css: {success: running, danger: notRunning}">
                   <td data-bind="text: title"></td>
                   <td data-bind="text: message"></td>
                 </tr>
               </tbody>
-              <tr class="success">
+              <tr class="alert alert-success">
                 <td>SSH Keys</td>
                 <td>Installed</td>
               </tr>
-              <tr class="info">
+              <tr class="alert alert-info">
                 <td>Apache Solr</td>
                 <td>Coming Soon</td>
               </tr>
-              <tr class="info">
+              <tr class="alert alert-info">
                 <td>Webroot</td>
                 <td>~/kalabox/www</td>
               </tr>
-              <tr class="info">
+              <tr class="alert alert-info">
                 <td>Happiness</td>
                 <td>Maximal</td>
               </tr>
@@ -64,7 +64,7 @@
             <div class="equidistant-row">
               <button href="#" class="btn"
                 data-bind="text: powerButton.label, click: powerButton.onClick, disable: powerButton.disabled,
-                           css: {'btn-success': $root.boxStopped, 'btn-danger': $root.boxRunning}">
+                css: {'btn-success': $root.boxStopped, 'btn-danger': $root.boxRunning}">
               </button>
               <button href="#" class="btn btn-primary"
                 data-bind="click: sshButton.onClick, disable: sshButton.disabled">
@@ -197,7 +197,7 @@
         <div class="tab-pane" id="config">
           <div style="height: 315px;">
             <h2>Configure Your Box</h2>
-            <div class="alert alert-error" data-bind="text: configError, visible: configError() !== ''"></div>
+            <div class="alert alert-danger" data-bind="text: configError, visible: configError() !== ''"></div>
             <div class="alert alert-success" data-bind="text: configSuccess, visible: configSuccess() !== ''"></div>
             <h3>Drush aliases:</h3>
             <div id="alias-file-drop" class="well">Drag here to upload.</div>

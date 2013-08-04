@@ -1,10 +1,5 @@
 /* Copyright 2013 Kalamuna LLC */
 
-.license.modal textarea.license-agreement {
-  height: 225px;
-  width: 515px;
-}
-
 a.btn-help {
   text-decoration: none;
 }
@@ -45,20 +40,28 @@ img.kalalogo {
   margin-top: 10px;
 }
 
-.jumbotron {
+/* Start Screen */
+
+.kalatron {
   margin: 40px 0;
   text-align: center;
 }
 
-.jumbotron h1 {
+.kalatron h1 {
   font-size: 72px;
   line-height: 1;
 }
 
-.jumbotron .btn {
+.kalatron .btn {
   font-size: 21px;
   padding: 14px 24px;
 }
+
+.kalatron .lead {
+  font-size: 21px;
+}
+
+/* Kala Colors */
 
 .kalagreen {
   color: #afd357;
@@ -113,7 +116,7 @@ img.kalalogo {
   font-size: 30px;
 }
 
-.start .jumbotron {
+.start .kalatron {
   margin: 70px 0;
 }
 
@@ -143,4 +146,15 @@ small {
 
 .no-sites {
   text-align: center;
+}
+
+/* Modal */
+
+.license.modal textarea.license-agreement {
+  height: 225px;
+  width: 640px;
+}
+
+.license.modal {
+  overflow-y: hidden;
 }

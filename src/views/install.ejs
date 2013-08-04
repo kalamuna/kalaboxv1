@@ -8,34 +8,42 @@
   </div>
   <hr>
   <div class="progress progress-striped active">
-    <div class="bar" style="width: 0%;"></div>
+    <div class="progress-bar" style="width: 0%;"></div>
   </div>
 </div>
 
-<div class="dependency-install modal hide fade" role="dialog">
-  <div class="modal-header">
-  </div>
-  <div class="modal-body">
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn" data-bind="click: permissionDeniedButton.onClick">No</a>
-    <a href="#" class="btn btn-primary" data-bind="click: permissionGrantedButton.onClick">Yes</a>
-  </div>
-</div>
+<div class="dependency-install modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+      </div>
+      <div class="modal-body">
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="btn" data-bind="click: permissionDeniedButton.onClick">No</a>
+        <a href="#" class="btn btn-primary" data-bind="click: permissionGrantedButton.onClick">Yes</a>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
-<div class="license modal hide fade" role="dialog">
-  <div class="modal-header">
-    <h3>Kalabox End User License Agreement</h3>
-  </div>
-  <div class="modal-body">
-    <p>Before the fun starts, please review the following agreement.</p>
-    <textarea disabled class="license-agreement"><%= licenseAgreement %></textarea>
-  </div>
-  <div class="modal-footer">
-    <a href="#" class="btn" data-bind="click: permissionDeniedButton.onClick">Decline</a>
-    <a href="#" class="btn btn-primary" data-bind="click: permissionGrantedButton.onClick">Accept</a>
-  </div>
-</div>
+<div class="license modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Kalabox End User License Agreement</h3>
+      </div>
+      <div class="modal-body">
+        <p>Before the fun starts, please review the following agreement.</p>
+        <textarea disabled class="license-agreement"><%= licenseAgreement %></textarea>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="btn" data-bind="click: permissionDeniedButton.onClick">Decline</a>
+        <a href="#" class="btn btn-primary" data-bind="click: permissionGrantedButton.onClick">Accept</a>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/libs/knockout-2.2.1.js"></script>

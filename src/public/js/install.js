@@ -10,7 +10,7 @@ var install = (function($, ko, socket) {
   var self = {};
 
   // DOM elements:
-  var $progressBar = $('.bar'),
+  var $progressBar = $('.progress-bar'),
       $statusMessage = $('.lead'),
       $dependencyInstallModal = $('.dependency-install.modal'),
       $licenseModal = $('.license.modal'),
