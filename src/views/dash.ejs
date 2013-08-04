@@ -5,10 +5,6 @@
       <ul class="nav nav-pills">
         <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
         <li><a href="#sites" data-toggle="tab">Sites</a></li>
-        <!--<li><a href="#pantheon" data-toggle="tab">Pantheon</a></li>-->
-        <!--<li><a href="#tools" data-toggle="tab">Tools</a></li>-->
-        <!--<li><a href="#code" data-toggle="tab">Commands</a></li>-->
-        <!--<li><a href="#deploy" data-toggle="tab">Deploy</a></li>-->
         <li><a href="#config" data-toggle="tab">Configure</a></li>
       </ul>
       <hr>
@@ -124,80 +120,6 @@
           </table>
         </div>
 
-        <div class="tab-pane" id="pantheon">
-          <div style="height: 315px;">
-            <div class="well">
-              <div class="pull-right" style="width: 300px;">
-                <h2>kalademo</h2>
-                <a id="kalademo-build" class="btn btn-primary" href="#">Build
-                  this site locally.</a>
-                <div id="kalademo-progress"
-                  class="progress progress-striped active"
-                  style="width: 200px;">
-                  <div class="bar" style="width: 0%;"></div>
-                </div>
-                <a id="kalademo-launch" class="btn btn-success"
-                  target="_blank" href="http://kalademo.kala">Launch!</a>
-              </div>
-              <div class="pull-left">
-                <img src="/images/kalademo.png" width="200">
-              </div>
-              <div class="clearfix"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="tab-pane" id="code">
-          <div style="height: 315px;">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Command</th>
-                  <th>Info</th>
-                </tr>
-              </thead>
-              <tr class="">
-                <td>drush build SITENAME.dev</td>
-                <td>Will build your pantheon site</td>
-              </tr>
-              <tr class="">
-                <td>drush krefresh SITENAME.dev</td>
-                <td>Will rebuild your pantheon site</td>
-              </tr>
-              <tr class="">
-                <td>drush crush SITENAME.dev</td>
-                <td>Will remove SITENAME.dev</td>
-              </tr>
-              <tr class="">
-                <td>drush code SITENAME.dev</td>
-                <td>Will get your pantheon codebase</td>
-              </tr>
-              <tr class="">
-                <td>drush data SITENAME.dev</td>
-                <td>Will get your pantheon database</td>
-              </tr>
-              <tr class="">
-                <td>drush files SITENAME.dev</td>
-                <td>Will sync your pantheon file</td>
-              </tr>
-              <tr class="">
-                <td>drush kala</td>
-                <td>Will list these commands</td>
-              </tr>
-            </table>
-          </div>
-        </div>
-
-        <div class="tab-pane" id="deploy">
-          <div style="height: 315px;">
-            <div class="hero-unit">
-              <h2>Future Magic</h2>
-              <p class="lead">Deploy your site to Pantheon, Acquia,
-                Rackspace</p>
-            </div>
-          </div>
-        </div>
-
         <div class="tab-pane" id="config">
           <div style="height: 315px;">
             <h2>Configure Your Box</h2>
@@ -214,17 +136,21 @@
   <hr>
 </div>
 
-<div id="dash-modal" class="modal hide fade" role="dialog">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 class="modal-title" data-bind="text: modal.title"></h3>
-  </div>
-  <div class="modal-body" data-bind="template: {name: modal.template()}">
-  </div>
-  <div class="modal-footer">
-    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" data-bind="text: modal.button"></button>
-  </div>
-</div>
+<div id="dash-modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 class="modal-title" data-bind="text: modal.title"></h3>
+      </div>
+      <div class="modal-body" data-bind="template: {name: modal.template()}">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" data-bind="text: modal.button"></button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/libs/knockout-2.2.1.js"></script>
