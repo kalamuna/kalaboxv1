@@ -48,6 +48,14 @@ exports.getSitesList = flow('getSitesList')(
   }
 );
 
+/**
+ * Builds a site on the virtual machine.
+ *
+ * @param object options
+ *   Site parameters with site (required), siteName, profile, and files
+ * @param function callback
+ *   Function to call with error if one occurs
+ */
 exports.buildSite = flow('buildSite')(
   function buildSite0(options, callback) {
     this.data.callback = callback;
@@ -70,7 +78,7 @@ exports.buildSite = flow('buildSite')(
   function buildSite1(response) {
     // Add site entry to /etc/hosts.
     host.addHostsEntry(this.data.options.site, this.async());
-  }
+  },
   function buildSiteEnd() {
     if (this.err) {
       this.data.callback(this.err);

@@ -16,10 +16,25 @@ var dash = (function($, ko, socket) {
   self.boxStopped = boxStopped;
 
   // Modal element:
-  var $modal = $('#dash-modal');
-  $modal.modal({show: false});
-  $modal.$title = $modal.find('.modal-title');
-  $modal.$body = $modal.find('.modal-body');
+  var modal = self.modal = {
+    title: ko.observable(''),
+    button: ko.observable(''),
+    template: ko.observable('vagrant-error'),
+    $window: $('#dash-modal'),
+    show: function() {
+      this.$window.modal('show');
+    },
+    close: function() {
+      this.$window.modal('hide');
+    }
+  };
+  modal.$window.modal({show: false});
+
+  // Templates:
+  var templates = [
+    {name: 'new-site-form'},
+    {name: 'site-build-complete'}
+  ];
 
   // Start/stop button:
   self.powerButton = {
@@ -186,12 +201,10 @@ var dash = (function($, ko, socket) {
   // On virtual machine error, show modal with message.
   socket.on('vmError', function(data) {
     self.powerButton.disabled(false);
-    $modal.$title.text('Uh Oh!');
-    $modal.$body.text(
-      'Looks like the box wasn\'t quite ready. Please try again in a moment. ' +
-      'If the problem persists, please let us know at errors@kalamuna.com.'
-    );
-    $modal.modal('show');
+    modal.title('Uh Oh!');
+    modal.template('vagrant-error');
+    modal.button('OK');
+    modal.show();
   });
 
   // Drush alias upload handler and helper functions:
@@ -227,11 +240,63 @@ var dash = (function($, ko, socket) {
     self.configSuccess('Drush aliases uploaded successfully!');
   });
 
+  // New site form handler:
+  var drupalProfiles = [
+    {name: 'Panopoly', id: 'panopoly'},
+    {name: 'Standard Drupal', id: 'standard'}
+  ];
+  var newSiteForm = self.newSiteForm = {
+    siteName: ko.observable(),
+    site: ko.observable(),
+    profile: ko.observable(),
+    profiles: ko.observableArray(drupalProfiles),
+    building: ko.observable(false),
+    onSubmit: function() {
+      socket.emit('siteBuildRequest', ko.toJS(this));
+      this.building(true);
+      modal.close();
+    },
+    onComplete: function(data) {
+      // Reset form state.
+      this.building(false);
+      this.siteName('');
+      this.site('');
+      this.profile('');
+      // Refresh sites list.
+      getSitesLists();
+      // Alert the user.
+      modal.title('Site Build Complete');
+      modal.button('OK');
+      modal.template('site-build-complete');
+      modal.show();
+    },
+    openForm: function() {
+      // Load form into modal from template.
+      modal.title('Build a New Site');
+      modal.button('Cancel');
+      modal.template('new-site-form');
+      modal.show();
+    }
+  };
+  newSiteForm.onComplete = newSiteForm.onComplete.bind(newSiteForm);
+  socket.on('siteBuildFinished', newSiteForm.onComplete);
+
   // Return public interface.
   return {
     initialize: function() {
       // Make the window accept drag-and-drop alias files.
       document.getElementById('alias-file-drop').addEventListener('drop', handleAliasUpload);
+      // Load templates.
+      var body = $('body');
+      for (var i = 0, length = templates.length; i < length; i++) {
+        // Create template holder for each template file.
+        var template = templates[i],
+            $contents = $('<script></script>');
+        $contents.attr('type', 'text/html');
+        $contents.attr('id', template.name);
+        $contents.load('/templates/' + template.name + '.html');
+        body.append($contents);
+      }
       // Knock-out magic
       ko.applyBindings(self);
     }

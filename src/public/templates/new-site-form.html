@@ -1,0 +1,15 @@
+<form data-bind="with: newSiteForm">
+  <label for="new-site-name">Site Name</label>
+  <input id="new-site-name" data-bind="value: siteName">
+  <label for="new-site-id">URL name</label>
+  <input id="new-site-id" data-bind="value: site">
+  <div class="description">
+    This should contain only lowercase letters, numbers, and dashes.
+    Once built, your new site will be available at <em>thisname</em>.kala
+  </div>
+  <select data-bind="value: profile, options: profiles, optionsText: 'name', optionsValue: 'id'"></select>
+  <div class="description">
+    Pick which Drupal profile/distribution you'd like to use for your new site.
+  </div>
+  <input type="submit" value="Go!" data-bind="click: onSubmit">
+</form>

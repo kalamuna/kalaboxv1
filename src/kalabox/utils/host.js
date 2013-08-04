@@ -7,12 +7,21 @@
 // Dependencies:
 var flow = require('nue').flow,
     as = require('nue').as,
-    sudoRunner = require('./task-runner/sudo-runner');
+    sudoRunner = require('./task-runner/sudo-runner'),
+    config = require('../../config');
 
 // "Constants":
 var HOSTS_TAG = ' # KALABOX SITE',
-    VM_IP;
+    VM_IP = config.get('VM_IP');
 
+/**
+ * Adds an entry to the host machine's /etc/hosts file pointing to the VM's IP.
+ *
+ * @param string url
+ *   URL to add.
+ * @param function callback
+ *   Function to call when finished, sending error if one occured.
+ */
 exports.addHostsEntry = flow('addHostsEntry')(
   function addHostsEntry0(url, callback) {
     this.data.callback = callback;

@@ -11,7 +11,8 @@ var box = require('./box'),
     config = require('../config'),
     drushUpload = require('./vm/drush-upload'),
     services = require('./vm/services'),
-    logger = require('../logger');
+    logger = require('../logger'),
+    sitesManager = require('./vm/sites-manager');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -95,7 +96,7 @@ function handleServiceRequest(data) {
       serviceURL = 'http://start.kala';
       break;
     case 'picardButton':
-      serviceURL = 'www.youtube.com/watch?v=g3rFNbSKpEE';
+      serviceURL = 'http://www.youtube.com/watch?v=g3rFNbSKpEE';
       break;
   }
   handleUrlRequest({url: serviceURL});
@@ -123,6 +124,17 @@ function handleDrushUpload(data) {
     if (socket) {
       socket.emit('drushUploadComplete');
     }
+  });
+}
+
+function handleSiteBuild(data) {
+  sitesManager.buildSite(data, function(error) {
+    var success = true;
+    if (error) {
+      logger.warn(error.message);
+      success = false;
+    }
+    socket.emit('siteBuildFinished', {status: success});
   });
 }
 
@@ -154,6 +166,7 @@ exports.initialize = function() {
     socket.on('foldersRequest', handleFoldersRequest);
     socket.on('drushUpload', handleDrushUpload);
     socket.on('urlRequest', handleUrlRequest);
+    socket.on('siteBuildRequest', handleSiteBuild);
     // If box running, make sure UI knows about it.
     if (box.isRunning()) {
       handleStart();

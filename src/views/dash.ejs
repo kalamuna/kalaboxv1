@@ -92,6 +92,10 @@
             <a class="btn btn-large btn-success btn-massive" href="#">Yes,
               I do.</a>
           </div>
+          <div class="alert alert-info" data-bind="visible: newSiteForm.building">
+            Your new site's coming up! It will be ready in a few minutes.
+          </div>
+          <button class="btn btn-success" data-bind="click: newSiteForm.openForm">Build a New Site</button>
           <table class="table" data-bind="visible: builtSites().length">
             <thead>
               <tr>
@@ -213,12 +217,12 @@
 <div id="dash-modal" class="modal hide fade" role="dialog">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-    <h3 class="modal-title"></h3>
+    <h3 class="modal-title" data-bind="text: modal.title"></h3>
   </div>
-  <div class="modal-body">
+  <div class="modal-body" data-bind="template: {name: modal.template()}">
   </div>
   <div class="modal-footer">
-    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Ok</button>
+    <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" data-bind="text: modal.button"></button>
   </div>
 </div>
 
@@ -226,3 +230,8 @@
 <script src="/js/libs/knockout-2.2.1.js"></script>
 <script src="/js/libs/bootstrap-modal.js"></script>
 <script src="/js/dash.js"></script>
+
+<script type="text/html" id="vagrant-error">
+  Looks like the box wasn't quite ready. Please try again in a moment.
+  If the problem persists, please let us know at errors@kalamuna.com.
+</script>
