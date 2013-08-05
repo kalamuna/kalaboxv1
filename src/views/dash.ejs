@@ -4,11 +4,12 @@
       <!-- Only required for left/right tabs -->
       <ul class="nav nav-pills">
         <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
-        <li><a href="#sites" data-toggle="tab">Sites</a></li>
+        <li><a href="#sites" data-toggle="tab">My Sites</a></li>
         <li><a href="#config" data-toggle="tab">Configure</a></li>
       </ul>
       <hr>
 
+      <!-- Home Tab -->
       <div class="tab-content">
         <div class="tab-pane active row-fluid" id="home">
           <div class="col-6">
@@ -76,9 +77,10 @@
               </a>
             </div>
           </div>
-
         </div>
+        <!-- End Home Tab -->
 
+        <!-- My Sites Tab -->
         <div class="tab-pane" id="sites">
           <div class="no-sites" data-bind="visible: !builtSites().length && !unbuiltSites().length">
             <h1>How Strange!</h1>
@@ -119,42 +121,66 @@
             </tbody>
           </table>
         </div>
+        <!-- End My Sites Tab -->
 
+        <!-- Config Tab -->
         <div class="tab-pane" id="config">
-          <div style="height: 315px;">
-            <h2>Configure Your Box</h2>
-            <div class="alert alert-danger" data-bind="text: configError, visible: configError() !== ''"></div>
-            <div class="alert alert-success" data-bind="text: configSuccess, visible: configSuccess() !== ''"></div>
-            <h3>Drush aliases:</h3>
-            <div id="alias-file-drop" class="well">Drag here to upload.</div>
+          <div style="height: 371px;">
+            <table cellpadding="0" cellspacing="0" class="alias-upload-container">
+              <tbody>
+                <tr>
+                  <td class="alias-td">
+                    <table id="alias-file-drop" cellpadding="0" cellspacing="0" class="alias-upload-container">
+                      <tbody>
+                        <tr>
+                          <td>
+                            <div>Drag alias file here.</div>
+                            <div class="alert alert-danger" data-bind="visible: configError() !== ''">
+                              <button type="button" class="close" data-dismiss="alert">&times;</button>
+                              <div data-bind="text: configError"></div>
+                            </div>
+                            <div class="alert alert-success" data-bind="visible: configSuccess() !== ''">
+                              <button type="button" class="close" data-dismiss="alert">&times;</button>
+                              <div data-bind="text: configSuccess"></div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
-      </div>
+        <!-- End Config Tab -->
+      </div> <!-- End Tab Content -->
 
-    </div>
-  </div>
-  <hr>
-</div>
+    </div> <!-- End Tabbable -->
+    <hr>
+  </div><!-- End Margin -->
+</div><!-- End Kalawrap -->
 
-<div id="dash-modal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 class="modal-title" data-bind="text: modal.title"></h3>
-      </div>
-      <div class="modal-body" data-bind="template: {name: modal.template()}">
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" data-bind="text: modal.button"></button>
-      </div>
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
+  <div id="dash-modal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+          <h3 class="modal-title" data-bind="text: modal.title"></h3>
+        </div>
+        <div class="modal-body" data-bind="template: {name: modal.template()}">
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" data-bind="text: modal.button"></button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/libs/knockout-2.2.1.js"></script>
 <script src="/js/libs/bootstrap-modal.js"></script>
+<script src="/js/libs/bootstrap-alert.js"></script>
 <script src="/js/dash.js"></script>
 
 <script type="text/html" id="vagrant-error">
