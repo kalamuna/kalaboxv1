@@ -3,7 +3,7 @@
     <div class="tabbable">
       <!-- Only required for left/right tabs -->
       <button class="btn btn-success pull-right" data-bind="click: newSiteForm.openForm, disable: newSiteButton.disabled"><i class="icon-plus"></i></button>
-      <ul class="nav nav-pills">
+      <ul id="dashtabs" class="nav nav-pills">
         <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
         <li><a href="#sites" data-toggle="tab" data-bind="visible: sitesButton.visible">My Sites</a></li>
         <li><a href="#config" data-toggle="tab">Configure</a></li>
@@ -83,14 +83,6 @@
 
         <!-- My Sites Tab -->
         <div class="tab-pane" id="sites">
-          <div class="no-sites" data-bind="visible: !builtSites().length && !unbuiltSites().length">
-            <h1>How Strange!</h1>
-            <p id="info" class="lead">It seems like you have no sites
-              locally.</p>
-            <p class="lead">Do you wish to spin one up?</p>
-            <a class="btn btn-large btn-success btn-massive" href="#">Yes,
-              I do.</a>
-          </div>
           <div class="alert alert-info" data-bind="visible: newSiteForm.building">
             <i class="icon-spinner icon-spin icon-large"></i>
             Your new site's coming up! It will be ready in a few minutes.

@@ -269,8 +269,10 @@ var dash = (function($, ko, socket) {
     building: ko.observable(false),
     onSubmit: function() {
       socket.emit('siteBuildRequest', ko.toJS(this));
+      self.newSiteButton.disabled(true);
       this.building(true);
       modal.close();
+      $('#dashtabs a[href="#sites"]').tab('show');
     },
     onComplete: function(data) {
       // Reset form state.
