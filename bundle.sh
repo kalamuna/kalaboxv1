@@ -122,10 +122,10 @@ if [ ${BUNDLE_NAME} ]; then
 fi;
 
 # Minify Kalabox src.
-find "${TARDIR}/${APPNAME}.app/Contents/Resources/kalabox" -name "*.js" -exec uglifyjs {} -o {} --screw-ie8 -m -r '$,require,exports' \;;
-find "${TARDIR}/${APPNAME}.app/Contents/Resources/public/js" -name "*.js" -maxdepth 1 -exec uglifyjs {} -o {} --screw-ie8 -m -r '$,require,exports' \;;
-find "${TARDIR}/${APPNAME}.app/Contents/Resources/routes" -name "*.js" -exec uglifyjs {} -o {} --screw-ie8 -m -r '$,require,exports' \;;
-find "${TARDIR}/${APPNAME}.app/Contents/Resources" -name "*.js" -maxdepth 1 -exec uglifyjs {} -o {} --screw-ie8 -m -r '$,require,exports' \;;
+find "${TARDIR}/${APPNAME}.app/Contents/Resources/kalabox" -name "*.js" -exec uglifyjs {} -o {} --screw-ie8 --comments '/Kalamuna/' -m -r '$,require,exports' \;;
+find "${TARDIR}/${APPNAME}.app/Contents/Resources/public/js" -name "*.js" -maxdepth 1 -exec uglifyjs {} -o {} --screw-ie8 --comments '/Kalamuna/' -m -r '$,require,exports' \;;
+find "${TARDIR}/${APPNAME}.app/Contents/Resources/routes" -name "*.js" -exec uglifyjs {} -o {} --screw-ie8 --comments '/Kalamuna/' -m -r '$,require,exports' \;;
+find "${TARDIR}/${APPNAME}.app/Contents/Resources" -name "*.js" -maxdepth 1 -exec uglifyjs {} -o {} --screw-ie8 --comments '/Kalamuna/' -m -r '$,require,exports' \;;
 
 # Optionally launch the application after packaging.
 if [ ${RUNIT} ]; then
