@@ -1,0 +1,8 @@
+<form data-bind="with: remoteSiteBuilder">
+  <label for="remote-files-download">Do you want to download your files?</label>
+  <input type="checkbox" data-bind="value: shouldDownloadFiles">
+  <div class="description">
+    Downloading files adds time to the site build and may be unnecessary for new sites.
+  </div>
+  <input type="submit" class="btn btn-success" data-bind="click: onSubmit">
+</form>

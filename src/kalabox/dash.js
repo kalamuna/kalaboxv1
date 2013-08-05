@@ -131,7 +131,7 @@ function handleSiteBuild(data) {
       logger.warn(error.message);
       success = false;
     }
-    socket.emit('siteBuildFinished', {status: success});
+    socket.emit('siteBuildFinished', {succeeded: success});
   });
 }
 

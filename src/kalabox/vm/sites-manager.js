@@ -7,12 +7,14 @@
 // Dependencies:
 var flow = require('nue').flow,
     as = require('nue').as,
-    connector = require('./connector'),
+    exec = require('child_process').exec,
     http = require('http'),
-    host = require('../utils/host');
+    host = require('../utils/host'),
+    config = require('../../config');
 
 // "Constants":
-var SITES_SOURCE = 'http://aliases.kala';
+var SITES_SOURCE = 'http://aliases.kala',
+    KALASTACK_DIR = config.get('KALASTACK_DIR');
 
 /**
  * Gets the list of sites, both running and available to build.
@@ -72,12 +74,14 @@ exports.buildSite = flow('buildSite')(
     if (options.files) {
       command += ' --files';
     }
-    // Run command against VM.
-    connector.runCommand(command, this.async());
+    // Run command against VM via Vagrant.
+    exec('vagrant ssh -c "' + command + '"', {cwd: KALASTACK_DIR}, this.async());
   },
-  function buildSite1(response) {
+  function buildSite1(stdout, stderr) {
     // Add site entry to /etc/hosts.
-    host.addHostsEntry(this.data.options.site + ".kala", this.async());
+    var siteId = this.data.options.site.split('.');
+    siteId = siteId[0];
+    host.addHostsEntry(siteId + ".kala", this.async());
   },
   function buildSiteEnd() {
     if (this.err) {

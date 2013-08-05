@@ -14,6 +14,7 @@ var dash = (function($, ko, socket) {
   });
   self.boxRunning = boxRunning;
   self.boxStopped = boxStopped;
+  var buildingInProgress = self.buildingInProgress = ko.observable(false);
 
   // Modal element:
   var modal = self.modal = {
@@ -33,7 +34,9 @@ var dash = (function($, ko, socket) {
   // Templates:
   var templates = [
     {name: 'new-site-form'},
-    {name: 'site-build-complete'}
+    {name: 'site-build-complete'},
+    {name: 'build-remote-site-form'},
+    {name: 'site-build-failed'}
   ];
 
   // My Sites button:
@@ -266,27 +269,34 @@ var dash = (function($, ko, socket) {
     site: ko.observable(),
     profile: ko.observable(),
     profiles: ko.observableArray(drupalProfiles),
-    building: ko.observable(false),
     onSubmit: function() {
       socket.emit('siteBuildRequest', ko.toJS(this));
       self.newSiteButton.disabled(true);
-      this.building(true);
+      buildingInProgress(true);
       modal.close();
       // @todo Probably a better way to do this?
       $('#dashtabs a[href="#sites"]').tab('show');
     },
     onComplete: function(data) {
       // Reset form state.
-      this.building(false);
+      buildingInProgress(false);
       this.siteName('');
       this.site('');
       this.profile('');
-      // Refresh sites list.
-      getSitesLists();
-      // Alert the user.
-      modal.title('Site Build Complete');
+      // If build successful...
+      if (data.succeeded) {
+        // Refresh sites list.
+        getSitesLists();
+        // Alert the user.
+        modal.title('Site Build Complete');
+        modal.template('site-build-complete');
+      }
+      // If build unsuccessful...
+      else {
+        modal.title('Uh Oh!');
+        modal.template('site-build-failed');
+      }
       modal.button('OK');
-      modal.template('site-build-complete');
       modal.show();
     },
     openForm: function() {
@@ -299,6 +309,33 @@ var dash = (function($, ko, socket) {
   };
   newSiteForm.onComplete = newSiteForm.onComplete.bind(newSiteForm);
   socket.on('siteBuildFinished', newSiteForm.onComplete);
+
+  // Build remote site:
+  var remoteSiteBuilder = self.remoteSiteBuilder = {
+    shouldDownloadFiles: ko.observable(false),
+    selectedSite: null,
+    onClick: function(site) {
+      remoteSiteBuilder.selectedSite = site;
+      // Ask if user wants to download files.
+      modal.title('Download Your Site');
+      modal.button('Cancel');
+      modal.template('build-remote-site-form');
+      modal.show();
+    },
+    onSubmit: function() {
+      modal.close();
+      var remoteSite = {
+        site: this.selectedSite.aliasName
+      };
+      if (this.shouldDownloadFiles()) {
+        remoteSite.files = true;
+        this.shouldDownloadFiles(false);
+      }
+      socket.emit('siteBuildRequest', remoteSite);
+      self.newSiteButton.disabled(true);
+      buildingInProgress(true);
+    }
+  };
 
   // Return public interface.
   return {
