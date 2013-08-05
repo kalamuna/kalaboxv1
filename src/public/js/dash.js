@@ -36,6 +36,16 @@ var dash = (function($, ko, socket) {
     {name: 'site-build-complete'}
   ];
 
+  // My Sites button:
+  self.sitesButton = {
+    visible: ko.observable(false),
+  };
+
+  // New site button:
+  self.newSiteButton = {
+    disabled: ko.observable(true),
+  };
+
   // Start/stop button:
   self.powerButton = {
     label: ko.observable('Start'),
@@ -44,7 +54,9 @@ var dash = (function($, ko, socket) {
       if (boxRunning()) {
         socket.emit('stopRequest', {});
         self.sshButton.disabled(true);
-        self.foldersButton.disabled(true);
+        self.sitesButton.visible(false);
+        self.newSiteButton.disabled(true);
+        self.serviceButton.visible(false);
       }
       else {
         socket.emit('startRequest', {});
@@ -66,8 +78,10 @@ var dash = (function($, ko, socket) {
     }
   };
 
+  // Service button
   self.serviceButton = {
     disabled: ko.observable(true),
+    visible: ko.observable(false),
     onClick: function(item, event) {
       var buttonType = $(event.target).attr('target');
       if (boxRunning()) {
@@ -80,13 +94,9 @@ var dash = (function($, ko, socket) {
 
   // Shared Folders button:
   self.foldersButton = {
-    disabled: ko.observable(true),
+    disabled: ko.observable(false),
     onClick: function() {
-      if (boxRunning()) {
-        socket.emit('foldersRequest', {});
-      } else {
-        self.toolsError('The box is not running. Fire this puppy up to see your files.');
-      }
+      socket.emit('foldersRequest', {});
     }
   };
 
@@ -157,8 +167,10 @@ var dash = (function($, ko, socket) {
     self.powerButton.label('Stop');
     self.powerButton.disabled(false);
     self.sshButton.disabled(false);
-    self.foldersButton.disabled(false);
     self.serviceButton.disabled(false);
+    self.serviceButton.visible(true);
+    self.sitesButton.visible(true);
+    self.newSiteButton.disabled(false);
     // Mark all services as started.
     for (var i = 0, length = self.statusDisplays.length; i < length; i++) {
       self.statusDisplays[i].running(true);
@@ -174,8 +186,10 @@ var dash = (function($, ko, socket) {
     self.powerButton.label('Start');
     self.powerButton.disabled(false);
     self.sshButton.disabled(true);
-    self.foldersButton.disabled(true);
     self.serviceButton.disabled(true);
+    self.serviceButton.visible(false);
+    self.sitesButton.visible(false);
+    self.newSiteButton.disabled(true);
     // Mark all services as stopped.
     for (var i = 0, length = self.statusDisplays.length; i < length; i++) {
       self.statusDisplays[i].running(false);
@@ -187,7 +201,8 @@ var dash = (function($, ko, socket) {
   socket.on('boxStopCanceled', function(data) {
     self.powerButton.disabled(false);
     self.sshButton.disabled(false);
-    self.foldersButton.disabled(false);
+    self.sitesButton.visible(true);
+    self.newSiteButton.disabled(false);
   });
   socket.on('serviceStatusChanged', function(data) {
     var service = data.name;

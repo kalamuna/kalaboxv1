@@ -2,9 +2,10 @@
   <div style="margin-top: 20px;">
     <div class="tabbable">
       <!-- Only required for left/right tabs -->
+      <button class="btn btn-success pull-right" data-bind="click: newSiteForm.openForm, disable: newSiteButton.disabled"><i class="icon-plus"></i></button>
       <ul class="nav nav-pills">
         <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
-        <li><a href="#sites" data-toggle="tab">My Sites</a></li>
+        <li><a href="#sites" data-toggle="tab" data-bind="visible: sitesButton.visible">My Sites</a></li>
         <li><a href="#config" data-toggle="tab">Configure</a></li>
       </ul>
       <hr>
@@ -22,9 +23,9 @@
               Oh Hello There.
             </p>
             <div class="equidistant-row service-links">
-              <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="phpMyAdminButton">Databases</a> |
-              <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="webGrindButton">Profiler</a> |
-              <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="picardButton">Engage</a>
+              <a href="#" data-bind="click: serviceButton.onClick, visible: serviceButton.visible" target="phpMyAdminButton">Databases</a>
+              <a href="#" data-bind="click: serviceButton.onClick, visible: serviceButton.visible" target="webGrindButton">Profiler</a>
+              <a href="#" data-bind="click: serviceButton.onClick, visible: serviceButton.visible" target="picardButton">Engage</a>
             </div>
           </div>
           <div class="col-6">
@@ -93,7 +94,6 @@
           <div class="alert alert-info" data-bind="visible: newSiteForm.building">
             Your new site's coming up! It will be ready in a few minutes.
           </div>
-          <button class="btn btn-success" data-bind="click: newSiteForm.openForm">Build a New Site</button>
           <table class="table" data-bind="visible: builtSites().length">
             <thead>
               <tr>
@@ -161,21 +161,21 @@
   </div><!-- End Margin -->
 </div><!-- End Kalawrap -->
 
-  <div id="dash-modal" class="modal fade" role="dialog">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-          <h3 class="modal-title" data-bind="text: modal.title"></h3>
-        </div>
-        <div class="modal-body" data-bind="template: {name: modal.template()}">
-        </div>
-        <div class="modal-footer">
-          <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" data-bind="text: modal.button"></button>
-        </div>
-      </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-  </div><!-- /.modal -->
+<div id="dash-modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 class="modal-title" data-bind="text: modal.title"></h3>
+      </div>
+      <div class="modal-body" data-bind="template: {name: modal.template()}">
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" data-bind="text: modal.button"></button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/libs/knockout-2.2.1.js"></script>

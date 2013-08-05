@@ -103,10 +103,7 @@ function handleServiceRequest(data) {
 }
 
 function handleFoldersRequest(data) {
-  // If box not running, don't open folders.
-  if (!box.isRunning()) {
-    return;
-  }
+  // User should be able to open up their code even when the box is off
   exec('open .', {cwd: process.env.HOME + '/kalabox/www'});
 }
 

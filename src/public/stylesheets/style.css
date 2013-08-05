@@ -148,6 +148,11 @@ small {
   text-align: center;
 }
 
+#sites {
+  height: 371px;
+  overflow-y: scroll;
+}
+
 /* Modal */
 
 .license.modal textarea.license-agreement {
