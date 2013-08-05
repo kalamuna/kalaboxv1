@@ -77,7 +77,7 @@ exports.buildSite = flow('buildSite')(
   },
   function buildSite1(response) {
     // Add site entry to /etc/hosts.
-    host.addHostsEntry(this.data.options.site, this.async());
+    host.addHostsEntry(this.data.options.site + ".kala", this.async());
   },
   function buildSiteEnd() {
     if (this.err) {

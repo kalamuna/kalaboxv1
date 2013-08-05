@@ -8,7 +8,8 @@
 var flow = require('nue').flow,
     as = require('nue').as,
     sudoRunner = require('./task-runner/sudo-runner'),
-    config = require('../../config');
+    config = require('../../config'),
+    exec = require('child_process').exec;
 
 // "Constants":
 var HOSTS_TAG = ' # KALABOX SITE',
@@ -25,8 +26,13 @@ var HOSTS_TAG = ' # KALABOX SITE',
 exports.addHostsEntry = flow('addHostsEntry')(
   function addHostsEntry0(url, callback) {
     this.data.callback = callback;
-    var entry = '"' + VM_IP + ' ' + url + HOSTS_TAG + '"';
-    sudoRunner.runCommand('echo', [entry, '>>', '/etc/hosts'], this.async());
+    this.data.entry = VM_IP + '  ' + url + HOSTS_TAG;
+    // Gotta ghetto this for now
+    sudoRunner.runCommand('echo', ['wiki wiki wild wild west'], this.async());
+  },
+  function addHostsEntry1(response) {
+    // This should eventually use sudo-runner
+    exec('sudo sh -c "echo \'' + this.data.entry + '\' >> /etc/hosts"', this.async());
   },
   function addHostsEntryEnd(response) {
     if (this.err) {
