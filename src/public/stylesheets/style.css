@@ -151,7 +151,28 @@ small {
 #sites {
   height: 371px;
   overflow-y: scroll;
-  padding-right: 20px;
+}
+
+.site-box {
+  width: 188px;
+  height: 200px;
+  float: left;
+  border: 1px solid #eee;
+  margin-right: 25px;
+  margin-bottom: 25px;
+  padding: 10px;
+}
+
+.alert-padright {
+  width: 615px;
+}
+
+.grayscale {
+  -webkit-filter: grayscale(1);
+}
+
+.site-label {
+  margin-top: 10px;
 }
 
 /* Modal */

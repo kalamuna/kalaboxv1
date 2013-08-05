@@ -272,6 +272,7 @@ var dash = (function($, ko, socket) {
       self.newSiteButton.disabled(true);
       this.building(true);
       modal.close();
+      // @todo Probably a better way to do this?
       $('#dashtabs a[href="#sites"]').tab('show');
     },
     onComplete: function(data) {

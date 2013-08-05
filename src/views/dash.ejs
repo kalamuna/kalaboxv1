@@ -83,36 +83,28 @@
 
         <!-- My Sites Tab -->
         <div class="tab-pane" id="sites">
-          <div class="alert alert-info" data-bind="visible: newSiteForm.building">
+
+          <div class="alert alert-info alert-padright" data-bind="visible: newSiteForm.building">
             <i class="icon-spinner icon-spin icon-large"></i>
-            Your new site's coming up! It will be ready in a few minutes.
+            Your new site's coming right up! Please Standby.
           </div>
-          <table class="table" data-bind="visible: builtSites().length">
-            <thead>
-              <tr>
-                <th>Enabled Sites</th>
-              </tr>
-            </thead>
-            <tbody data-bind="foreach: builtSites">
-              <tr>
-                <td>
-                  <a href="#" data-bind="text: name, click: $root.openSite"></a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <table class="table" data-bind="visible: unbuiltSites().length">
-            <thead>
-              <tr>
-                <th>Sites Available to Build</th>
-              </tr>
-            </thead>
-            <tbody data-bind="foreach: unbuiltSites">
-              <tr>
-                <td data-bind="text: aliasName"></td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="row">
+            <div data-bind="foreach: builtSites">
+              <div class="site-box">
+                <a href="#" data-bind="click: $root.openSite">
+                  <img class="centered" src="/images/kalaboxv2-site.png" height="150" width="150" />
+                  <div class="site-label" data-bind="text: name"></div>
+                </a>
+              </div>
+            </div>
+            <div data-bind="foreach: unbuiltSites">
+              <div class="site-box">
+                <img class="centered grayscale" src="/images/kalaboxv2-site.png" height="150" width="150" />
+                <div class="site-label" data-bind="text: aliasName"></div>
+              </div>
+            </div>
+          </div>
+
         </div>
         <!-- End My Sites Tab -->
 
