@@ -298,6 +298,7 @@ var dash = (function($, ko, socket) {
       }
       modal.button('OK');
       modal.show();
+      self.newSiteButton.disabled(false);
     },
     openForm: function() {
       // Load form into modal from template.
