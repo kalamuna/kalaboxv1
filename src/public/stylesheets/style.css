@@ -198,6 +198,10 @@ small {
   overflow-y: hidden;
 }
 
+.modal-content {
+  width: 400px;
+}
+
 /* Alias Upload Form */
 
 .alias-upload-container {

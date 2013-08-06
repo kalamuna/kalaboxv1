@@ -151,16 +151,7 @@
 
 <div id="dash-modal" class="modal fade" role="dialog">
   <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 class="modal-title" data-bind="text: modal.title"></h3>
-      </div>
-      <div class="modal-body" data-bind="template: {name: modal.template()}">
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true" data-bind="text: modal.button"></button>
-      </div>
+    <div class="modal-content" data-bind="template: {name: modal.template()}">
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
@@ -170,8 +161,3 @@
 <script src="/js/libs/bootstrap-modal.js"></script>
 <script src="/js/libs/bootstrap-alert.js"></script>
 <script src="/js/dash.js"></script>
-
-<script type="text/html" id="vagrant-error">
-  Looks like the box wasn't quite ready. Please try again in a moment.
-  If the problem persists, please let us know at errors@kalamuna.com.
-</script>

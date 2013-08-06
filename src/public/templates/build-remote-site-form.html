@@ -1,8 +1,26 @@
 <form data-bind="with: remoteSiteBuilder">
-  <label for="remote-files-download">Do you want to download your files?</label>
-  <input type="checkbox" data-bind="value: shouldDownloadFiles">
-  <div class="description">
-    Downloading files adds time to the site build and may be unnecessary for new sites.
+  <div class="kala-modal remote-site-modal">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 class="modal-title">Download your site</h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" data-bind="value: shouldDownloadFiles">
+          Download my files also
+        </label>
+      </div>
+
+      <div class="description">
+        Downloading files adds time to the site build and may be unnecessary for new sites.
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <input type="submit" class="btn btn-success" data-bind="click: onSubmit">
+      <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    </div>
   </div>
-  <input type="submit" class="btn btn-success" data-bind="click: onSubmit">
 </form>

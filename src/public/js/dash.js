@@ -19,8 +19,6 @@ var dash = (function($, ko, socket) {
 
   // Modal element:
   var modal = self.modal = {
-    title: ko.observable(''),
-    button: ko.observable(''),
     template: ko.observable('vagrant-error'),
     $window: $('#dash-modal'),
     show: function() {
@@ -37,7 +35,8 @@ var dash = (function($, ko, socket) {
     {name: 'new-site-form'},
     {name: 'site-build-complete'},
     {name: 'build-remote-site-form'},
-    {name: 'site-build-failed'}
+    {name: 'site-build-failed'},
+    {name: 'vagrant-error'}
   ];
 
   // My Sites button:
@@ -221,9 +220,7 @@ var dash = (function($, ko, socket) {
   // On virtual machine error, show modal with message.
   socket.on('vmError', function(data) {
     self.powerButton.disabled(false);
-    modal.title('Uh Oh!');
     modal.template('vagrant-error');
-    modal.button('OK');
     modal.show();
   });
 
@@ -289,23 +286,18 @@ var dash = (function($, ko, socket) {
         // Refresh sites list.
         getSitesLists();
         // Alert the user.
-        modal.title('Site Build Complete');
         modal.template('site-build-complete');
       }
       // If build unsuccessful...
       else {
-        modal.title('Uh Oh!');
         modal.template('site-build-failed');
       }
-      modal.button('OK');
       modal.show();
       self.newSiteButton.disabled(false);
       siteInProgress('');
     },
     openForm: function() {
       // Load form into modal from template.
-      modal.title('Build a New Site');
-      modal.button('Cancel');
       modal.template('new-site-form');
       modal.show();
     }
@@ -320,8 +312,6 @@ var dash = (function($, ko, socket) {
     onClick: function(site) {
       remoteSiteBuilder.selectedSite = site;
       // Ask if user wants to download files.
-      modal.title('Download Your Site');
-      modal.button('Cancel');
       modal.template('build-remote-site-form');
       modal.show();
     },
