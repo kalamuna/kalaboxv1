@@ -14,7 +14,8 @@ var dash = (function($, ko, socket) {
   });
   self.boxRunning = boxRunning;
   self.boxStopped = boxStopped;
-  var buildingInProgress = self.buildingInProgress = ko.observable(false);
+  var buildingInProgress = self.buildingInProgress = ko.observable(false),
+      siteInProgress = self.siteInProgress = ko.observable('');
 
   // Modal element:
   var modal = self.modal = {
@@ -299,6 +300,7 @@ var dash = (function($, ko, socket) {
       modal.button('OK');
       modal.show();
       self.newSiteButton.disabled(false);
+      siteInProgress('');
     },
     openForm: function() {
       // Load form into modal from template.
@@ -325,9 +327,11 @@ var dash = (function($, ko, socket) {
     },
     onSubmit: function() {
       modal.close();
+      var aliasName = this.selectedSite.aliasName;
       var remoteSite = {
-        site: this.selectedSite.aliasName
+        site: aliasName
       };
+      siteInProgress(aliasName);
       if (this.shouldDownloadFiles()) {
         remoteSite.files = true;
         this.shouldDownloadFiles(false);

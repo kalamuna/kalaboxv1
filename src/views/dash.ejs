@@ -86,7 +86,7 @@
 
           <div class="alert alert-info alert-padright" data-bind="visible: buildingInProgress">
             <i class="icon-spinner icon-spin icon-large"></i>
-            Your new site's coming right up! Please Standby.
+            Your site's coming right up! Please Standby.
           </div>
           <div class="row">
             <div data-bind="foreach: builtSites">
@@ -100,7 +100,8 @@
             <div data-bind="foreach: unbuiltSites">
               <div class="site-box">
                 <a href="#" data-bind="click: $root.remoteSiteBuilder.onClick">
-                  <img class="centered grayscale" src="/images/kalaboxv2-site.png" height="150" width="150" />
+                  <img class="centered grayscale" src="/images/kalaboxv2-site.png" height="150" width="150" data-bind="visible: aliasName != $root.siteInProgress()"/>
+                  <i class="icon-spinner icon-spin icon-large" data-bind="visible: aliasName == $root.siteInProgress()"></i>
                   <div class="site-label" data-bind="text: aliasName"></div>
                 </a>
               </div>
