@@ -75,7 +75,7 @@ exports.buildSite = flow('buildSite')(
       command += ' --files';
     }
     // Run command against VM via Vagrant.
-    exec('vagrant ssh -c "' + command + '"', {cwd: KALASTACK_DIR}, this.async());
+    exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
   function buildSite1(stdout, stderr) {
     // Add site entry to /etc/hosts.
