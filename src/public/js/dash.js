@@ -255,6 +255,7 @@ var dash = (function($, ko, socket) {
 
   socket.on('drushUploadComplete', function() {
     self.configSuccess('Drush aliases uploaded successfully!');
+    getSitesLists();
   });
 
   // New site form handler:
