@@ -2,10 +2,10 @@
   <div style="margin-top: 20px;">
     <div class="tabbable">
       <!-- Only required for left/right tabs -->
-      <button class="btn btn-success pull-right" data-bind="click: newSiteForm.openForm, disable: newSiteButton.disabled"><i class="icon-plus"></i></button>
+      <button class="btn btn-success pull-right" data-bind="click: sites.newSiteForm.openForm, disable: sites.newSiteButton.disabled"><i class="icon-plus"></i></button>
       <ul id="dashtabs" class="nav nav-pills">
         <li class="active"><a href="#home" data-toggle="tab">Home</a></li>
-        <li><a href="#sites" data-toggle="tab" data-bind="visible: sitesButton.visible">My Sites</a></li>
+        <li><a href="#sites" data-toggle="tab" data-bind="visible: sites.sitesButton.visible">My Sites</a></li>
         <li><a href="#config" data-toggle="tab">Configure</a></li>
       </ul>
       <hr>
@@ -14,7 +14,7 @@
       <div class="tab-content">
         <div class="tab-pane active row-fluid" id="home">
           <div class="col-6">
-            <a href="#" data-bind="click: serviceButton.onClick, disable: serviceButton.disabled" target="startSiteButton">
+            <a href="#" data-bind="click: controls.serviceButton.onClick, disable: controls.serviceButton.disabled" target="startSiteButton">
               <svg id="logo" class="centered kalalogo" height="268" width="268" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
                 <image x="0" y="0" height="268" width="268"  xlink:href="/images/kalabox-logo.svg" />
               </svg>
@@ -22,7 +22,7 @@
             <p class="lead text-center" style="margin-top: 10px;">
               Oh Hello There.
             </p>
-            <div class="equidistant-row service-links">
+            <div class="equidistant-row service-links" data-bind="with: controls">
               <a href="#" data-bind="click: serviceButton.onClick, visible: serviceButton.visible" target="phpMyAdminButton">Databases</a>
               <a href="#" data-bind="click: serviceButton.onClick, visible: serviceButton.visible" target="webGrindButton">Profiler</a>
               <a href="#" data-bind="click: serviceButton.onClick, visible: serviceButton.visible" target="picardButton">Engage</a>
@@ -36,7 +36,7 @@
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody data-bind="foreach: statusDisplays">
+              <tbody data-bind="foreach: statusMonitor.statusDisplays">
                 <tr data-bind="css: {success: running, danger: notRunning}">
                   <td data-bind="text: title"></td>
                   <td data-bind="text: message"></td>
@@ -59,10 +59,10 @@
                 <td>Maximal</td>
               </tr>
             </table>
-            <div class="equidistant-row">
+            <div class="equidistant-row" data-bind="with: controls">
               <button href="#" class="btn"
                 data-bind="html: powerButton.label, click: powerButton.onClick, disable: powerButton.disabled,
-                css: {'btn-success': $root.boxStopped, 'btn-danger': $root.boxRunning} ">
+                css: {'btn-success': $root.statusMonitor.boxStopped, 'btn-danger': $root.statusMonitor.boxRunning} ">
               </button>
               <button href="#" class="btn btn-primary"
                 data-bind="click: sshButton.onClick, disable: sshButton.disabled">
@@ -84,24 +84,24 @@
         <!-- My Sites Tab -->
         <div class="tab-pane" id="sites">
 
-          <div class="alert alert-info alert-padright" data-bind="visible: buildingInProgress">
+          <div class="alert alert-info alert-padright" data-bind="visible: sites.buildingInProgress">
             <i class="icon-spinner icon-spin icon-large"></i>
             Your site's coming right up! Please Standby.
           </div>
           <div class="row">
-            <div data-bind="foreach: builtSites">
+            <div data-bind="foreach: sites.builtSites">
               <div class="site-box">
-                <a href="#" data-bind="click: $root.openSite">
+                <a href="#" data-bind="click: $root.sites.openSite">
                   <img class="centered" src="/images/kalaboxv2-site.png" height="150" width="150" />
                   <div class="site-label" data-bind="text: name"></div>
                 </a>
               </div>
             </div>
-            <div data-bind="foreach: unbuiltSites">
+            <div data-bind="foreach: sites.unbuiltSites">
               <div class="site-box">
-                <a href="#" data-bind="click: $root.remoteSiteBuilder.onClick">
-                  <img class="centered grayscale" src="/images/kalaboxv2-site.png" height="150" width="150" data-bind="visible: aliasName != $root.siteInProgress()"/>
-                  <i class="icon-spinner icon-spin icon-large" data-bind="visible: aliasName == $root.siteInProgress()"></i>
+                <a href="#" data-bind="click: $root.sites.remoteSiteBuilder.onClick">
+                  <img class="centered grayscale" src="/images/kalaboxv2-site.png" height="150" width="150" data-bind="visible: aliasName != $root.sites.siteInProgress()"/>
+                  <i class="icon-spinner icon-spin icon-large" data-bind="visible: aliasName == $root.sites.siteInProgress()"></i>
                   <div class="site-label" data-bind="text: aliasName"></div>
                 </a>
               </div>
@@ -121,7 +121,7 @@
                     <table id="alias-file-drop" cellpadding="0" cellspacing="0" class="alias-upload-container">
                       <tbody>
                         <tr>
-                          <td>
+                          <td data-bind="with: aliasUploader">
                             <div>Drag Pantheon alias file here.</div>
                             <div class="alert alert-danger" data-bind="visible: configError() !== ''">
                               <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -160,4 +160,4 @@
 <script src="/js/libs/knockout-2.2.1.js"></script>
 <script src="/js/libs/bootstrap-modal.js"></script>
 <script src="/js/libs/bootstrap-alert.js"></script>
-<script src="/js/dash.js"></script>
+<script src="/js/dash-compiled.js"></script>

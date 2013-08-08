@@ -121,6 +121,10 @@ if [ ${BUNDLE_NAME} ]; then
     defaults write "${TARDIR}/${APPNAME}.app/Contents/Info" CFBundleName "${BUNDLE_NAME}";
 fi;
 
+# Run Browserify on front-end code and remove uncompiled code.
+browserify "${TARDIR}/${APPNAME}.app/Contents/Resources/public/js/dash/main.js" -o "${TARDIR}/${APPNAME}.app/Contents/Resources/public/js/dash-compiled.js"
+rm "${TARDIR}/${APPNAME}.app/Contents/Resources/public/js/dash/"*.js
+
 # Minify Kalabox src.
 find "${TARDIR}/${APPNAME}.app/Contents/Resources/kalabox" -name "*.js" -exec uglifyjs {} -o {} --screw-ie8 --comments '/Kalamuna/' -m -r '$,require,exports' \;;
 find "${TARDIR}/${APPNAME}.app/Contents/Resources/public/js" -name "*.js" -maxdepth 1 -exec uglifyjs {} -o {} --screw-ie8 --comments '/Kalamuna/' -m -r '$,require,exports' \;;

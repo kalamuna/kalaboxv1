@@ -6,3 +6,4 @@ dist/*
 kalabox.sublime-project
 kalabox.sublime-workspace
 Drupal.sublime-projectcompletions
+src/public/js/dash-compiled.js
