@@ -16,13 +16,11 @@ var fs = require('fs'),
     flow = require('nue').flow,
     as = require('nue').as,
     logger = require('../../logger'),
-    config = require('../../config'),
-    os = require('os');
+    config = require('../../config');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
-    KALABOX64_FILENAME = 'kalabox64.box',
-    KALABOX32_FILENAME = 'kalabox32.box';
+    KALABOX64_FILENAME = 'kalabox64.box';
 
 // State variables:
 var vboxVersion,
@@ -216,11 +214,7 @@ exports.checkbaseBox = function(callback) {
     return;
   }
 
-  if (os.arch() != 'x64') {
-    fs.exists(KALABOX_DIR + KALABOX32_FILENAME, callback);
-  } else {
-    fs.exists(KALABOX_DIR + KALABOX64_FILENAME, callback);
-  }
+  fs.exists(KALABOX_DIR + KALABOX64_FILENAME, callback);
 };
 
 /**

@@ -16,8 +16,7 @@ var flow = require('nue').flow,
     box = require('../box'),
     logger = require('../../logger'),
     config = require('../../config'),
-    sudoRunner = require('../utils/task-runner/sudo-runner'),
-    os = require('os');
+    sudoRunner = require('../utils/task-runner/sudo-runner');
 
 // "Constants":
 var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg',
@@ -29,8 +28,6 @@ var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg',
     KALABOX_DIR = config.get('KALABOX_DIR'),
     KALABOX64_URL = 'http://files.kalamuna.com/kalabox64.box',
     KALABOX64_FILENAME = 'kalabox64.box',
-    KALABOX32_URL = 'http://files.kalamuna.com/kalabox32.box',
-    KALABOX32_FILENAME = 'kalabox32.box',
     KALASTACK_DIR = config.get('KALASTACK_DIR'),
     KALASTACK_URL = config.get('KALASTACK_URL'),
     KALASTACK_FILENAME = 'kalastack.tar.gz',
@@ -334,14 +331,7 @@ var install = flow('installKalabox')(
     if (!this.data.baseboxExists) {
       sendMessage('Downloading Stuff...');
       sendIcon('icon-download', 'kalagreen');
-      if (os.arch() != 'x64') {
-        this.data.kalaboxFilename = KALABOX32_FILENAME;
-        downloadAndReport(KALABOX32_URL, KALABOX_DIR, this.async());
-      } else {
-        this.data.kalaboxFilename = KALABOX64_FILENAME;
-        downloadAndReport(KALABOX64_URL, KALABOX_DIR, this.async());
-      }
-
+      downloadAndReport(KALABOX64_URL, KALABOX_DIR, this.async());
     }
     else {
       decreaseProgressFinal(progressWeight);
@@ -350,7 +340,7 @@ var install = flow('installKalabox')(
   },
   // Verify Kalabox was downloaded.
   function install7() {
-      fs.exists(KALABOX_DIR + this.data.kalaboxFilename, this.async(as(0)));
+    fs.exists(KALABOX_DIR + KALABOX64_FILENAME, this.async(as(0)));
   },
   // Download Kalastack archive from GitHub if download made it.
   function install8(exists) {
@@ -393,7 +383,7 @@ var install = flow('installKalabox')(
     if (response.indexOf('kalabox (virtualbox)') !== -1) {
       this.next();
     } else {
-      exec('vagrant box add kalabox "' + KALABOX_DIR + this.data.kalaboxFilename + '"', {cwd: KALASTACK_DIR}, this.async());
+      exec('vagrant box add kalabox "' + KALABOX_DIR + KALABOX64_FILENAME + '"', {cwd: KALASTACK_DIR}, this.async());
     }
   },
   // Run a sudo command to get authentication.
