@@ -91,6 +91,10 @@ img.kalalogo {
   font-size: 280px;
 }
 
+.icon-site-size {
+  font-size: 150px;
+}
+
 .icon-kalabox {
   width: 280px;
   height: 280px;
@@ -164,10 +168,8 @@ small {
   position: relative;
 }
 
-.site-box .icon-spinner {
-  font-size: 50px;
-  margin-left: 45px;
-  margin-top: 30px;
+.site-box.site-unbuilt a {
+  color: #666;
 }
 
 .site-box .site-label {

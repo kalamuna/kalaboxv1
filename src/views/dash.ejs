@@ -99,12 +99,13 @@
               </div>
             </div>
             <div data-bind="foreach: sites.unbuiltSites">
-              <div class="site-box">
-                <a href="#" data-bind="click: $root.sites.remoteSiteBuilder.onClick">
-                  <img class="centered grayscale" src="/images/kalaboxv2-site.png" height="150" width="150" data-bind="visible: aliasName != $root.sites.siteInProgress()"/>
-                  <i class="icon-spinner icon-spin icon-large" data-bind="visible: aliasName == $root.sites.siteInProgress()"></i>
+              <div class="site-box site-unbuilt">
+                <a href="#" data-bind="click: $root.sites.remoteSiteBuilder.onClick, visible: aliasName != $root.sites.siteInProgress()">
+                  <i class="icon-cloud icon-site-size"/></i>
                   <div class="site-label" data-bind="text: aliasName"></div>
                 </a>
+                <i class="icon-cloud-download icon-site-size kalagreen" data-bind="visible: aliasName == $root.sites.siteInProgress()"></i>
+                <div class="site-label" data-bind="visible: aliasName == $root.sites.siteInProgress()">Downloading...</div>
               </div>
             </div>
           </div>
