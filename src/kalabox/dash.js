@@ -135,6 +135,17 @@ function handleSiteBuild(data) {
   });
 }
 
+function handleSiteRemove(data) {
+  sitesManager.removeSite(data, function(error) {
+    var success = true;
+    if (error) {
+      logger.warn(error.message);
+      success = false;
+    }
+    socket.emit('siteRemoveFinished', {succeeded: success});
+  });
+}
+
 // Module communication handlers:
 
 function handleStart() {
@@ -164,6 +175,7 @@ exports.initialize = function() {
     socket.on('drushUpload', handleDrushUpload);
     socket.on('urlRequest', handleUrlRequest);
     socket.on('siteBuildRequest', handleSiteBuild);
+    socket.on('siteRemoveRequest', handleSiteRemove);
     // If box running, make sure UI knows about it.
     if (box.isRunning()) {
       handleStart();

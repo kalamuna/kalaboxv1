@@ -175,6 +175,10 @@ small {
   bottom: 10px;
 }
 
+.site-operations-button {
+  float: right;
+}
+
 .alert-padright {
   width: 615px;
 }

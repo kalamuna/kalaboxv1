@@ -1,5 +1,5 @@
 /**
- * Manages resources on the host machine
+ * Manages resources on the host machine.
  *
  * Copyright 2013 Kalamuna LLC
  */
@@ -35,6 +35,33 @@ exports.addHostsEntry = flow('addHostsEntry')(
     exec('sudo sh -c "echo \'' + this.data.entry + '\' >> /etc/hosts"', this.async());
   },
   function addHostsEntryEnd(response) {
+    if (this.err) {
+      this.data.callback(this.err);
+      this.err = null;
+    }
+    else {
+      this.data.callback();
+    }
+    this.next();
+  }
+);
+
+/**
+ * Removes an entry from the host machine's /etc/hosts file.
+ *
+ * @param string url
+ *   URL to remove.
+ * @param function callback
+ *   Function to call when finished, sending error if one occured.
+ */
+exports.removeHostsEntry = flow('removeHostsEntry')(
+  function removeHostsEntry0(url, callback) {
+    this.data.callback = callback;
+    url = url.replace('.', '\\.');
+    var sedString = "/" + url + HOSTS_TAG + "/d";
+    sudoRunner.runCommand('sed', ['-i.bak', '-e', sedString, '/etc/hosts'], this.async());
+  },
+  function removeHostsEntryEnd(response) {
     if (this.err) {
       this.data.callback(this.err);
       this.err = null;

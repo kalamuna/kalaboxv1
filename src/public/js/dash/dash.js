@@ -20,7 +20,8 @@ var templates = [
   {name: 'site-build-complete'},
   {name: 'build-remote-site-form'},
   {name: 'site-build-failed'},
-  {name: 'vagrant-error'}
+  {name: 'vagrant-error'},
+  {name: 'site-operations'}
 ];
 
 // Server event handlers:

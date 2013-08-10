@@ -132,6 +132,41 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
   }
 };
 
+/**
+ * Site operations controls.
+ */
+var operations = exports.operations = {
+  selectedSite: null,
+  removeConfirmation: {
+    visible: ko.observable(false)
+  },
+  removalInProgress: ko.observable(false),
+  openControls: function(site) {
+    operations.selectedSite = site;
+    modal.template('site-operations');
+    modal.show();
+  },
+  confirmRemove: function() {
+    this.removeConfirmation.visible(true);
+  },
+  remove: function() {
+    this.removalInProgress(true);
+    this.removeConfirmation.visible(false);
+    socket.emit('siteRemoveRequest', this.selectedSite);
+  },
+  cancelRemove: function() {
+    this.removeConfirmation.visible(false);
+  },
+  removalComplete: function() {
+    getSitesLists();
+    this.removalInProgress(false);
+    modal.close();
+    // @todo Add error handling.
+  }
+};
+operations.removalComplete = operations.removalComplete.bind(operations);
+socket.on('siteRemoveFinished', operations.removalComplete);
+
 // Server event handlers:
 
 socket.on('boxStarted', function(data) {

@@ -1,0 +1,25 @@
+<div class="kala-modal site-operations-modal" data-bind="with: sites.operations">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <h3 class="modal-title">Site Operations</h3>
+  </div>
+  <div class="modal-body">
+    <button class="btn btn-danger" data-bind="click: confirmRemove">
+      Remove Site
+    </button>
+    <div class="alert alert-danger" data-bind="visible: removeConfirmation.visible">
+      <p>This will remove the site's code, database, and files from the Kalabox.
+        Are you sure you want to proceed?</p>
+      <button class="btn btn-danger" data-bind="click: remove">
+        Yes, Remove Site
+      </button>
+      <button class="btn btn-primary" data-bind="click: cancelRemove">
+        Cancel
+      </button>
+    </div>
+    <div class="alert alert-info" data-bind="visible: removalInProgress">
+      <i class="icon-spinner icon-spin icon-large"></i>
+      Removing the site. Please stand by.
+    </div>
+  </div>
+</div>

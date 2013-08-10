@@ -54,9 +54,9 @@ exports.getSitesList = flow('getSitesList')(
  * Builds a site on the virtual machine.
  *
  * @param object options
- *   Site parameters with site (required), siteName, profile, and files
+ *   Site parameters with site (required), siteName, profile, and files.
  * @param function callback
- *   Function to call with error if one occurs
+ *   Function to call with error if one occurs.
  */
 exports.buildSite = flow('buildSite')(
   function buildSite0(options, callback) {
@@ -84,6 +84,41 @@ exports.buildSite = flow('buildSite')(
     host.addHostsEntry(siteId + ".kala", this.async());
   },
   function buildSiteEnd() {
+    if (this.err) {
+      this.data.callback(this.err);
+      this.err = null;
+    }
+    else {
+      this.data.callback();
+    }
+    this.next();
+  }
+);
+
+/**
+ * Removes a site from the virtual machine.
+ *
+ * @param object site
+ *   Site object with aliasName (required) and builtFrom (for remote sites).
+ * @param function callback
+ *   Function to call with error if one occurs.
+ */
+exports.removeSite = flow('removeSite')(
+  function removeSite0(site, callback) {
+    this.data.callback = callback;
+    this.data.site = site.uri;
+    // Run command against VM via Vagrant.
+    var alias = site.aliasName;
+    if (site.builtFrom) {
+      alias = site.builtFrom;
+    }
+    exec('vagrant ssh -c \'drush crush ' + alias + '\'', {cwd: KALASTACK_DIR}, this.async());
+  },
+  function removeSite1(stdout, stderr) {
+    // Remove entry from /etc/hosts.
+    host.removeHostsEntry(this.data.site, this.async());
+  },
+  function removeSiteEnd() {
     if (this.err) {
       this.data.callback(this.err);
       this.err = null;
