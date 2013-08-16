@@ -21,7 +21,8 @@ var templates = [
   {name: 'build-remote-site-form'},
   {name: 'site-build-failed'},
   {name: 'vagrant-error'},
-  {name: 'site-operations'}
+  {name: 'remove-site-confirmation'},
+  {name: 'refresh-site-form'}
 ];
 
 // Server event handlers:

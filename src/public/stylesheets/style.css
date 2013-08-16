@@ -40,6 +40,10 @@ img.kalalogo {
   margin-top: 10px;
 }
 
+a:hover > i {
+  text-decoration: none;
+}
+
 /* Start Screen */
 
 .kalatron {
@@ -93,6 +97,7 @@ img.kalalogo {
 
 .icon-site-size {
   font-size: 150px;
+  text-align: center;
 }
 
 .icon-kalabox {
@@ -168,6 +173,10 @@ small {
   position: relative;
 }
 
+.site-box a i.icon-site-size {
+  display: block;
+}
+
 .site-box.site-unbuilt a {
   color: #666;
 }
@@ -179,6 +188,7 @@ small {
 
 .site-operations-button {
   float: right;
+  cursor: pointer;
 }
 
 .alert-padright {
@@ -208,7 +218,8 @@ small {
   overflow-y: hidden;
 }
 
-.modal-content {
+.modal-dialog {
+  margin: 0 auto;
   width: 400px;
 }
 
@@ -243,6 +254,3 @@ td.alias-td {
   color: #ccc;
   padding: 0 10px;
 }
-
-
-

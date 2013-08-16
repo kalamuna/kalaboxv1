@@ -129,3 +129,54 @@ exports.removeSite = flow('removeSite')(
     this.next();
   }
 );
+
+/**
+ * Refreshes a site on the virtual machine.
+ *
+ * @param object options
+ *   Refresh parameters with alias (required), refreshCode, refreshData, and refreshFiles.
+ * @param function callback
+ *   Function to call with error if one occurs.
+ */
+exports.refreshSite = flow('refreshSite')(
+  function refreshSite0(options, callback) {
+    this.data.options = options;
+    this.data.callback = callback;
+    this.data.alias = options.alias;
+    // Refresh code if requested.
+    if (options.refreshCode) {
+      exec('vagrant ssh -c \'drush code ' + options.alias + '\'', {cwd: KALASTACK_DIR}, this.async());
+    }
+    else {
+      this.next();
+    }
+  },
+  function refreshSite1() {
+    // Refresh database if requested.
+    if (this.data.options.refreshData) {
+      exec('vagrant ssh -c \'drush data ' + this.data.alias + '\'', {cwd: KALASTACK_DIR}, this.async());
+    }
+    else {
+      this.next();
+    }
+  },
+  function refreshSite2() {
+    // Refresh files if requested.
+    if (this.data.options.refreshFiles) {
+      exec('vagrant ssh -c \'drush files ' + this.data.alias + '\'', {cwd: KALASTACK_DIR}, this.async());
+    }
+    else {
+      this.next();
+    }
+  },
+  function refreshSiteEnd() {
+    if (this.err) {
+      this.data.callback(this.err);
+      this.err = null;
+    }
+    else {
+      this.data.callback();
+    }
+    this.next();
+  }
+);

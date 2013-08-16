@@ -92,20 +92,36 @@
             <div data-bind="foreach: sites.builtSites">
               <div class="site-box">
                 <a href="#" data-bind="click: $root.sites.openSite">
-                  <img class="centered" src="/images/kalaboxv2-site.png" height="150" width="150" />
+                  <img class="centered" src="/images/kalaboxv2-site.png" height="150" width="150" data-bind="visible: isIdle">
+                  <i class="icon-refresh icon-site-size" data-bind="visible: refreshing"></i>
+                  <i class="icon-trash icon-site-size" data-bind="visible: removing"></i>
                   <div class="site-label" data-bind="text: name"></div>
-                  <i class="icon-cogs site-operations-button" data-bind="click: $root.sites.operations.openControls, clickBubble: false"></i>
                 </a>
+                <div class="dropdown">
+                  <i class="icon-cogs site-operations-button" data-toggle="dropdown"></i>
+                  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+                    <li role="presentation" data-bind="visible: isRemote">
+                      <a role="menuitem" tabindex="-1" href="#" data-bind="click: $root.sites.refresher.startRefresh">
+                        <i class="icon-refresh"></i> Refresh
+                      </a>
+                    </li>
+                    <li role="presentation">
+                      <a role="menuitem" tabindex="-1" href="#" data-bind="click: $root.sites.remover.confirmRemove">
+                        <i class="icon-trash"></i> Remove
+                      </a>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div data-bind="foreach: sites.unbuiltSites">
               <div class="site-box site-unbuilt">
-                <a href="#" data-bind="click: $root.sites.remoteSiteBuilder.onClick, visible: aliasName != $root.sites.siteInProgress()">
+                <a href="#" data-bind="click: $root.sites.remoteSiteBuilder.onClick, visible: building() == false">
                   <i class="icon-cloud icon-site-size"/></i>
                   <div class="site-label" data-bind="text: aliasName"></div>
                 </a>
-                <i class="icon-cloud-download icon-site-size kalagreen" data-bind="visible: aliasName == $root.sites.siteInProgress()"></i>
-                <div class="site-label" data-bind="visible: aliasName == $root.sites.siteInProgress()">Downloading...</div>
+                <i class="icon-cloud-download icon-site-size kalagreen" data-bind="visible: building"></i>
+                <div class="site-label" data-bind="visible: building">Downloading...</div>
               </div>
             </div>
           </div>
@@ -160,6 +176,8 @@
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/libs/knockout-2.2.1.js"></script>
+<script src="/js/libs/bootstrap-transition.js"></script>
 <script src="/js/libs/bootstrap-modal.js"></script>
 <script src="/js/libs/bootstrap-alert.js"></script>
+<script src="/js/libs/bootstrap-dropdown.js"></script>
 <script src="/js/dash-compiled.js"></script>

@@ -13,8 +13,47 @@ var builtSites = exports.builtSites = ko.observableArray(),
     unbuiltSites = exports.unbuiltSites = ko.observableArray();
 
 // State variables:
-var buildingInProgress = exports.buildingInProgress = ko.observable(false),
-    siteInProgress = exports.siteInProgress = ko.observable('');
+var buildingInProgress = exports.buildingInProgress = ko.observable(false);
+
+/**
+ * Determines if the site is idle (not building, being removed, etc.).
+ *
+ * @return bool
+ *   True or false depending on state.
+ */
+function isSiteIdle() {
+  return !this.refreshing() && !this.removing();
+}
+
+/**
+ * Determines if the site was built from a remote site.
+ *
+ * @return bool
+ *   True or false depending on state.
+ */
+function isSiteRemote() {
+  return typeof this.builtFrom == 'string';
+}
+
+/**
+ * Adds members to site objects.
+ *
+ * @param object site
+ *   The site to modify.
+ */
+function processSite(site) {
+  site.building = ko.observable(false);
+  site.removing = ko.observable(false);
+  site.refreshing = ko.observable(false);
+  site.isIdle = ko.computed({
+    read: isSiteIdle,
+    owner: site
+  });
+  site.isRemote = ko.computed({
+    read: isSiteRemote,
+    owner: site
+  });
+}
 
 /**
  * Loads the lists of running sites and available sites from the box.
@@ -22,6 +61,8 @@ var buildingInProgress = exports.buildingInProgress = ko.observable(false),
 var getSitesLists = exports.getSitesLists = function() {
   var connection = $.getJSON('/sites-list');
   connection.done(function(data) {
+    data.builtSites.forEach(processSite);
+    data.unbuiltSites.forEach(processSite);
     builtSites(data.builtSites);
     unbuiltSites(data.unbuiltSites);
   });
@@ -92,7 +133,6 @@ var newSiteForm = exports.newSiteForm = {
     }
     modal.show();
     newSiteButton.disabled(false);
-    siteInProgress('');
   },
   openForm: function() {
     // Load form into modal from template.
@@ -113,6 +153,7 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
     remoteSiteBuilder.selectedSite = site;
     // Ask if user wants to download files.
     modal.template('build-remote-site-form');
+    remoteSiteBuilder.shouldDownloadFiles(false);
     modal.show();
   },
   onSubmit: function() {
@@ -121,7 +162,7 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
     var remoteSite = {
       site: aliasName
     };
-    siteInProgress(aliasName);
+    this.selectedSite.building(true);
     if (this.shouldDownloadFiles()) {
       remoteSite.files = true;
       this.shouldDownloadFiles(false);
@@ -133,39 +174,60 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
 };
 
 /**
- * Site operations controls.
+ * Site remover.
  */
-var operations = exports.operations = {
+var remover = exports.remover = {
   selectedSite: null,
-  removeConfirmation: {
-    visible: ko.observable(false)
-  },
-  removalInProgress: ko.observable(false),
-  openControls: function(site) {
-    operations.selectedSite = site;
-    modal.template('site-operations');
+  confirmRemove: function(site) {
+    remover.selectedSite = site;
+    modal.template('remove-site-confirmation');
     modal.show();
   },
-  confirmRemove: function() {
-    this.removeConfirmation.visible(true);
-  },
   remove: function() {
-    this.removalInProgress(true);
-    this.removeConfirmation.visible(false);
-    socket.emit('siteRemoveRequest', this.selectedSite);
-  },
-  cancelRemove: function() {
-    this.removeConfirmation.visible(false);
-  },
-  removalComplete: function() {
-    getSitesLists();
-    this.removalInProgress(false);
+    remover.selectedSite.removing(true);
     modal.close();
+    socket.emit('siteRemoveRequest', ko.toJS(remover.selectedSite));
+  },
+  removalComplete: function(data) {
+    getSitesLists();
     // @todo Add error handling.
   }
 };
-operations.removalComplete = operations.removalComplete.bind(operations);
-socket.on('siteRemoveFinished', operations.removalComplete);
+remover.removalComplete = remover.removalComplete.bind(remover);
+socket.on('siteRemoveFinished', remover.removalComplete);
+
+/**
+ * Site refresher.
+ */
+var refresher = exports.refresher = {
+  selectedSite: null,
+  refreshCode: ko.observable(false),
+  refreshData: ko.observable(false),
+  refreshFiles: ko.observable(false),
+  startRefresh: function(site) {
+    refresher.selectedSite = site;
+    modal.template('refresh-site-form');
+    refresher.refreshCode(false);
+    refresher.refreshData(false);
+    refresher.refreshFiles(false);
+    modal.show();
+  },
+  refresh: function() {
+    var site = refresher.selectedSite;
+    site.refreshing(true);
+    var refreshRequest = ko.toJS(refresher);
+    delete refreshRequest.selectedSite;
+    refreshRequest.alias = site.builtFrom;
+    socket.emit('siteRefreshRequest', refreshRequest);
+    modal.close();
+  },
+  refreshComplete: function(data) {
+    refresher.selectedSite.refreshing(false);
+    // @todo Add error handling.
+  }
+};
+refresher.refreshComplete = refresher.refreshComplete.bind(refresher);
+socket.on('siteRefreshFinished', refresher.refreshComplete);
 
 // Server event handlers:
 
