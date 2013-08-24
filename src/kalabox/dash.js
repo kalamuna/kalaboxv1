@@ -131,7 +131,7 @@ function handleSiteBuild(data) {
       logger.warn(error.message);
       success = false;
     }
-    socket.emit('siteBuildFinished', {succeeded: success});
+    socket.emit('siteBuildFinished', {succeeded: success, site: data.site});
   });
 }
 
@@ -142,7 +142,7 @@ function handleSiteRemove(data) {
       logger.warn(error.message);
       success = false;
     }
-    socket.emit('siteRemoveFinished', {succeeded: success});
+    socket.emit('siteRemoveFinished', {succeeded: success, site: data.aliasName});
   });
 }
 
@@ -153,7 +153,7 @@ function handleSiteRefresh(data) {
       logger.warn(error.message);
       success = false;
     }
-    socket.emit('siteRefreshFinished', {succeeded: success});
+    socket.emit('siteRefreshFinished', {succeeded: success, site: data.alias});
   });
 }
 

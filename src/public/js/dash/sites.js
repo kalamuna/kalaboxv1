@@ -106,24 +106,41 @@ var newSiteForm = exports.newSiteForm = {
   site: ko.observable(),
   profile: ko.observable(),
   profiles: ko.observableArray(drupalProfiles),
+  sitesInProgress: {},
   onSubmit: function() {
+    // Add new site to in progress.
+    var name = this.site(),
+        alias = name + '.kala';
+    this.sitesInProgress[name] = {
+      aliasName: alias,
+      webRoot: '/var/www/' + name,
+      uri: alias,
+      name: this.siteName()
+    };
+    // Send request and update UI.
     socket.emit('siteBuildRequest', ko.toJS(this));
     newSiteButton.disabled(true);
     buildingInProgress(true);
     modal.close();
     // @todo Probably a better way to do this?
     $('#dashtabs a[href="#sites"]').tab('show');
-  },
-  onComplete: function(data) {
     // Reset form state.
-    buildingInProgress(false);
     this.siteName('');
     this.site('');
     this.profile('');
+  },
+  onComplete: function(data) {
+    var site = data.site,
+        siteObject = this.sitesInProgress[site];
+    // Make sure this is a site we're tracking.
+    if (!siteObject) {
+      return;
+    }
     // If build successful...
     if (data.succeeded) {
-      // Refresh sites list.
-      getSitesLists();
+      // Add new site to the list.
+      processSite(siteObject);
+      builtSites.unshift(siteObject);
       // Alert the user.
       modal.template('site-build-complete');
     }
@@ -131,8 +148,10 @@ var newSiteForm = exports.newSiteForm = {
     else {
       modal.template('site-build-failed');
     }
+    delete this.sitesInProgress[site];
     modal.show();
     newSiteButton.disabled(false);
+    buildingInProgress(false);
   },
   openForm: function() {
     // Load form into modal from template.
@@ -140,8 +159,7 @@ var newSiteForm = exports.newSiteForm = {
     modal.show();
   }
 };
-newSiteForm.onComplete = newSiteForm.onComplete.bind(newSiteForm);
-socket.on('siteBuildFinished', newSiteForm.onComplete);
+socket.on('siteBuildFinished', newSiteForm.onComplete.bind(newSiteForm));
 
 /**
  * Build remote site form.
@@ -149,6 +167,7 @@ socket.on('siteBuildFinished', newSiteForm.onComplete);
 var remoteSiteBuilder = exports.remoteSiteBuilder = {
   shouldDownloadFiles: ko.observable(false),
   selectedSite: null,
+  sitesInProgress: {},
   onClick: function(site) {
     remoteSiteBuilder.selectedSite = site;
     // Ask if user wants to download files.
@@ -157,50 +176,104 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
     modal.show();
   },
   onSubmit: function() {
-    modal.close();
-    var aliasName = this.selectedSite.aliasName;
+    var selectedSite = this.selectedSite;
+    var aliasName = selectedSite.aliasName;
     var remoteSite = {
       site: aliasName
     };
-    this.selectedSite.building(true);
+    selectedSite.building(true);
     if (this.shouldDownloadFiles()) {
       remoteSite.files = true;
       this.shouldDownloadFiles(false);
     }
+    // Add site to in progress.
+    this.sitesInProgress[aliasName] = selectedSite;
+    // Send request and update UI.
     socket.emit('siteBuildRequest', remoteSite);
     newSiteButton.disabled(true);
-    buildingInProgress(true);
+    modal.close();
+  },
+  onComplete: function(data) {
+    var site = data.site,
+        siteObject = this.sitesInProgress[site];
+    // Make sure this is a site we're tracking.
+    if (!siteObject) {
+      return;
+    }
+    // If build successful...
+    if (data.succeeded) {
+      // Add site to the built list and remove from unbuilt.
+      unbuiltSites.remove(siteObject);
+      siteObject.builtFrom = siteObject.aliasName;
+      var boxName = siteObject.aliasName.split('.');
+      boxName.pop();
+      boxName = boxName.join('.');
+      siteObject.aliasName = siteObject.uri = boxName + '.kala';
+      siteObject.webRoot = '/var/www/' + boxName;
+      siteObject.building(false);
+      builtSites.unshift(siteObject);
+      // Alert the user.
+      modal.template('site-build-complete');
+    }
+    // If build unsuccessful...
+    else {
+      modal.template('site-build-failed');
+    }
+    delete this.sitesInProgress[site];
+    modal.show();
+    newSiteButton.disabled(false);
   }
 };
+socket.on('siteBuildFinished', remoteSiteBuilder.onComplete.bind(remoteSiteBuilder));
 
 /**
  * Site remover.
  */
 var remover = exports.remover = {
   selectedSite: null,
+  sitesInProgress: {},
   confirmRemove: function(site) {
     remover.selectedSite = site;
     modal.template('remove-site-confirmation');
     modal.show();
   },
   remove: function() {
-    remover.selectedSite.removing(true);
+    var selectedSite = remover.selectedSite;
+    selectedSite.removing(true);
+    remover.sitesInProgress[selectedSite.aliasName] = selectedSite;
     modal.close();
-    socket.emit('siteRemoveRequest', ko.toJS(remover.selectedSite));
+    socket.emit('siteRemoveRequest', ko.toJS(selectedSite));
   },
   removalComplete: function(data) {
-    getSitesLists();
-    // @todo Add error handling.
+    var site = data.site,
+        siteObject = this.sitesInProgress[site];
+    // Make sure this is a site we're tracking.
+    if (!siteObject) {
+      return;
+    }
+    // If removal successful...
+    if (data.succeeded) {
+      builtSites.remove(siteObject);
+      // If site was remote, add it back to the unbuilt list.
+      if (siteObject.builtFrom) {
+        siteObject.aliasName = siteObject.builtFrom;
+        unbuiltSites.push(siteObject);
+      }
+    }
+    else {
+      // @todo Add error handling.
+    }
+    delete this.sitesInProgress[site];
   }
 };
-remover.removalComplete = remover.removalComplete.bind(remover);
-socket.on('siteRemoveFinished', remover.removalComplete);
+socket.on('siteRemoveFinished', remover.removalComplete.bind(remover));
 
 /**
  * Site refresher.
  */
 var refresher = exports.refresher = {
   selectedSite: null,
+  sitesInProgress: {},
   refreshCode: ko.observable(false),
   refreshData: ko.observable(false),
   refreshFiles: ko.observable(false),
@@ -218,16 +291,28 @@ var refresher = exports.refresher = {
     var refreshRequest = ko.toJS(refresher);
     delete refreshRequest.selectedSite;
     refreshRequest.alias = site.builtFrom;
+    refresher.sitesInProgress[site.builtFrom] = site;
     socket.emit('siteRefreshRequest', refreshRequest);
     modal.close();
   },
   refreshComplete: function(data) {
-    refresher.selectedSite.refreshing(false);
-    // @todo Add error handling.
+    var site = data.site,
+        siteObject = this.sitesInProgress[site];
+    // Make sure this is a site we're tracking.
+    if (!siteObject) {
+      return;
+    }
+    // If refresh successful...
+    if (data.succeeded) {
+      siteObject.refreshing(false);
+    }
+    else {
+      // @todo Add error handling.
+    }
+    delete this.sitesInProgress[site];
   }
 };
-refresher.refreshComplete = refresher.refreshComplete.bind(refresher);
-socket.on('siteRefreshFinished', refresher.refreshComplete);
+socket.on('siteRefreshFinished', refresher.refreshComplete.bind(refresher));
 
 // Server event handlers:
 

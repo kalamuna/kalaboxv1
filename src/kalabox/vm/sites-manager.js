@@ -112,6 +112,10 @@ exports.removeSite = flow('removeSite')(
     if (site.builtFrom) {
       alias = site.builtFrom;
     }
+    else {
+      // Remove '.kala' from site name.
+      alias = alias.replace('.kala', '');
+    }
     exec('vagrant ssh -c \'drush crush ' + alias + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
   function removeSite1(stdout, stderr) {
