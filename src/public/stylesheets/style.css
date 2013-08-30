@@ -223,6 +223,10 @@ small {
   width: 400px;
 }
 
+.installer-modal .modal-dialog {
+  width: 600px;
+}
+
 /* Alias Upload Form */
 
 .alias-upload-container {

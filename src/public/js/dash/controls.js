@@ -103,6 +103,7 @@ socket.on('boxStopped', function(data) {
 });
 
 socket.on('boxStopCanceled', function(data) {
+  powerButton.label('Stop');
   powerButton.disabled(false);
   sshButton.disabled(false);
   sites.sitesButton.visible(true);
@@ -110,6 +111,7 @@ socket.on('boxStopCanceled', function(data) {
 });
 
 socket.on('boxStartCanceled', function(data) {
+  powerButton.label('Start');
   powerButton.disabled(false);
 });
 

@@ -226,6 +226,10 @@ var installDMG = flow('installDMG')(
  * Route handler that installs Kalabox.
  */
 var install = flow('installKalabox')(
+  // Get asking for the user's password out of the way.
+  function installGetPassword() {
+    sudoRunner.runCommand('echo', ['We needs the passwordz...'], this.async());
+  },
   // Check if VBox and Vagrant are installed.
   parallel('installGetVersions')(
     function install0() {
