@@ -6,9 +6,10 @@
     </div>
 
     <div class="modal-body">
+      <div class="alert alert-danger" data-bind="visible: errorMessages() !== '', html: errorMessages"></div>
       <label for="new-site-name">Site Name</label>
       <input type="text" class="form-control" id="new-site-name" name="new-site-name" data-bind="value: siteName">
-      <label for="new-site-id">URL name</label>
+      <label for="new-site-id">URL Name</label>
       <input type="text" title="Only lowercase letters, numbers, and dashes." class="form-control" name="new-site-id" id="new-site-id" data-bind="value: site">
       <div class="description">
         This should contain only lowercase letters, numbers, and dashes.

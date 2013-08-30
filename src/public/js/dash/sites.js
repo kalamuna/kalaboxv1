@@ -108,28 +108,29 @@ var newSiteForm = exports.newSiteForm = {
   profiles: ko.observableArray(drupalProfiles),
   validationCriteria: [
     {
-      name: 'new-site-id',
-      rules: 'callback_check_site_id',
-    },
-    {
       name: 'new-site-name',
       display: 'Site Name',
       rules: 'required'
+    },
+    {
+      name: 'new-site-id',
+      display: 'URL Name',
+      rules: 'required|callback_check_site_id',
     }
   ],
+  errorMessages: ko.observable(''),
+  siteIdRegex: /[^a-z0-9-]/,
   submit: function(errors, event) {
     event.preventDefault();
     // If validation failed, stop and display errors.
     if (errors.length > 0) {
       var errorString = '';
-
       for (var i = 0, errorLength = errors.length; i < errorLength; i++) {
-          errorString += errors[i].message + '<br />';
+        errorString += errors[i].message + '<br>';
       }
-
-      $('<div class="alert alert-danger">' + errorString + '</div>').insertBefore('.modal-body');console.log('No!');
+      this.errorMessages(errorString);
       return;
-    }console.log('Yes!');
+    }
     // Send request and update the UI.
     socket.emit('siteBuildRequest', ko.toJS(this));
     newSiteButton.disabled(true);
@@ -162,17 +163,17 @@ var newSiteForm = exports.newSiteForm = {
     // Load form into modal from template.
     modal.template('new-site-form');
     modal.show();
+    newSiteForm.errorMessages('');
     newSiteForm.validateForm();
   },
   validateForm: function() {
     // Validate form before proceeding.
     var validator = new FormValidator('new-site-form', this.validationCriteria, this.submit.bind(this));
-    validator.registerCallback('check_site_id', function(value) {
-      console.log('THIS RAN');
-      var patt = new RegExp('[0-9a-z-]*$');
-      console.log(patt.test(value));
-      return patt.test(value);
-    }).setMessage('check_site_id', 'Please set a site URL that only has lowercase letters, numbers, and dashes.');
+    validator.registerCallback('check_site_id', this.validateSiteId.bind(this))
+      .setMessage('check_site_id', 'Please set a URL Name that only has lowercase letters, numbers, and dashes.');
+  },
+  validateSiteId: function(value) {
+    return !this.siteIdRegex.test(value);
   }
 };
 newSiteForm.onComplete = newSiteForm.onComplete.bind(newSiteForm);
