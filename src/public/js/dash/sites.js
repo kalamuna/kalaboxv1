@@ -107,7 +107,31 @@ var newSiteForm = exports.newSiteForm = {
   profile: ko.observable(),
   profiles: ko.observableArray(drupalProfiles),
   sitesInProgress: {},
-  onSubmit: function() {
+  validationCriteria: [
+    {
+      name: 'new-site-name',
+      display: 'Site Name',
+      rules: 'required'
+    },
+    {
+      name: 'new-site-id',
+      display: 'URL Name',
+      rules: 'required|callback_check_site_id',
+    }
+  ],
+  errorMessages: ko.observable(''),
+  siteIdRegex: /[^a-z0-9-]/,
+  submit: function(errors, event) {
+    event.preventDefault();
+    // If validation failed, stop and display errors.
+    if (errors.length > 0) {
+      var errorString = '';
+      for (var i = 0, errorLength = errors.length; i < errorLength; i++) {
+        errorString += errors[i].message + '<br>';
+      }
+      this.errorMessages(errorString);
+      return;
+    }
     // Add new site to in progress.
     var name = this.site(),
         alias = name + '.kala';
@@ -117,7 +141,7 @@ var newSiteForm = exports.newSiteForm = {
       uri: alias,
       name: this.siteName()
     };
-    // Send request and update UI.
+    // Send request and update the UI.
     socket.emit('siteBuildRequest', ko.toJS(this));
     newSiteButton.disabled(true);
     buildingInProgress(true);
@@ -157,6 +181,17 @@ var newSiteForm = exports.newSiteForm = {
     // Load form into modal from template.
     modal.template('new-site-form');
     modal.show();
+    newSiteForm.errorMessages('');
+    newSiteForm.validateForm();
+  },
+  validateForm: function() {
+    // Validate form before proceeding.
+    var validator = new FormValidator('new-site-form', this.validationCriteria, this.submit.bind(this));
+    validator.registerCallback('check_site_id', this.validateSiteId.bind(this))
+      .setMessage('check_site_id', 'Please set a URL Name that only has lowercase letters, numbers, and dashes.');
+  },
+  validateSiteId: function(value) {
+    return !this.siteIdRegex.test(value);
   }
 };
 socket.on('siteBuildFinished', newSiteForm.onComplete.bind(newSiteForm));

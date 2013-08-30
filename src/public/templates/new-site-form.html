@@ -1,4 +1,4 @@
-<form data-bind="with: sites.newSiteForm">
+<form id="new-site-form" name="new-site-form" data-bind="with: sites.newSiteForm">
   <div class="kala-modal new-site-modal">
     <div class="modal-header">
       <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
@@ -6,10 +6,11 @@
     </div>
 
     <div class="modal-body">
+      <div class="alert alert-danger" data-bind="visible: errorMessages() !== '', html: errorMessages"></div>
       <label for="new-site-name">Site Name</label>
-      <input type="text" class="form-control" id="new-site-name" data-bind="value: siteName">
-      <label for="new-site-id">URL name</label>
-      <input type="text" class="form-control" id="new-site-id" data-bind="value: site">
+      <input type="text" class="form-control" id="new-site-name" name="new-site-name" data-bind="value: siteName">
+      <label for="new-site-id">URL Name</label>
+      <input type="text" title="Only lowercase letters, numbers, and dashes." class="form-control" name="new-site-id" id="new-site-id" data-bind="value: site">
       <div class="description">
         This should contain only lowercase letters, numbers, and dashes.
         Once built, your new site will be available at <em>thisname</em>.kala
@@ -21,7 +22,7 @@
     </div>
 
     <div class="modal-footer">
-      <input type="submit" class="btn btn-success" data-bind="click: onSubmit" value-="Go go go!">
+      <input type="submit" class="btn btn-success" value="Go go go!">
       <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Cancel</button>
     </div>
   </div>
