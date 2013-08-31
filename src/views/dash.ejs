@@ -83,7 +83,11 @@
 
         <!-- My Sites Tab -->
         <div class="tab-pane" id="sites">
-
+          <div class="no-sites alert alert-info" data-bind="visible: sites.builtSites().length == 0 && sites.unbuiltSites().length == 0">
+            Looks like you don't have any sites yet. How sad! But don't fret. You can pull down any of your
+            sites from Pantheon after you upload your aliases file in the Configure tab. Or, you can spin up
+            a fresh new bundle of Drupal goodness by clicking the plus icon in the upper right.
+          </div>
           <div class="alert alert-info alert-padright" data-bind="visible: sites.buildingInProgress">
             <i class="icon-spinner icon-spin icon-large"></i>
             Your site's coming right up! Please Standby.
