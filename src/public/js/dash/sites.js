@@ -70,6 +70,36 @@ var getSitesLists = exports.getSitesLists = function() {
 };
 
 /**
+ * Retrieves a site's info from the aliases list.
+ *
+ * @param string type
+ *   Whether to look for a 'built' site or an 'unbuilt' site.
+ * @param string alias
+ *   The alias specifying which site to retrieve.
+ *
+ * @return object
+ *   A promise that will resolve with the site's info if lookup succeeds.
+ */
+function getSiteInfo(type, alias) {
+  var result = new $.Deferred(),
+      connection = $.getJSON('/sites-list');
+  connection.done(function(data) {
+    var sites = (type == 'built') ? data.builtSites : data.unbuiltSites;
+    for (var i = 0, length = sites.length; i < length; i++) {
+      if (sites[i].aliasName == alias) {
+        result.resolve(sites[i]);
+        return;
+      }
+    }
+    result.reject();
+  });
+  connection.fail(function() {
+    result.reject();
+  });
+  return result;
+}
+
+/**
  * Requests that backend open a site in user's default browser.
  *
  * @param object site
@@ -246,7 +276,12 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
       siteObject.aliasName = siteObject.uri = boxName + '.kala';
       siteObject.webRoot = '/var/www/' + boxName;
       siteObject.building(false);
-      builtSites.unshift(siteObject);
+      getSiteInfo('built', siteObject.aliasName).done(function(info) {
+        if (info.name) {
+          siteObject.name = info.name;
+        }
+        builtSites.unshift(siteObject);
+      });
       // Alert the user.
       modal.template('site-build-complete');
     }
