@@ -1,80 +1,53 @@
-# OS X AppJs Bootstrap
+# Installing Kalabox
 =========================
+Before installing, please check the Requirements (listed below).
 
-This is a boilerplate AppJS desktop application for OS X using Express, Twitter Bootstrap, and Font Awesome.
-Please keep in mind that this is a little subject to being dated with regard to keeping up with the latest
-versions of Express, Twitter Bootstrap, and Font Awesome...But that doesn't mean you couldn't update them
-yourself after cloning this and it also doesn't mean this doesn't serve as a good start for your project.
+1. Double click on the installer.
+2. Agree to the terms of service.
+3. Rejoice.
 
-For more information about AppJs, see [AppJs.org](http://www.appjs.org)
+NOTE: Apple may warn you that Kalabox is "from an unidentified developer." That's because we're hip with the indie crowd. To get around the warning (until we sell our souls to Apple), either right-click on Kalabox and select "Open," or, if you're tired of Apple's bullshit, follow these directions to disable Gatekeeper.
 
-## Quickstart
+## Requirements
 
-You can clone this project and simply open your terminal and type in your terminal:
-```./bundle.sh -open```
+1. Mac OSX 10.7+
 
-That will bundle and launch the little default application for you, but you really won't see much.
-However, what you will be looking at is actually quite a robust application.
-Just about anything you can do with Node.js you'll be able to do here. You will be running the
-express framework listening on port 51686. Of course this can be changed along with many other things.
+  Kalabox has been tested mostly on Mac OS X 10.8 and partially tested on 10.7. It may work on 10.6 or lower. If you try it out on an older OS X version, please share your experience.
 
-## Next Steps
+2. 64-bit architecture
 
-You'll want to go into the ```src``` directory and start building your application.
-Checkout the ```app.js``` file first. In there you will see options to change file menus in your
-application along with the default port your app will listen on (which you may want to change to
-avoid conflicts with other things) and more.
+  For now, Kalabox supports 64-bit operating systems only. So if you're on a 32-bit machine, just hang tight, as support is coming soon!
 
-You can of course install any node module you like with npm just like normal. Just make sure
-you are running all that in the ```src``` directory. Everything goes in there.
+3. Vagrant 1.2.2 and VirtualBox 4.2.8
 
-You can change the default application icon by making your own .icns file and replacing ```src/app.icns```
-Just a small note about the application icons...OS X will cache them. I tried to make the bundle script
-remove that cache best I could, but you may need to take other measures. Sorry.
+  Kalabox needs Vagrant 1.2.2 and VirtualBox 4.2.8 to run. It will install them for you if you don't have them, or upgrade them for you if you're on an older versions.
 
-Be sure to look at the help for the bundle script: ```./bundle.sh --help``` for more options.
-Alternatively, you can change the Info.plist file manually (or with XCode or something) after
-bundling the application if you prefer.
+4. 1GB+ of RAM
 
-## Misc. Notes
+  Kalabox dynamically allocates memory to itself based on your available RAM. It needs at least 1GB available to run.
 
-I included a ```.noSelect``` class in the default stylesheet (and in the .less file). You can apply
-this to elements you want to disable from being highlighted when selected. This is quite useful for text
-so when a user tries to click and drag to select, they won't be able to. There will be no blue (or whatever
-color your CSS made it) highlight color all over.
+## Known Issues
 
-Don't want to build the application bundle to test things out? No problem, run this command:
-```bin/node --harmony src/app```
+The Mac OS X firewall can interfere with the underlying technologies, Vagrant and NFS, that Kalabox uses. Check out these instructions for tips on using Kalabox with your firewall. Please refer to:
+https://kalamuna.atlassian.net/wiki/display/kalabox/Troubleshooting+Kalabox+Problems
 
-You may even want to run a build command from your IDE to execute that. For example, in Sublimie Text 2,
-I now simply press Command-B and up pops the application with all my recent changes. It even kills the old
-process first so I don't need to close the app before launching it again. The only thing I haven't perfected
-there was to bring the app to the foreground. I tried AppleScirpt via osascript but I couldn't get it to work.
-Anyway, I've included a "test.sh" script for you to use either from the command line or called by your IDE.
+## Connecting with Pantheon
 
-## Why?
+Kalabox can connect to Pantheon and download sites you have on your Pantheon account. To download a site from Pantheon, follow these steps: Download your site aliases by visiting "Your Sites" on Pantheon and clicking the "Download all Drush aliases" button.
 
-I wasn't totally satisified with AppJs out of the box. I felt that it didn't leave me with enough to
-get started building desktop applications with relative ease. Well, they would work, but would need
-to be launched from a command prompt or terminal. I saw the skeleton .app file for OS X bundles, but
-it took me a while to wrap my head around how they needed to be packaged. The shell script provided
-in the repository for AppJs simply didn't work - especially if you had spaces in your directory name.
-However, thanks to hard work from all of those folks it did lead me to figuring it out.
+In Kalabox, go to the Configure tab and drag-and-drop the site aliases file you downloaded to the upload widget.
 
-I didn't want to exactly fork their repo and submit back pull requests because I wanted to take things
-a slightly more dramatic direction. I wanted to include Twitter Bootstrap in my application skeleton
-and I also wanted a more robust (and OS X specific) bundle script.
+Make sure that you have an SSH key that's connected to your Pantheon account on your computer in your home directory's .ssh folder. If you don't Kalabox will generate one for you and you'll need to add it to your Pantheon account. See: http://helpdesk.getpantheon.com/customer/portal/articles/361246-loading-ssh-keys
 
-In the future, it would be nice to expand upon this to include scripts that would automatically
-build distributable packages for Windows and Linux as well. For now, I'm just focusing on OS X.
+Go to the "My Sites" tab in Kalabox and download away! If your sites don't appear, try restarting Kalabox.
 
-## How?
+If you're interested in interacting with your Pantheon sites directly from the command line, you can use some of the handy Drush commands that come packaged with Kalastack.
+https://github.com/kalamuna/kalastack
 
-AppJS is pretty cool. It works by using Chromium and a 32-bit (currently) version of node for OS X
-and providing a wrapper for it all. This all runs in --harmony mode and essentially you've got
-a web browser looking at your Node.js application without all the navigation controls, etc.
-You can still hit the F12 key to bring up the developer inspector though.
-Yes, that can be disabled too.
+## Troubleshooting Installation
 
-The application is 60mb+ in size, so it's not exactly the leanest...But also not the beefiest
-thing I've seen. Though it does come with that overhead before your application code and assets.
+If you installation fails you should report the failure to errors@kalamuna.com. You might also want to check out the Uninstall.tool utility that is packaged with the install DMG. THIS UTILITY CAN WIPE BOTH YOUR VIRTUAL BOX AND VAGRANT INSTALLS, INCLUDING PREVIOUSLY BUILT VMS. AKA BE CAREFUL.
+
+## More?
+
+https://kalamuna.atlassian.net/wiki/display/kalabox/Kalabox+Home
