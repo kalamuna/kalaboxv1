@@ -283,7 +283,7 @@ var install = flow('installKalabox')(
     }
     // Parse and compare Vagrant version string.
     if (vagrantVersion !== false && typeof vagrantVersion[0] === 'string') {
-      vagrantVersion = vagrantVersion[0].match(/^Vagrant version (\d+\.\d+\.\d+)\s*$/);
+      vagrantVersion = vagrantVersion[0].match(/(\d+\.\d+\.\d+)/);
       if (vagrantVersion !== null) {
         vagrantVersion = vagrantVersion[1];
         // Make sure Vagrant version equals required.
@@ -399,7 +399,7 @@ var install = flow('installKalabox')(
   // Start box build from Kalabox image if necessary.
   function install11(stdout, stderr) {
     var response = stdout.toString();
-    if (response.indexOf('kalabox (virtualbox)') !== -1) {
+    if (/kalabox\s+\(virtualbox\)/.test(response)) {
       this.next();
     } else {
       exec('vagrant box add kalabox "' + KALABOX_DIR + KALABOX64_FILENAME + '"', {cwd: KALASTACK_DIR}, this.async());
