@@ -230,6 +230,21 @@ var install = flow('installKalabox')(
   function installGetPassword() {
     sudoRunner.runCommand('echo', ['We needs the passwordz...'], this.async());
   },
+  function installCheckFirewall0() {
+    // Make sure firewall settings won't cause us trouble.
+    installUtils.checkFirewall(this.async(as(0)));
+  },
+  function installCheckFirewall1(firewallOk) {
+    if (firewallOk === null) {
+      logger.warn('Unable to check firewall status.');
+    }
+    else if (!firewallOk) {
+      // Stop and alert user if firewall will be problematic.
+      socket.emit('installer.firewallCheckFailed');
+      return;
+    }
+    this.next();
+  },
   // Check if VBox and Vagrant are installed.
   parallel('installGetVersions')(
     function install0() {
@@ -453,7 +468,7 @@ exports.loadLicense = flow('loadLicense')(
   // Return log contents.
   function loadLicenseEnd(contents) {
     if (this.err) {
-      exports.error('Error loading log file: ' + this.err.message);
+      logger.warn('Error loading log file: ' + this.err.message);
       this.err = null;
       this.next();
       this.data.callback();

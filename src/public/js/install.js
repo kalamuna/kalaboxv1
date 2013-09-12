@@ -108,6 +108,11 @@ var install = (function($, ko, socket) {
     }
   };
 
+  // If user's firewall has problematic setting, send user to notifications screen.
+  socket.on('installer.firewallCheckFailed', function() {
+    window.location.href = '/firewall-issue';
+  });
+
 
   // Return public interface.
   return {

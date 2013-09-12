@@ -77,3 +77,9 @@ exports.sitesList = function(req, res) {
     }
   });
 };
+
+exports.firewallIssue = function(req, res) {
+  res.render('firewall_issue', {
+    title : 'Kalabox'
+  });
+};

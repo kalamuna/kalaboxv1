@@ -234,6 +234,31 @@ exports.checkInternet = function(callback) {
 };
 
 /**
+ * Checks if the host's firewall has a problematic setting.
+ *
+ * @param function callback
+ *   Callback to call with true if firewall is okay, false if not, or null if check failed.
+ */
+exports.checkFirewall = flow('checkFirewall')(
+  function checkFirewall0(callback) {
+    this.data.callback = callback;
+    exec('/usr/libexec/ApplicationFirewall/socketfilterfw --getblockall', this.async());
+  },
+  function checkFirewallEnd(stdout, stderr) {
+    var firewallOk = null;
+    if (this.err) {
+      this.err = null;
+    }
+    else {
+      // Parse output to see if block all connections is off.
+      var response = stdout.toString();
+      firewallOk = (response.indexOf('Block all DISABLED!') !== -1);
+    }
+    this.data.callback(firewallOk);
+  }
+);
+
+/**
  * Compares two version strings.
  *
  * Based on: http://jsfiddle.net/Xv9WL/16/

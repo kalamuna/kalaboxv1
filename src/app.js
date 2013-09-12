@@ -50,6 +50,7 @@ app.get('/no-internet', routes.noInternet);
 app.get('/help', routes.helpPage);
 app.get('/permission-denied', routes.noPermission);
 app.get('/sites-list', routes.sitesList);
+app.get('/firewall-issue', routes.firewallIssue);
 
 /**
  * Setup AppJS
