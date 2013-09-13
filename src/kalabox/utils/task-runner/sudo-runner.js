@@ -11,6 +11,12 @@ var exec = require('child_process').exec,
     flow = require('nue').flow,
     as = require('nue').as;
 
+// "Constants":
+var AUTH_RENEWAL_FREQUENCY = 180000;
+
+// Variables:
+var authRenewalInterval;
+
 /**
  * Runs a command with sudo and the administrator password.
  *
@@ -118,6 +124,27 @@ exports.removeKey = flow('removeKey')(
     this.next();
   }
 );
+
+/**
+ * Start renewing sudo authentication on a regular interval.
+ */
+exports.startAuthRenewal = function() {
+  authRenewalInterval = setInterval(renewSudoAuth, AUTH_RENEWAL_FREQUENCY);
+};
+
+/**
+ * Halt periodic renewal of sudo authentication.
+ */
+exports.stopAuthRenewal = function() {
+  clearInterval(authRenewalInterval);
+};
+
+/**
+ * Renew sudo authentication so we aren't asked for a password.
+ */
+function renewSudoAuth() {
+  exec('sudo -v');
+}
 
 /**
  * Gets password from the user, storing it in the keychain for later access.
