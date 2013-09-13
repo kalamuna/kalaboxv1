@@ -67,7 +67,9 @@ append kala_files "~/.kalabox/kalastack"
     cd ~/.kalabox/kalastack
     /usr/bin/vagrant halt -f
     /usr/bin/vagrant destroy -f
+    sleep 10s
     /bin/rm -rf ~/.kalabox/kalastack
+    /bin/rm -rf ~/kalabox
     /bin/rm ~/.kalabox/kalabox.log
 fi
 
