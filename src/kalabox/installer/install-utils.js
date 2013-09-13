@@ -16,11 +16,14 @@ var fs = require('fs'),
     flow = require('nue').flow,
     as = require('nue').as,
     logger = require('../../logger'),
-    config = require('../../config');
+    config = require('../../config'),
+    sudoRunner = require('../utils/task-runner/sudo-runner');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
-    KALABOX64_FILENAME = 'kalabox64.box';
+    KALABOX64_FILENAME = 'kalabox64.box',
+    KALASTACK_DIR = config.get('KALASTACK_DIR'),
+    MAX_SPINUP_ATTEMPTS = 3;
 
 // State variables:
 var vboxVersion,
@@ -296,3 +299,56 @@ exports.compareVersions = function(v1, v2) {
 
   return 0;
 };
+
+/**
+ * Initializes the virtual machine with Vagrant.
+ *
+ * If initialization fails, it will retry twice more.
+ *
+ * @param function callback
+ *   Callback to call with error, if one occurs.
+ * @param int (optional) attempts
+ *   The current attempt this call represents.
+ */
+var spinupBox = exports.spinupBox = flow('spinupBox')(
+  function spinupBox0(callback, attempts) {
+    this.data.attempts = attempts || 0;
+    this.data.callback = callback;
+    // Attempt the spinup.
+    sudoRunner.runCommand('echo', ['We needs the passwordz...'], this.async());
+  },
+  function spinupBox1() {
+    sudoRunner.startAuthRenewal();
+    exec('vagrant up', {cwd: KALASTACK_DIR}, this.async(as(0)));
+  },
+  function spinupBox2(error) {
+    var attempts = this.data.attempts + 1,
+        that = this;
+    sudoRunner.stopAuthRenewal();
+    // If no error, continue on.
+    if (!error) {
+      this.next();
+      return;
+    }
+    // Otherwise, remove failed box.
+    exec('vagrant destroy -f', {cwd: KALASTACK_DIR}, function(destroyError) {
+      // Error out if we've made the maximum number of attempts.
+      if (attempts == MAX_SPINUP_ATTEMPTS) {
+        that.endWith(new Error('Failed to spin up virtual machine after ' + attempts + ' attempts. Error was: ' + error.message));
+        return;
+      }
+      // Otherwise, retry the spinup.
+      setTimeout(spinupBox, 0, that.data.callback, attempts);
+    });
+  },
+  function spinupBoxEnd() {
+    if (this.err) {
+      this.data.callback(this.err);
+      this.err = null;
+    }
+    else {
+      this.data.callback();
+    }
+    this.next();
+  }
+);

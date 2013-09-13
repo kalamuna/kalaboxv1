@@ -415,14 +415,12 @@ var install = flow('installKalabox')(
   function install13(output) {
     // Show this step as 70% complete
     sendProgress(70);
-    sudoRunner.startAuthRenewal();
-    exec('vagrant up', {cwd: KALASTACK_DIR}, this.async());
+    installUtils.spinupBox(this.async());
   },
   // Reinitialize the box module.
   function install14(stdout, stderr) {
     // Bump up the progress of this step to 100%
     sendProgress(100);
-    sudoRunner.stopAuthRenewal();
     box.initialize(this.async());
   },
   function installEnd() {
