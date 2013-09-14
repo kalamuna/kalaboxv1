@@ -275,7 +275,6 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
       boxName = boxName.join('.');
       siteObject.aliasName = siteObject.uri = boxName + '.kala';
       siteObject.webRoot = '/var/www/' + boxName;
-      siteObject.building(false);
       getSiteInfo('built', siteObject.aliasName).done(function(info) {
         if (info.name) {
           siteObject.name = info.name;
@@ -290,6 +289,7 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
       modal.template('site-build-failed');
     }
     delete this.sitesInProgress[site];
+    siteObject.building(false);
     modal.show();
     newSiteButton.disabled(false);
   }
