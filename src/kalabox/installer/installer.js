@@ -386,7 +386,7 @@ var install = flow('installKalabox')(
     }
     else {
       this.asyncEach(1)(VAGRANT_PLUGINS, function(plugin, group) {
-        exec('vagrant plugin install ' + plugin, {cwd: KALASTACK_DIR}, group.async());
+        exec('vagrant plugin install ' + plugin.name + ' --plugin-version ' + plugin.version, {cwd: KALASTACK_DIR}, group.async());
       });
     }
   },
