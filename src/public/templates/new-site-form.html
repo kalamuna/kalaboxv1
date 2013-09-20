@@ -15,8 +15,9 @@
         This should contain only lowercase letters, numbers, and dashes.
         Once built, your new site will be available at <em>thisname</em>.kala
       </div>
-      <select style="display: none;" data-bind="value: profile, options: profiles, optionsText: 'name', optionsValue: 'id'"></select>
-      <div class="description" style="display: none;">
+      <label for="new-site-profile">Profile</label>
+      <select id="new-site-profile" class="form-control" data-bind="value: profile, options: profiles, optionsText: 'name', optionsValue: 'id'"></select>
+      <div class="description">
         Pick which Drupal profile/distribution you'd like to use for your new site.
       </div>
     </div>
