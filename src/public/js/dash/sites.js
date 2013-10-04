@@ -135,6 +135,7 @@ var drupalProfiles = [
   {name: 'Open Outreach', id: 'openoutreach'},
   {name: 'OpenPublic', id: 'openpublic'},
   {name: 'OpenPublish', id: 'openpublish'},
+  {name: 'Drupal Commons', id: 'commons'},
   {name: 'Standard Drupal 7', id: 'drupal7'}
 ];
 var newSiteForm = exports.newSiteForm = {
