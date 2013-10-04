@@ -19,8 +19,8 @@ var flow = require('nue').flow,
     sudoRunner = require('../utils/task-runner/sudo-runner');
 
 // "Constants":
-var VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-4.2.8.dmg',
-    VBOX_VERSION = '4.2.8',
+var VBOX_VERSION = config.get('VBOX_VERSION'),
+    VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-' + VBOX_VERSION + '.dmg',
     TEMP_DIR = '/tmp/',
     VAGRANT_VERSION = config.get('VAGRANT_VERSION'),
     VAGRANT_URL = 'http://files.kalamuna.com/vagrant-macosx-' + VAGRANT_VERSION + '.dmg',
