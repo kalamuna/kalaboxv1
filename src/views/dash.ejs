@@ -135,32 +135,23 @@
 
         <!-- Config Tab -->
         <div class="tab-pane" id="config">
-          <div style="height: 371px;">
-            <table cellpadding="0" cellspacing="0" class="alias-upload-container">
-              <tbody>
-                <tr>
-                  <td class="alias-td">
-                    <table id="alias-file-drop" cellpadding="0" cellspacing="0" class="alias-upload-container">
-                      <tbody>
-                        <tr>
-                          <td data-bind="with: aliasUploader">
-                            <div>Drag Pantheon alias file here.</div>
-                            <div class="alert alert-danger" data-bind="visible: configError() !== ''">
-                              <button type="button" class="close" data-dismiss="alert">&times;</button>
-                              <div data-bind="text: configError"></div>
-                            </div>
-                            <div class="alert alert-success" data-bind="visible: configSuccess() !== ''">
-                              <button type="button" class="close" data-dismiss="alert">&times;</button>
-                              <div data-bind="text: configSuccess"></div>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="pantheon-authentication" data-bind="with: configuration.pantheonAuth">
+            <h2>Pantheon Authentication</h2>
+            <form data-bind="visible: !signedIn()">
+              <div class="alert" data-bind="visible: message() !== '', text: message, css: {'alert-success': !messageError(), 'alert-danger': messageError}"></div>
+              <label for="pantheon-email">Email Address</label>
+              <input type="text" class="form-control" id="pantheon-email" data-bind="value: email">
+              <label for="pantheon-password">Password</label>
+              <input type="password" class="form-control" id="pantheon-password" data-bind="value: password">
+              <label>
+                <input type="checkbox" data-bind="checked: saveCreds">
+                Save username &amp; password
+              </label>
+              <input type="submit" class="btn btn-success" value="Sign In" data-bind="click: onSubmit">
+            </form>
+            <div class="alert alert-info" data-bind="visible: signedIn">
+              You are currently signed in.
+            </div>
           </div>
         </div>
         <!-- End Config Tab -->

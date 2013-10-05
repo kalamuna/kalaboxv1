@@ -12,7 +12,8 @@ var box = require('./box'),
     drushUpload = require('./vm/drush-upload'),
     services = require('./vm/services'),
     logger = require('../logger'),
-    sitesManager = require('./vm/sites-manager');
+    sitesManager = require('./vm/sites-manager'),
+    pantheonAuth = require('./utils/pantheon-auth');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -157,6 +158,20 @@ function handleSiteRefresh(data) {
   });
 }
 
+function handlePantheonAuth(data) {
+  pantheonAuth.setEmail(data.email);
+  pantheonAuth.setPassword(data.password);
+  pantheonAuth.authenticate(function(error, success) {
+    if (error) {
+      logger.warn(error.message);
+    }
+    if (success && data.saveCreds) {
+      pantheonAuth.storeCredentials();
+    }
+    socket.emit('pantheonAuthFinished', {succeeded: success});
+  });
+}
+
 // Module communication handlers:
 
 function handleStart() {
@@ -188,6 +203,7 @@ exports.initialize = function() {
     socket.on('siteBuildRequest', handleSiteBuild);
     socket.on('siteRemoveRequest', handleSiteRemove);
     socket.on('siteRefreshRequest', handleSiteRefresh);
+    socket.on('pantheonAuthRequest', handlePantheonAuth);
     // If box running, make sure UI knows about it.
     if (box.isRunning()) {
       handleStart();
