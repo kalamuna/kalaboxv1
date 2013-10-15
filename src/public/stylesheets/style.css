@@ -226,35 +226,3 @@ small {
 .installer-modal .modal-dialog {
   width: 600px;
 }
-
-/* Alias Upload Form */
-
-.alias-upload-container {
-  height: 100%;
-  width: 100%;
-  position: relative;
-  border-spacing: 20px;
-}
-
-.alias-upload-container tbody {
-  display: table-row-group;
-  vertical-align: middle;
-  border-color: inherit;
-}
-
-.alias-upload-container tr {
-  display: table-row;
-  vertical-align: inherit;
-  border-color: inherit;
-}
-
-td.alias-td {
-  border: #ddd 4px dashed;
-  border-radius: 2px;
-  width: 100%;
-  text-align: center;
-  position: relative;
-  font-size: 20pt;
-  color: #ccc;
-  padding: 0 10px;
-}

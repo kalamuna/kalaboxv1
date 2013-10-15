@@ -9,7 +9,6 @@
 var box = require('./box'),
     exec = require('child_process').exec,
     config = require('../config'),
-    drushUpload = require('./vm/drush-upload'),
     services = require('./vm/services'),
     logger = require('../logger'),
     sitesManager = require('./vm/sites-manager'),
@@ -113,18 +112,6 @@ function handleUrlRequest(data) {console.log('URL: ' + data.url);
   exec('osascript -e \'open location "' + data.url + '"\'');
 }
 
-function handleDrushUpload(data) {
-  drushUpload.upload(data.content, function(error) {
-    if (error) {
-      logger.error('Unable to upload Drush aliases file: ' + error.message);
-      return;
-    }
-    if (socket) {
-      socket.emit('drushUploadComplete');
-    }
-  });
-}
-
 function handleSiteBuild(data) {
   sitesManager.buildSite(data, function(error) {
     var success = true;
@@ -198,7 +185,6 @@ exports.initialize = function() {
     socket.on('sshRequest', handleSSHRequest);
     socket.on('openServiceRequest', handleServiceRequest);
     socket.on('foldersRequest', handleFoldersRequest);
-    socket.on('drushUpload', handleDrushUpload);
     socket.on('urlRequest', handleUrlRequest);
     socket.on('siteBuildRequest', handleSiteBuild);
     socket.on('siteRemoveRequest', handleSiteRemove);
