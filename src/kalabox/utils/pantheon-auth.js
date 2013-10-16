@@ -69,6 +69,12 @@ exports.authenticate = flow('authenticate')(
   function authenticate1() {
     refresh(this.async());
   },
+  function authenticate2() {
+    // Set gitconfig
+    var command = 'KALABOX=on drush tset ';
+    // Run command against VM via Vagrant.
+    exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
+  },
   function authenticateEnd(stdout, stderr) {
     if (this.err) {
       this.data.callback(this.err);
