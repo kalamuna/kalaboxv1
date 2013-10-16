@@ -124,6 +124,7 @@ var refresh = exports.refresh = flow('refresh')(
  */
 exports.close = flow('close')(
   function close0() {
+    this.data.callback = callback;
     // Remove aliases
     var command = 'rm /etc/drush/pantheon.aliases.drushrc.php';
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
