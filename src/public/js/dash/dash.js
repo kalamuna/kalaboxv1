@@ -11,7 +11,7 @@ var socket = require('./socket'),
     modal = self.modal = require('./modal');
 self.controls = require('./controls');
 self.statusMonitor = require('./status-monitor');
-self.aliasUploader = require('./alias-uploader');
+self.configuration = require('./configuration');
 self.sites = require('./sites');
 
 // Templates:
@@ -42,8 +42,6 @@ socket.on('vmError', function(data) {
  * Loads and initializes resources, including the Knockout view model.
  */
 exports.initialize = function() {
-  // Make the window accept drag-and-drop alias files.
-  document.getElementById('alias-file-drop').addEventListener('drop', self.aliasUploader.handleAliasUpload);
   // Load templates.
   var body = $('body');
   for (var i = 0, length = templates.length; i < length; i++) {

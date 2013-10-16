@@ -24,6 +24,7 @@ var KALABOX_DIR = config.get('KALABOX_DIR'),
 var installed = false,
     running = false;
 
+
 // Variables:
 var statusChecker, // Holds reference to interval running the status checker.
     appWindow; // Holds reference to the actual OS window.
@@ -101,7 +102,7 @@ exports.startBox = flow('startBox')(
   },
   function startBox1(output) {
     // Run "vagrant up" to start the Kalabox.
-    exec('vagrant up --no-provision', {cwd: KALASTACK_DIR}, this.async(as(0)));
+    exec('vagrant up', {cwd: KALASTACK_DIR}, this.async(as(0)));
   },
   function startBox2(error) {
     // Check for Vagrant error.

@@ -83,6 +83,9 @@
 
         <!-- My Sites Tab -->
         <div class="tab-pane" id="sites">
+          <div class="refresh-sites" data-bind="with: configuration">
+            <a href="#" data-bind="click: refreshButton.onClick, visible: pantheonAuth.signedIn"><i class="icon-refresh"></i> Refresh</a>
+          </div>
           <div class="no-sites alert alert-info" data-bind="visible: sites.builtSites().length == 0 && sites.unbuiltSites().length == 0">
             Looks like you don't have any sites yet. How sad! But don't fret. You can pull down any of your
             sites from Pantheon after you upload your aliases file in the Configure tab. Or, you can spin up
@@ -135,32 +138,20 @@
 
         <!-- Config Tab -->
         <div class="tab-pane" id="config">
-          <div style="height: 371px;">
-            <table cellpadding="0" cellspacing="0" class="alias-upload-container">
-              <tbody>
-                <tr>
-                  <td class="alias-td">
-                    <table id="alias-file-drop" cellpadding="0" cellspacing="0" class="alias-upload-container">
-                      <tbody>
-                        <tr>
-                          <td data-bind="with: aliasUploader">
-                            <div>Drag Pantheon alias file here.</div>
-                            <div class="alert alert-danger" data-bind="visible: configError() !== ''">
-                              <button type="button" class="close" data-dismiss="alert">&times;</button>
-                              <div data-bind="text: configError"></div>
-                            </div>
-                            <div class="alert alert-success" data-bind="visible: configSuccess() !== ''">
-                              <button type="button" class="close" data-dismiss="alert">&times;</button>
-                              <div data-bind="text: configSuccess"></div>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="pantheon-authentication" data-bind="with: configuration.pantheonAuth">
+            <h2>Pantheon Authentication</h2>
+            <form data-bind="visible: !signedIn()">
+              <div class="alert" data-bind="visible: message() !== '', text: message, css: {'alert-success': !messageError(), 'alert-danger': messageError}"></div>
+              <label for="pantheon-email">Email Address</label>
+              <input type="text" class="form-control" id="pantheon-email" data-bind="value: email">
+              <label for="pantheon-password">Password</label>
+              <input type="password" class="form-control" id="pantheon-password" data-bind="value: password">
+              <input type="submit" class="btn btn-success" value="Log In" data-bind="click: onSubmit">
+            </form>
+            <div class="alert alert-info" data-bind="visible: signedIn">
+              You are currently signed in.
+              <input type="submit" class="btn btn-danger" value="Log Out" data-bind="click: $root.configuration.signOutButton.onClick">
+            </div>
           </div>
         </div>
         <!-- End Config Tab -->

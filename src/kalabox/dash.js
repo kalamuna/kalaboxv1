@@ -9,10 +9,10 @@
 var box = require('./box'),
     exec = require('child_process').exec,
     config = require('../config'),
-    drushUpload = require('./vm/drush-upload'),
     services = require('./vm/services'),
     logger = require('../logger'),
-    sitesManager = require('./vm/sites-manager');
+    sitesManager = require('./vm/sites-manager'),
+    pantheonAuth = require('./utils/pantheon-auth');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -42,6 +42,11 @@ function handleStartRequest(data) {
     console.log('Box started');
     if (socket) {
       socket.emit('boxStarted');
+    }
+  });
+  pantheonAuth.loadCredentials(function(credentials) {
+    if (credentials) {
+      socket.emit('pantheonAuthFinished', {succeeded: credentials});
     }
   });
 }
@@ -112,20 +117,19 @@ function handleUrlRequest(data) {console.log('URL: ' + data.url);
   exec('osascript -e \'open location "' + data.url + '"\'');
 }
 
-function handleDrushUpload(data) {
-  drushUpload.upload(data.content, function(error) {
+function handleSiteBuild(data) {
+  sitesManager.buildSite(data, function(error) {
+    var success = true;
     if (error) {
-      logger.error('Unable to upload Drush aliases file: ' + error.message);
-      return;
+      logger.warn(error.message);
+      success = false;
     }
-    if (socket) {
-      socket.emit('drushUploadComplete');
-    }
+    socket.emit('siteBuildFinished', {succeeded: success, site: data.site});
   });
 }
 
-function handleSiteBuild(data) {
-  sitesManager.buildSite(data, function(error) {
+function handleSiteNew(data) {
+  sitesManager.newSite(data, function(error) {
     var success = true;
     if (error) {
       logger.warn(error.message);
@@ -157,6 +161,44 @@ function handleSiteRefresh(data) {
   });
 }
 
+function handlePantheonAuth(data) {
+  pantheonAuth.setEmail(data.email);
+  pantheonAuth.setPassword(data.password);
+  pantheonAuth.authenticate(function(error, success) {
+    if (error) {
+      logger.warn(error.message);
+    }
+    if (success) {
+      pantheonAuth.storeCredentials();
+    }
+    socket.emit('pantheonAuthFinished', {succeeded: success});
+  });
+}
+
+function handlePantheonClose() {
+  pantheonAuth.close(function(error, success) {
+    if (error) {
+      logger.warn(error.message);
+    }
+    if (success) {
+      socket.emit('pantheonCloseFinished', {closed: success});
+      pantheonAuth.setEmail(null);
+      pantheonAuth.setPassword(null);
+    }
+  });
+}
+
+function handlePantheonRefresh() {
+  pantheonAuth.refresh(function(error, success) {
+    if (error) {
+      logger.warn(error.message);
+    }
+    if (success) {
+      socket.emit('pantheonRefreshFinished', {refreshed: success});
+    }
+  });
+}
+
 // Module communication handlers:
 
 function handleStart() {
@@ -183,11 +225,14 @@ exports.initialize = function() {
     socket.on('sshRequest', handleSSHRequest);
     socket.on('openServiceRequest', handleServiceRequest);
     socket.on('foldersRequest', handleFoldersRequest);
-    socket.on('drushUpload', handleDrushUpload);
     socket.on('urlRequest', handleUrlRequest);
     socket.on('siteBuildRequest', handleSiteBuild);
+    socket.on('siteNewRequest', handleSiteNew);
     socket.on('siteRemoveRequest', handleSiteRemove);
     socket.on('siteRefreshRequest', handleSiteRefresh);
+    socket.on('pantheonAuthRequest', handlePantheonAuth);
+    socket.on('pantheonCloseRequest', handlePantheonClose);
+    socket.on('pantheonRefreshRequest', handlePantheonRefresh);
     // If box running, make sure UI knows about it.
     if (box.isRunning()) {
       handleStart();
