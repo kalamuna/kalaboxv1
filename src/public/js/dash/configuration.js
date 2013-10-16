@@ -5,7 +5,8 @@
  */
 
 // Dependencies:
-var socket = require('./socket');
+var socket = require('./socket'),
+    sites = require('./sites');
 
 var pantheonAuth = exports.pantheonAuth = {
   email: ko.observable(''),
@@ -31,6 +32,7 @@ var pantheonAuth = exports.pantheonAuth = {
   onComplete: function(data) {
     if (data.succeeded) {
       this.signedIn(true);
+      sites.getSitesLists();
     }
     else {
       this.message('Unable to sign in. Please check your credentials.');

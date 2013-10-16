@@ -7,11 +7,15 @@
 // Dependencies:
 var flow = require('nue').flow,
     as = require('nue').as,
-    exec = require('child_process').exec;
+    exec = require('child_process').exec,
+    config = require('../../config');
 
 // Variables:
 var pantheonEmail = null,
     pantheonPassword = null;
+
+// "CONSTANTS"
+var KALASTACK_DIR = config.get('KALASTACK_DIR');
 
 /**
  * Registers the user's Pantheon account email.
@@ -41,6 +45,43 @@ exports.setPassword = function(password) {
 exports.getEmail = function() {
   return pantheonEmail;
 };
+
+/**
+ * Signals the virtual machine to authenticate with Pantheon, passing it the username and password.
+ * Will also pull down sites for rhe first time.
+ *
+ * @param function callback
+ *   Function to call when complete, passing an error if one ocurred
+ *   and a boolean result of the authentication.
+ */
+exports.authenticate = flow('authenticate')(
+  function authenticate0(callback) {
+    this.data.callback = callback;
+    // Build command from site options.
+    var command = 'drush pauth ';
+    command += pantheonEmail;
+    if (pantheonPassword) {
+      command += ' --password="' + pantheonPassword + '"';
+    }
+    // Run command against VM via Vagrant.
+    exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
+  },
+  function authenticate1(stdout, stderr) {
+    var command = 'KALABOX=on drush ta';
+    // Run command against VM via Vagrant.
+    exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
+  },
+  function authenticateEnd() {
+    if (this.err) {
+      this.data.callback(this.err);
+      this.err = null;
+    }
+    else {
+      this.data.callback(null, true);
+    }
+    this.next();
+  }
+);
 
 /**
  * Stores the user's email and password in the keychain for later use.
@@ -79,18 +120,6 @@ exports.storeCredentials = flow('storeCredentials')(
     this.next();
   }
 );
-
-/**
- * Signals the virtual machine to authenticate with Pantheon, passing it the username and password.
- *
- * @param function callback
- *   Function to call when complete, passing an error if one ocurred
- *   and a boolean result of the authentication.
- */
-exports.authenticate = function(callback) {
-  // @todo Get authentication with box working.
-  callback(null, true);
-};
 
 /**
  * Loads the user's email and password from the keychain.
