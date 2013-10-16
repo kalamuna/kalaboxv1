@@ -44,6 +44,11 @@ function handleStartRequest(data) {
       socket.emit('boxStarted');
     }
   });
+  pantheonAuth.loadCredentials(function(credentials) {
+    if (credentials) {
+      socket.emit('pantheonAuthFinished', {succeeded: credentials});
+    }
+  });
 }
 
 function handleStopRequest(data) {
@@ -163,7 +168,7 @@ function handlePantheonAuth(data) {
     if (error) {
       logger.warn(error.message);
     }
-    if (success && data.saveCreds) {
+    if (success) {
       pantheonAuth.storeCredentials();
     }
     socket.emit('pantheonAuthFinished', {succeeded: success});

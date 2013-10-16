@@ -127,7 +127,7 @@ exports.storeCredentials = flow('storeCredentials')(
  * @param function callback
  *   Function to call when complete, passing credentials if they were loaded, false if not.
  */
-var loadCredentials = flow('loadCredentials')(
+exports.loadCredentials = flow('loadCredentials')(
   function loadCredentials0(callback) {
     this.data.callback = callback;
     this.data.email = null;

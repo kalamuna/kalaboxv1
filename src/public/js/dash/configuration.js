@@ -11,7 +11,6 @@ var socket = require('./socket'),
 var pantheonAuth = exports.pantheonAuth = {
   email: ko.observable(''),
   password: ko.observable(''),
-  saveCreds: ko.observable(false),
   signedIn: ko.observable(false),
   message: ko.observable(''),
   messageError: ko.observable(false),
@@ -26,7 +25,6 @@ var pantheonAuth = exports.pantheonAuth = {
     socket.emit('pantheonAuthRequest', {
       email: this.email(),
       password: this.password(),
-      saveCreds: this.saveCreds()
     });
   },
   onComplete: function(data) {
