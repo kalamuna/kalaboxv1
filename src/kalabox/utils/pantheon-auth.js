@@ -123,7 +123,7 @@ var refresh = exports.refresh = flow('refresh')(
  *   and a boolean result of the authentication.
  */
 exports.close = flow('close')(
-  function close0() {
+  function close0(callback) {
     this.data.callback = callback;
     // Remove aliases
     var command = 'rm /etc/drush/pantheon.aliases.drushrc.php';
