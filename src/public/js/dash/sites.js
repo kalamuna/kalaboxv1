@@ -138,6 +138,7 @@ var drupalProfiles = [
   {name: 'Drupal Commons', id: 'commons'},
   {name: 'Standard Drupal 7', id: 'drupal7'}
 ];
+
 var newSiteForm = exports.newSiteForm = {
   siteName: ko.observable(),
   site: ko.observable(),
@@ -179,7 +180,7 @@ var newSiteForm = exports.newSiteForm = {
       name: this.siteName()
     };
     // Send request and update the UI.
-    socket.emit('siteBuildRequest', ko.toJS(this));
+    socket.emit('siteNewRequest', ko.toJS(this));
     newSiteButton.disabled(true);
     buildingInProgress(true);
     modal.close();
@@ -238,6 +239,7 @@ socket.on('siteBuildFinished', newSiteForm.onComplete.bind(newSiteForm));
  */
 var remoteSiteBuilder = exports.remoteSiteBuilder = {
   shouldDownloadFiles: ko.observable(false),
+  shouldPipeData: ko.observable(false),
   selectedSite: null,
   sitesInProgress: {},
   onClick: function(site) {
@@ -258,11 +260,14 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
       remoteSite.files = true;
       this.shouldDownloadFiles(false);
     }
+    if (this.shouldPipeData()) {
+      remoteSite.pipe = true;
+      this.shouldPipeData(false);
+    }
     // Add site to in progress.
     this.sitesInProgress[aliasName] = selectedSite;
     // Send request and update UI.
     socket.emit('siteBuildRequest', remoteSite);
-    newSiteButton.disabled(true);
     modal.close();
   },
   onComplete: function(data) {
@@ -298,7 +303,6 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
     delete this.sitesInProgress[site];
     siteObject.building(false);
     modal.show();
-    newSiteButton.disabled(false);
   }
 };
 socket.on('siteBuildFinished', remoteSiteBuilder.onComplete.bind(remoteSiteBuilder));

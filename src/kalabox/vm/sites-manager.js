@@ -51,10 +51,10 @@ exports.getSitesList = flow('getSitesList')(
 );
 
 /**
- * Builds a site on the virtual machine.
+ * Pull down site from Pantheon
  *
  * @param object options
- *   Site parameters with site (required), siteName, profile, and files.
+ *   Site parameters with site (required) files, pipe.
  * @param function callback
  *   Function to call with error if one occurs.
  */
@@ -63,16 +63,13 @@ exports.buildSite = flow('buildSite')(
     this.data.callback = callback;
     this.data.options = options;
     // Build command from site options.
-    var command = 'drush build ';
+    var command = 'KALABOX=on drush pullsite ';
     command += options.site;
-    if (options.siteName) {
-      command += ' --site-name="' + options.siteName + '"';
-    }
-    if (options.profile) {
-      command += ' --profile="' + options.profile + '"';
-    }
     if (options.files) {
       command += ' --files';
+    }
+    if (options.pipe) {
+      command += ' --pipe';
     }
     // Run command against VM via Vagrant.
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
@@ -84,6 +81,47 @@ exports.buildSite = flow('buildSite')(
     host.addHostsEntry(siteId + ".kala", this.async());
   },
   function buildSiteEnd() {
+    if (this.err) {
+      this.data.callback(this.err);
+      this.err = null;
+    }
+    else {
+      this.data.callback();
+    }
+    this.next();
+  }
+);
+
+
+/**
+ * Builds a site on the virtual machine.
+ *
+ * @param object options
+ *   Site parameters with site (required), siteName and profile.
+ * @param function callback
+ *   Function to call with error if one occurs.
+ */
+exports.newSite = flow('newSite')(
+  function newSite0(options, callback) {
+    this.data.callback = callback;
+    this.data.options = options;
+    // Build command from site options.
+    var command = 'KALABOX=on drush newsite ';
+    command += options.site;
+    if (options.siteName) {
+      command += ' --site-name="' + options.siteName + '"';
+    }
+    if (options.profile) {
+      command += ' --profile="' + options.profile + '"';
+    }
+    // Run command against VM via Vagrant.
+    exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
+  },
+  function newSite1(stdout, stderr) {
+    // Add site entry to /etc/hosts.
+    host.addHostsEntry(this.data.options.site + ".kala", this.async());
+  },
+  function newSiteEnd() {
     if (this.err) {
       this.data.callback(this.err);
       this.err = null;
@@ -109,14 +147,8 @@ exports.removeSite = flow('removeSite')(
     this.data.site = site.uri;
     // Run command against VM via Vagrant.
     var alias = site.aliasName;
-    if (site.builtFrom) {
-      alias = site.builtFrom;
-    }
-    else {
-      // Remove '.kala' from site name.
-      alias = alias.replace('.kala', '');
-    }
-    exec('vagrant ssh -c \'drush crush ' + alias + '\'', {cwd: KALASTACK_DIR}, this.async());
+
+    exec('vagrant ssh -c \'KALABOX=on drush crush ' + alias + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
   function removeSite1(stdout, stderr) {
     // Remove entry from /etc/hosts.
@@ -147,9 +179,10 @@ exports.refreshSite = flow('refreshSite')(
     this.data.options = options;
     this.data.callback = callback;
     this.data.alias = options.alias;
+    this.data.pipe = options.pipe;
     // Refresh code if requested.
     if (options.refreshCode) {
-      exec('vagrant ssh -c \'drush code ' + options.alias + '\'', {cwd: KALASTACK_DIR}, this.async());
+      exec('vagrant ssh -c \'KALABOX=on drush pullcode ' + options.alias + '\'', {cwd: KALASTACK_DIR}, this.async());
     }
     else {
       this.next();
@@ -157,8 +190,13 @@ exports.refreshSite = flow('refreshSite')(
   },
   function refreshSite1() {
     // Refresh database if requested.
+    var command = 'KALABOX=on drush pulldata ';
+    command += this.data.alias;
+    if (this.data.pipe) {
+      command += ' --pipe';
+    }
     if (this.data.options.refreshData) {
-      exec('vagrant ssh -c \'drush data ' + this.data.alias + '\'', {cwd: KALASTACK_DIR}, this.async());
+      exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
     }
     else {
       this.next();
@@ -167,7 +205,7 @@ exports.refreshSite = flow('refreshSite')(
   function refreshSite2() {
     // Refresh files if requested.
     if (this.data.options.refreshFiles) {
-      exec('vagrant ssh -c \'drush files ' + this.data.alias + '\'', {cwd: KALASTACK_DIR}, this.async());
+      exec('vagrant ssh -c \'KALABOX=on drush pullfiles ' + this.data.alias + '\'', {cwd: KALASTACK_DIR}, this.async());
     }
     else {
       this.next();

@@ -123,6 +123,17 @@ function handleSiteBuild(data) {
   });
 }
 
+function handleSiteNew(data) {
+  sitesManager.newSite(data, function(error) {
+    var success = true;
+    if (error) {
+      logger.warn(error.message);
+      success = false;
+    }
+    socket.emit('siteBuildFinished', {succeeded: success, site: data.site});
+  });
+}
+
 function handleSiteRemove(data) {
   sitesManager.removeSite(data, function(error) {
     var success = true;
@@ -187,6 +198,7 @@ exports.initialize = function() {
     socket.on('foldersRequest', handleFoldersRequest);
     socket.on('urlRequest', handleUrlRequest);
     socket.on('siteBuildRequest', handleSiteBuild);
+    socket.on('siteNewRequest', handleSiteNew);
     socket.on('siteRemoveRequest', handleSiteRemove);
     socket.on('siteRefreshRequest', handleSiteRefresh);
     socket.on('pantheonAuthRequest', handlePantheonAuth);
