@@ -83,6 +83,9 @@
 
         <!-- My Sites Tab -->
         <div class="tab-pane" id="sites">
+          <div class="refresh-sites" data-bind="with: configuration">
+            <a href="#" data-bind="click: refreshButton.onClick, visible: pantheonAuth.signedIn"><i class="icon-refresh"></i> Refresh</a>
+          </div>
           <div class="no-sites alert alert-info" data-bind="visible: sites.builtSites().length == 0 && sites.unbuiltSites().length == 0">
             Looks like you don't have any sites yet. How sad! But don't fret. You can pull down any of your
             sites from Pantheon after you upload your aliases file in the Configure tab. Or, you can spin up
@@ -147,7 +150,7 @@
             </form>
             <div class="alert alert-info" data-bind="visible: signedIn">
               You are currently signed in.
-              <input type="submit" class="btn btn-danger" value="Log Out" data-bind="click: onSubmit">
+              <input type="submit" class="btn btn-danger" value="Log Out" data-bind="click: $root.configuration.signOutButton.onClick">
             </div>
           </div>
         </div>

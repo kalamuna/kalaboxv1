@@ -67,11 +67,36 @@ exports.authenticate = flow('authenticate')(
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
   function authenticate1() {
+    refresh(this.async());
+  },
+  function authenticateEnd(stdout, stderr) {
+    if (this.err) {
+      this.data.callback(this.err);
+      this.err = null;
+    }
+    else {
+      this.data.callback(null, true);
+    }
+    this.next();
+  }
+);
+
+
+/**
+ * Signals the virtual machine to download aliases from Pantheon
+ *
+ * @param function callback
+ *   Function to call when complete, passing an error if one ocurred
+ */
+var refresh = exports.refresh = flow('refresh')(
+  function refresh0(callback) {
+    this.data.callback = callback;
+    // Build command
     var command = 'KALABOX=on drush ta';
     // Run command against VM via Vagrant.
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
-  function authenticateEnd(stdout, stderr) {
+  function refreshEnd(stdout, stderr) {
     if (this.err) {
       this.data.callback(this.err);
       this.err = null;

@@ -15,31 +15,21 @@ var pantheonAuth = exports.pantheonAuth = {
   message: ko.observable(''),
   messageError: ko.observable(false),
   onSubmit: function() {
-    if (this.signedIn()) {
-      // Transmit closing request.
-      socket.emit('pantheonAuthClose',  {});
+    // Make sure email and password are filled out.
+    if (this.email() === '' || this.password() === '') {
+      this.message('Please fill out both username and password.');
+      this.messageError(true);
+      return;
     }
-    else {
-      // Make sure email and password are filled out.
-      if (this.email() === '' || this.password() === '') {
-        this.message('Please fill out both username and password.');
-        this.messageError(true);
-        return;
-      }
-      // Transmit authentication request.
-      socket.emit('pantheonAuthRequest', {
-        email: this.email(),
-        password: this.password(),
-      });
-    }
+    // Transmit authentication request.
+    socket.emit('pantheonAuthRequest', {
+      email: this.email(),
+      password: this.password(),
+    });
   },
   onComplete: function(data) {
     if (data.succeeded) {
       this.signedIn(true);
-      sites.getSitesLists();
-    }
-    else if (data.closed) {
-      this.signedIn(false);
       sites.getSitesLists();
     }
     else {
@@ -48,4 +38,34 @@ var pantheonAuth = exports.pantheonAuth = {
     }
   }
 };
+
+var signOutButton = exports.signOutButton = {
+  onClick: function() {
+    if (pantheonAuth.signedIn()) {
+      // Transmit closing request.
+      socket.emit('pantheonCloseRequest', {});
+    }
+  }
+};
+
+var refreshButton = exports.refreshButton = {
+  onClick: function() {
+    if (pantheonAuth.signedIn()) {
+      socket.emit('pantheonRefreshRequest', {});
+    }
+  }
+};
+
+// Server event handlers
 socket.on('pantheonAuthFinished', pantheonAuth.onComplete.bind(pantheonAuth));
+socket.on('pantheonCloseFinished', function(data) {
+  if (data.closed) {
+    pantheonAuth.signedIn(false);
+    sites.getSitesLists();
+  }
+});
+socket.on('pantheonRefreshFinished', function(data) {
+  if (data.refreshed) {
+    sites.getSitesLists();
+  }
+});

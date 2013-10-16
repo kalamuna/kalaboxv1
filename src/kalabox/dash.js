@@ -181,7 +181,20 @@ function handlePantheonClose() {
       logger.warn(error.message);
     }
     if (success) {
-      socket.emit('pantheonAuthFinished', {closed: success});
+      socket.emit('pantheonCloseFinished', {closed: success});
+      pantheonAuth.setEmail(null);
+      pantheonAuth.setPassword(null);
+    }
+  });
+}
+
+function handlePantheonRefresh() {
+  pantheonAuth.refresh(function(error, success) {
+    if (error) {
+      logger.warn(error.message);
+    }
+    if (success) {
+      socket.emit('pantheonRefreshFinished', {refreshed: success});
     }
   });
 }
@@ -218,7 +231,8 @@ exports.initialize = function() {
     socket.on('siteRemoveRequest', handleSiteRemove);
     socket.on('siteRefreshRequest', handleSiteRefresh);
     socket.on('pantheonAuthRequest', handlePantheonAuth);
-    socket.on('pantheonAuthClose', handlePantheonClose);
+    socket.on('pantheonCloseRequest', handlePantheonClose);
+    socket.on('pantheonRefreshRequest', handlePantheonRefresh);
     // If box running, make sure UI knows about it.
     if (box.isRunning()) {
       handleStart();
