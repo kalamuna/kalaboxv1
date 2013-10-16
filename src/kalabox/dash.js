@@ -175,6 +175,17 @@ function handlePantheonAuth(data) {
   });
 }
 
+function handlePantheonClose() {
+  pantheonAuth.close(function(error, success) {
+    if (error) {
+      logger.warn(error.message);
+    }
+    if (success) {
+      socket.emit('pantheonAuthFinished', {closed: success});
+    }
+  });
+}
+
 // Module communication handlers:
 
 function handleStart() {
@@ -207,6 +218,7 @@ exports.initialize = function() {
     socket.on('siteRemoveRequest', handleSiteRemove);
     socket.on('siteRefreshRequest', handleSiteRefresh);
     socket.on('pantheonAuthRequest', handlePantheonAuth);
+    socket.on('pantheonAuthClose', handlePantheonClose);
     // If box running, make sure UI knows about it.
     if (box.isRunning()) {
       handleStart();

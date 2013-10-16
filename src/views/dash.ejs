@@ -143,10 +143,11 @@
               <input type="text" class="form-control" id="pantheon-email" data-bind="value: email">
               <label for="pantheon-password">Password</label>
               <input type="password" class="form-control" id="pantheon-password" data-bind="value: password">
-              <input type="submit" class="btn btn-success" value="Sign In" data-bind="click: onSubmit">
+              <input type="submit" class="btn btn-success" value="Log In" data-bind="click: onSubmit">
             </form>
             <div class="alert alert-info" data-bind="visible: signedIn">
               You are currently signed in.
+              <input type="submit" class="btn btn-danger" value="Log Out" data-bind="click: onSubmit">
             </div>
           </div>
         </div>

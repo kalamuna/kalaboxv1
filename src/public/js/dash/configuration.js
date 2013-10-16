@@ -15,21 +15,31 @@ var pantheonAuth = exports.pantheonAuth = {
   message: ko.observable(''),
   messageError: ko.observable(false),
   onSubmit: function() {
-    // Make sure email and password are filled out.
-    if (this.email() === '' || this.password() === '') {
-      this.message('Please fill out both username and password.');
-      this.messageError(true);
-      return;
+    if (this.signedIn()) {
+      // Transmit closing request.
+      socket.emit('pantheonAuthClose',  {});
     }
-    // Transmit authentication request.
-    socket.emit('pantheonAuthRequest', {
-      email: this.email(),
-      password: this.password(),
-    });
+    else {
+      // Make sure email and password are filled out.
+      if (this.email() === '' || this.password() === '') {
+        this.message('Please fill out both username and password.');
+        this.messageError(true);
+        return;
+      }
+      // Transmit authentication request.
+      socket.emit('pantheonAuthRequest', {
+        email: this.email(),
+        password: this.password(),
+      });
+    }
   },
   onComplete: function(data) {
     if (data.succeeded) {
       this.signedIn(true);
+      sites.getSitesLists();
+    }
+    else if (data.closed) {
+      this.signedIn(false);
       sites.getSitesLists();
     }
     else {

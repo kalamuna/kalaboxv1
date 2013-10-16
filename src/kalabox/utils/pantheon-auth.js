@@ -58,7 +58,7 @@ exports.authenticate = flow('authenticate')(
   function authenticate0(callback) {
     this.data.callback = callback;
     // Build command from site options.
-    var command = 'drush pauth ';
+    var command = 'KALABOX=on drush pauth ';
     command += pantheonEmail;
     if (pantheonPassword) {
       command += ' --password="' + pantheonPassword + '"';
@@ -66,12 +66,54 @@ exports.authenticate = flow('authenticate')(
     // Run command against VM via Vagrant.
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
-  function authenticate1(stdout, stderr) {
+  function authenticate1() {
     var command = 'KALABOX=on drush ta';
     // Run command against VM via Vagrant.
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
-  function authenticateEnd() {
+  function authenticateEnd(stdout, stderr) {
+    if (this.err) {
+      this.data.callback(this.err);
+      this.err = null;
+    }
+    else {
+      this.data.callback(null, true);
+    }
+    this.next();
+  }
+);
+
+/**
+ * Signals the virtual machine to authenticate with Pantheon, passing it the username and password.
+ * Will also pull down sites for rhe first time.
+ *
+ * @param function callback
+ *   Function to call when complete, passing an error if one ocurred
+ *   and a boolean result of the authentication.
+ */
+exports.close = flow('close')(
+  function close0(callback) {
+    this.data.callback = callback;
+
+    // Logout of Pantheon
+    var command = 'KALABOX=on drush plogout';
+    exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
+  },
+  function close1() {
+    // Destroy our cached key
+    var command = 'KALABOX=on drush php-eval "drush_cache_clear_all(\\"*\\", \\"terminatur\\", TRUE);"';
+    exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
+  },
+  function close2() {
+    // Remove aliases
+    var command = 'rm /etc/drush/pantheon.aliases.drushrc.php';
+    exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
+  },
+  function close3() {
+    // Delete keychain entry
+    deleteCredentials(this.async());
+  },
+  function closeEnd(stdout, stderr) {
     if (this.err) {
       this.data.callback(this.err);
       this.err = null;
@@ -106,6 +148,7 @@ exports.storeCredentials = flow('storeCredentials')(
   },
   function storeCredentials2() {
     // Save new credentials.
+    console.log("about to save to keychain" + pantheonEmail + pantheonPassword);
     exec('security add-generic-password -a "' + pantheonEmail + '" -s KalaboxPantheonAuth -w "' + pantheonPassword + '"', this.async());
   },
   function storeCredentialsEnd(stdout, stderr) {
@@ -127,7 +170,7 @@ exports.storeCredentials = flow('storeCredentials')(
  * @param function callback
  *   Function to call when complete, passing credentials if they were loaded, false if not.
  */
-exports.loadCredentials = flow('loadCredentials')(
+var loadCredentials = exports.loadCredentials = flow('loadCredentials')(
   function loadCredentials0(callback) {
     this.data.callback = callback;
     this.data.email = null;
