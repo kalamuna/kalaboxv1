@@ -117,6 +117,16 @@ var refresh = exports.refresh = flow('refresh')(
  *   and a boolean result of the authentication.
  */
 exports.close = flow('close')(
+  function close0() {
+    // Remove aliases
+    var command = 'rm /etc/drush/pantheon.aliases.drushrc.php';
+    exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
+  },
+  function close1() {
+    // Delete keychain entry
+    deleteCredentials(this.async());
+  },
+  /* @todo we should do these things but right now they cause some weird problems.
   function close0(callback) {
     this.data.callback = callback;
 
@@ -129,15 +139,7 @@ exports.close = flow('close')(
     var command = 'KALABOX=on drush php-eval "drush_cache_clear_all(\\"*\\", \\"terminatur\\", TRUE);"';
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
-  function close2() {
-    // Remove aliases
-    var command = 'rm /etc/drush/pantheon.aliases.drushrc.php';
-    exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
-  },
-  function close3() {
-    // Delete keychain entry
-    deleteCredentials(this.async());
-  },
+  */
   function closeEnd(stdout, stderr) {
     if (this.err) {
       this.data.callback(this.err);
