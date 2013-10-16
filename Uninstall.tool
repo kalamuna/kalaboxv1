@@ -13,7 +13,7 @@ export PATH="/bin:/usr/bin:/sbin:/usr/sbin:$PATH"
 
 ## @param [Integer] $1 exit code.
 function key_exit() {
-    echo "Press any key to exit."
+    echo "Press enter to exit."
     read
     exit $1
 }
