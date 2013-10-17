@@ -12,7 +12,7 @@
 
       <!-- Home Tab -->
       <div class="tab-content">
-        <div class="tab-pane active row-fluid" id="home">
+        <div class="tab-pane active" id="home">
           <div class="col-6">
             <a href="#" data-bind="click: controls.serviceButton.onClick, disable: controls.serviceButton.disabled" target="startSiteButton">
               <svg id="logo" class="centered kalalogo" height="268" width="268" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" >
@@ -137,8 +137,11 @@
         <!-- End My Sites Tab -->
 
         <!-- Config Tab -->
-        <div class="tab-pane" id="config">
-          <div class="pantheon-authentication" data-bind="with: configuration.pantheonAuth">
+        <div class="tab-pane row-fluid" id="config">
+          <div class="pantheon-brand col-6">
+            <img src="/images/pantheon.png">
+          </div>
+          <div class="pantheon-authentication col-6" data-bind="with: configuration.pantheonAuth">
             <h2>Pantheon Authentication</h2>
             <form data-bind="visible: !signedIn()">
               <div class="alert" data-bind="visible: message() !== '', text: message, css: {'alert-success': !messageError(), 'alert-danger': messageError}"></div>
@@ -148,8 +151,8 @@
               <input type="password" class="form-control" id="pantheon-password" data-bind="value: password">
               <input type="submit" class="btn btn-success" value="Log In" data-bind="click: onSubmit">
             </form>
-            <div class="alert alert-info" data-bind="visible: signedIn">
-              You are currently signed in.
+            <div class="alert alert-info message-signedin" data-bind="visible: signedIn">
+              You are currently signed in. It's not forever which is why you can also click below to sign out
               <input type="submit" class="btn btn-danger" value="Log Out" data-bind="click: $root.configuration.signOutButton.onClick">
             </div>
           </div>

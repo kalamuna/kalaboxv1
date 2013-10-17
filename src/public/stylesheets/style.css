@@ -199,8 +199,36 @@ small {
   -webkit-filter: grayscale(1);
 }
 
-.site-label {
-  margin-top: 10px;
+/* Config */
+
+#config {
+  height: 371px;
+}
+
+#config .pantheon-brand img {
+  position: relative;
+  left: 24px;
+}
+
+#config .pantheon-brand {
+  padding-top: 45px;
+}
+
+#config .pantheon-authentication {
+  padding-right: 34px;
+  padding-top: 28px;
+}
+
+#config .pantheon-authentication .btn-success {
+  margin-top: 20px;
+}
+
+#config .pantheon-authentication .btn-danger {
+  margin-top: 20px;
+}
+
+#config .pantheon-authentication .message-signedin {
+width: 216px;
 }
 
 /* Modal */
