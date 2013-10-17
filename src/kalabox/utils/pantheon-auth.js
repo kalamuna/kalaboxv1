@@ -57,18 +57,18 @@ exports.getEmail = function() {
 exports.authenticate = flow('authenticate')(
   function authenticate0(callback) {
     this.data.callback = callback;
-    // Set gitconfig
-    var command = 'KALABOX=on drush tset ';
-    // Run command against VM via Vagrant.
-    exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
-  },
-  function authenticate1() {
     // Build command from site options.
     var command = 'KALABOX=on drush pauth ';
     command += pantheonEmail;
     if (pantheonPassword) {
       command += ' --password="' + pantheonPassword + '"';
     }
+    // Run command against VM via Vagrant.
+    exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
+  },
+  function authenticate1() {
+    // Set gitconfig
+    var command = 'KALABOX=on drush tset ';
     // Run command against VM via Vagrant.
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
