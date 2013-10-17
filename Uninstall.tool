@@ -41,7 +41,7 @@ echo ""
 echo "WHAT YOU WANT TO DO?"
 echo ""
 echo "1. Remove Kalabox code."
-echo "2. Remove Kalabox code AND uninstall VirtualBox and Vagrant."
+echo "2. Remove Kalabox code AND uninstall VirtualBox and Vagrant. (WARNING: This will delete EVERYTHING, including your shared folders)"
 echo "3. Forget this ever happened."
 echo ""
 read my_answer
@@ -75,6 +75,9 @@ fi
 
 # Delete the Kalabox application
 /usr/bin/sudo -p "Please enter %u's password:" /bin/rm -Rf /Applications/Kalabox.app
+
+# Remove Pantheon auth keychain
+security delete-generic-password -s KalaboxPantheonAuth
 
 # Print the files and directories that are to be removed and verify
 # with the user that that is what he/she really wants to do.
