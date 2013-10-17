@@ -84,7 +84,9 @@
         <!-- My Sites Tab -->
         <div class="tab-pane" id="sites">
           <div class="refresh-sites" data-bind="with: configuration">
-            <a href="#" data-bind="click: refreshButton.onClick, visible: pantheonAuth.signedIn"><i class="icon-refresh"></i> Refresh</a>
+            <div class="refresh-sites-container" data-bind="visible: pantheonAuth.signedIn">
+              <button href="#" class="btn btn-success" data-bind="click: refreshButton.onClick, html: refreshButton.label, disable: refreshButton.disabled"></button>
+            </div>
           </div>
           <div class="no-sites alert alert-info" data-bind="visible: sites.builtSites().length == 0 && sites.unbuiltSites().length == 0">
             Looks like you don't have any sites yet. How sad! But don't fret. You can pull down any of your
@@ -137,23 +139,26 @@
         <!-- End My Sites Tab -->
 
         <!-- Config Tab -->
-        <div class="tab-pane row-fluid" id="config">
+        <div class="tab-pane row-fluid" id="config" data-bind="with: configuration.pantheonAuth">
+          <div class="alert alert-dismissable" data-bind="visible: message() !== '', css: {'alert-success': !messageError(), 'alert-danger': messageError}">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+            <span data-bind="text: message"></span>
+          </div>
           <div class="pantheon-brand col-6">
             <img src="/images/pantheon.png">
           </div>
-          <div class="pantheon-authentication col-6" data-bind="with: configuration.pantheonAuth">
+          <div class="pantheon-authentication col-6">
             <h2>Pantheon Authentication</h2>
             <form data-bind="visible: !signedIn()">
-              <div class="alert" data-bind="visible: message() !== '', text: message, css: {'alert-success': !messageError(), 'alert-danger': messageError}"></div>
               <label for="pantheon-email">Email Address</label>
-              <input type="text" class="form-control" id="pantheon-email" data-bind="value: email">
+              <input type="text" class="form-control" id="pantheon-email" data-bind="value: email, disable: disabled">
               <label for="pantheon-password">Password</label>
-              <input type="password" class="form-control" id="pantheon-password" data-bind="value: password">
-              <input type="submit" class="btn btn-success" value="Log In" data-bind="click: onSubmit">
+              <input type="password" class="form-control" id="pantheon-password" data-bind="value: password, disable: disabled">
+              <button href="#" class="btn btn-success" data-bind="click: onClick, html: label, disable: disabled"></button>
             </form>
             <div class="alert alert-info message-signedin" data-bind="visible: signedIn">
-              You are currently signed in. It's not forever which is why you can also click below to sign out
-              <input type="submit" class="btn btn-danger" value="Log Out" data-bind="click: $root.configuration.signOutButton.onClick">
+              You are currently signed in. It's not for forever which is why you can also click below.
+              <button href="#" class="btn btn-danger" data-bind="click: $root.configuration.signOutButton.onClick">Log Out</button>
             </div>
           </div>
         </div>

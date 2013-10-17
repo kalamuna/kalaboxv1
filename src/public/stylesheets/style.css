@@ -199,6 +199,10 @@ small {
   -webkit-filter: grayscale(1);
 }
 
+.refresh-sites {
+  margin-bottom: 20px;
+}
+
 /* Config */
 
 #config {
@@ -228,7 +232,7 @@ small {
 }
 
 #config .pantheon-authentication .message-signedin {
-width: 216px;
+  width: 216px;
 }
 
 /* Modal */
