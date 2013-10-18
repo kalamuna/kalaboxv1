@@ -101,7 +101,7 @@
             <div data-bind="foreach: sites.builtSites">
               <div class="site-box">
                 <a href="#" data-bind="click: $root.sites.openSite">
-                  <img class="centered" src="/images/kalaboxv2-site.png" height="150" width="150" data-bind="visible: isIdle">
+                  <img class="centered" width="150" data-bind="visible: isIdle, attr:{ src: imgSrc }">
                   <i class="icon-refresh icon-site-size" data-bind="visible: refreshing"></i>
                   <i class="icon-trash icon-site-size" data-bind="visible: removing"></i>
                   <div class="site-label" data-bind="text: name"></div>

@@ -202,6 +202,7 @@ var newSiteForm = exports.newSiteForm = {
     if (data.succeeded) {
       // Add new site to the list.
       processSite(siteObject);
+      siteObject.imgSrc = '/images/kalaboxv2-site.png';
       builtSites.unshift(siteObject);
       // Alert the user.
       modal.template('site-build-complete');
@@ -290,6 +291,9 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
       getSiteInfo('built', siteObject.aliasName).done(function(info) {
         if (info.name) {
           siteObject.name = info.name;
+        }
+        if (info.imgSrc) {
+          siteObject.imgSrc = info.imgSrc;
         }
         builtSites.unshift(siteObject);
       });
