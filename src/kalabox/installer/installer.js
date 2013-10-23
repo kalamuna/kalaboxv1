@@ -188,27 +188,50 @@ var installDMG = flow('installDMG')(
       this.endWith({message: 'Software DMG does not exist!'});
       return;
     }
+    // Make sure a volume isn't already mounted.
+    var mountPoint = this.data.packageLocation.split('/');
+    mountPoint.pop();
+    mountPoint = mountPoint.join('/');
+    this.data.mountPoint = mountPoint;
+    fs.exists(mountPoint, this.async(as(0)));
+  },
+  function installDMG5(exists) {
+    // If a volume is already mounted, eject it.
+    if (exists) {
+      exec('hdiutil detach ' + this.data.mountPoint, this.async());
+    }
+    else {
+      this.next();
+    }
+  },
+  function installDMG6() {
     console.log('Software downloaded!');
     sendMessage('Configuring Things...');
     sendIcon('icon-cog', 'kalablue');
     exec('hdiutil attach ' + this.data.destination + this.data.fileName, this.async());
   },
   // Execute installer.
-  function installDMG5(stdout, stderr) {
+  function installDMG7(stdout, stderr) {
     console.log('DMG mounted.');
     sendMessage('Configuring Things...');
     sendIcon('icon-cog', 'kalablue');
     sudoRunner.runCommand('installer', ['-pkg', this.data.packageLocation, '-target', '/'], this.async());
   },
   // Unmount DMG after installation.
-  function installDMG6(stdout, stderr) {
+  function installDMG8(stdout, stderr) {
     console.log('Installed!');
     sendMessage('Configuring Things...');
     sendIcon('icon-cog', 'kalablue');
-    var mountPoint = this.data.packageLocation.split('/');
-    mountPoint.pop();
-    mountPoint = mountPoint.join('/');
-    exec('hdiutil detach ' + mountPoint, this.async());
+    // Only unmount if volume hasn't been removed already.
+    fs.exists(this.data.mountPoint, this.async(as(0)));
+  },
+  function installDMG9(exists) {
+    if (exists) {
+      exec('hdiutil detach ' + this.data.mountPoint, this.async());
+    }
+    else {
+      this.next();
+    }
   },
   function installDMGEnd(stdout, stderr) {
     if (this.err) {
