@@ -8,7 +8,8 @@
 var flow = require('nue').flow,
     as = require('nue').as,
     exec = require('child_process').exec,
-    config = require('../../config');
+    config = require('../../config'),
+    services = require('../vm/services');
 
 // Variables:
 var pantheonEmail = null,
@@ -57,6 +58,14 @@ exports.getEmail = function() {
 exports.authenticate = flow('authenticate')(
   function authenticate0(callback) {
     this.data.callback = callback;
+    // Check box's Internet connection.
+    services.checkConnection(this.async(as(0)));
+  },
+  function authenticate1(error) {
+    if (error) {
+      this.endWith(error);
+      return;
+    }
     // Build command from site options.
     var command = 'KALABOX=on drush pauth ';
     command += pantheonEmail;
@@ -66,17 +75,20 @@ exports.authenticate = flow('authenticate')(
     // Run command against VM via Vagrant.
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
-  function authenticate1() {
+  function authenticate2() {
     // Set gitconfig
     var command = 'KALABOX=on drush tset ';
     // Run command against VM via Vagrant.
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
-  function authenticate2() {
+  function authenticate3() {
     refresh(this.async());
   },
   function authenticateEnd(stdout, stderr) {
     if (this.err) {
+      if (!this.err.code) {
+        this.err.code = 'PANTHEON_AUTH_FAILED';
+      }
       this.data.callback(this.err);
       this.err = null;
     }
@@ -97,6 +109,14 @@ exports.authenticate = flow('authenticate')(
 var refresh = exports.refresh = flow('refresh')(
   function refresh0(callback) {
     this.data.callback = callback;
+    // Check box's Internet connection.
+    services.checkConnection(this.async(as(0)));
+  },
+  function refresh1(error) {
+    if (error) {
+      this.endWith(error);
+      return;
+    }
     // Build command
     var command = 'KALABOX=on drush ta';
     // Run command against VM via Vagrant.

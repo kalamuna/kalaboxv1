@@ -124,7 +124,7 @@ function handleSiteBuild(data) {
       logger.warn(error.message);
       success = false;
     }
-    socket.emit('siteBuildFinished', {succeeded: success, site: data.site});
+    socket.emit('siteBuildFinished', {succeeded: success, site: data.site, error: error});
   });
 }
 
@@ -135,7 +135,7 @@ function handleSiteNew(data) {
       logger.warn(error.message);
       success = false;
     }
-    socket.emit('siteBuildFinished', {succeeded: success, site: data.site});
+    socket.emit('siteBuildFinished', {succeeded: success, site: data.site, error: error});
   });
 }
 
@@ -146,7 +146,7 @@ function handleSiteRemove(data) {
       logger.warn(error.message);
       success = false;
     }
-    socket.emit('siteRemoveFinished', {succeeded: success, site: data.aliasName});
+    socket.emit('siteRemoveFinished', {succeeded: success, site: data.aliasName, error: error});
   });
 }
 
@@ -157,7 +157,7 @@ function handleSiteRefresh(data) {
       logger.warn(error.message);
       success = false;
     }
-    socket.emit('siteRefreshFinished', {succeeded: success, site: data.alias});
+    socket.emit('siteRefreshFinished', {succeeded: success, site: data.alias, error: error});
   });
 }
 
@@ -171,7 +171,7 @@ function handlePantheonAuth(data) {
     if (success) {
       pantheonAuth.storeCredentials();
     }
-    socket.emit('pantheonAuthFinished', {succeeded: success});
+    socket.emit('pantheonAuthFinished', {succeeded: success, error: error});
   });
 }
 
@@ -193,9 +193,7 @@ function handlePantheonRefresh() {
     if (error) {
       logger.warn(error.message);
     }
-    if (success) {
-      socket.emit('pantheonRefreshFinished', {refreshed: success});
-    }
+    socket.emit('pantheonRefreshFinished', {refreshed: success, error: error});
   });
 }
 

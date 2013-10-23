@@ -22,7 +22,8 @@ var templates = [
   {name: 'site-build-failed'},
   {name: 'vagrant-error'},
   {name: 'remove-site-confirmation'},
-  {name: 'refresh-site-form'}
+  {name: 'refresh-site-form'},
+  {name: 'modal-notification'}
 ];
 
 // Server event handlers:

@@ -7,7 +7,13 @@
 // Dependencies:
 var connector = require('./connector'),
     flow = require('nue').flow,
-    as = require('nue').as;
+    as = require('nue').as,
+    exec = require('child_process').exec,
+    config = require('../../config');
+
+// "Constants":
+var KALASTACK_DIR = config.get('KALASTACK_DIR'),
+    NET_CHECK_HOST = '8.8.8.8'; // IP or hostname to ping as a test for Internet connection.
 
 // Data objects:
 var socket,
@@ -56,6 +62,26 @@ exports.initialize = function(startChecking) {
   if (startChecking) {
     exports.startChecking();
   }
+};
+
+/**
+ * Checks if the box can access the Internet.
+ *
+ * @param function callback
+ *   Function to call when check completes.
+ */
+exports.checkConnection = function(callback) {
+  var command = 'ping -c 1 -q ' + NET_CHECK_HOST;
+  exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, function(error) {
+    if (error) {
+      error = new Error('Box has no Internet connection.');
+      error.code = 'NO_NET';
+      callback(error);
+    }
+    else {
+      callback(null);
+    }
+  });
 };
 
 /**

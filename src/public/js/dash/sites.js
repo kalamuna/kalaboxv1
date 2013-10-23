@@ -209,7 +209,7 @@ var newSiteForm = exports.newSiteForm = {
     }
     // If build unsuccessful...
     else {
-      modal.template('site-build-failed');
+      modal.showError(data.error);
     }
     delete this.sitesInProgress[site];
     modal.show();
@@ -302,7 +302,7 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
     }
     // If build unsuccessful...
     else {
-      modal.template('site-build-failed');
+      modal.showError(data.error);
     }
     delete this.sitesInProgress[site];
     siteObject.building(false);
@@ -387,13 +387,11 @@ var refresher = exports.refresher = {
     if (!siteObject) {
       return;
     }
-    // If refresh successful...
-    if (data.succeeded) {
-      siteObject.refreshing(false);
+    // If refresh unsuccessful...
+    if (data.error) {
+      modal.showError(data.error);
     }
-    else {
-      // @todo Add error handling.
-    }
+    siteObject.refreshing(false);
     delete this.sitesInProgress[site];
   }
 };

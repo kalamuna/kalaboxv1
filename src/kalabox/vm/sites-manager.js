@@ -10,7 +10,8 @@ var flow = require('nue').flow,
     exec = require('child_process').exec,
     http = require('http'),
     host = require('../utils/host'),
-    config = require('../../config');
+    config = require('../../config'),
+    services = require('./services');
 
 // "Constants":
 var SITES_SOURCE = 'http://aliases.kala',
@@ -62,8 +63,17 @@ exports.buildSite = flow('buildSite')(
   function buildSite0(options, callback) {
     this.data.callback = callback;
     this.data.options = options;
+    // Check box's Internet connection.
+    services.checkConnection(this.async(as(0)));
+  },
+  function buildSite1(error) {
+    if (error) {
+      this.endWith(error);
+      return;
+    }
     // Build command from site options.
-    var command = 'KALABOX=on drush pullsite ';
+    var command = 'KALABOX=on drush pullsite ',
+        options = this.data.options;
     command += options.site;
     if (options.files) {
       command += ' --files';
@@ -74,7 +84,7 @@ exports.buildSite = flow('buildSite')(
     // Run command against VM via Vagrant.
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
-  function buildSite1(stdout, stderr) {
+  function buildSite2(stdout, stderr) {
     // Add site entry to /etc/hosts.
     var siteId = this.data.options.site.split('.');
     siteId = siteId[0];
@@ -105,8 +115,17 @@ exports.newSite = flow('newSite')(
   function newSite0(options, callback) {
     this.data.callback = callback;
     this.data.options = options;
+    // Check box's Internet connection.
+    services.checkConnection(this.async(as(0)));
+  },
+  function newSite1(error) {
+    if (error) {
+      this.endWith(error);
+      return;
+    }
     // Build command from site options.
-    var command = 'KALABOX=on drush newsite ';
+    var command = 'KALABOX=on drush newsite ',
+        options = this.data.options;
     command += options.site;
     if (options.siteName) {
       command += ' --site-name="' + options.siteName + '"';
@@ -117,7 +136,7 @@ exports.newSite = flow('newSite')(
     // Run command against VM via Vagrant.
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
-  function newSite1(stdout, stderr) {
+  function newSite2(stdout, stderr) {
     // Add site entry to /etc/hosts.
     host.addHostsEntry(this.data.options.site + ".kala", this.async());
   },
@@ -180,7 +199,16 @@ exports.refreshSite = flow('refreshSite')(
     this.data.callback = callback;
     this.data.alias = options.alias;
     this.data.pipe = options.pipe;
+    // Check box's Internet connection.
+    services.checkConnection(this.async(as(0)));
+  },
+  function refreshSite1(error) {
+    if (error) {
+      this.endWith(error);
+      return;
+    }
     // Refresh code if requested.
+    var options = this.data.options;
     if (options.refreshCode) {
       exec('vagrant ssh -c \'KALABOX=on drush pullcode ' + options.alias + '\'', {cwd: KALASTACK_DIR}, this.async());
     }

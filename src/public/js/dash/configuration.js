@@ -6,7 +6,8 @@
 
 // Dependencies:
 var socket = require('./socket'),
-    sites = require('./sites');
+    sites = require('./sites'),
+    modal = require('./modal');
 
 var pantheonAuth = exports.pantheonAuth = {
   label: ko.observable('Log In'),
@@ -64,8 +65,7 @@ socket.on('pantheonAuthFinished', function(data) {
     sites.getSitesLists();
   }
   else {
-    pantheonAuth.message('Unable to sign in. Please check your credentials.');
-    pantheonAuth.messageError(true);
+    modal.showError(data.error);
     pantheonAuth.label("Log In");
     pantheonAuth.disabled(false);
   }
@@ -79,7 +79,10 @@ socket.on('pantheonCloseFinished', function(data) {
 socket.on('pantheonRefreshFinished', function(data) {
   if (data.refreshed) {
     sites.getSitesLists();
-    refreshButton.label('<i class="icon-refresh"></i> Refresh');
-    refreshButton.disabled(false);
   }
+  else {
+    modal.showError(data.error);
+  }
+  refreshButton.label('<i class="icon-refresh"></i> Refresh');
+  refreshButton.disabled(false);
 });

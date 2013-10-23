@@ -1,0 +1,4 @@
+{
+  "NO_NET": "The box is having trouble connecting to the Internet. Please check your connection. You may need to restart the box to reestablish the connection.",
+  "PANTHEON_AUTH_FAILED": "Unable to sign in. Please check your credentials."
+}
