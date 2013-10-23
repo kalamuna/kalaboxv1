@@ -342,6 +342,7 @@ var remover = exports.remover = {
       // If site was remote, add it back to the unbuilt list.
       if (siteObject.builtFrom) {
         siteObject.aliasName = siteObject.builtFrom;
+        siteObject.removing(false);
         unbuiltSites.push(siteObject);
       }
     }
