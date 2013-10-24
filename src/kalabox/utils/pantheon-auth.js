@@ -66,6 +66,14 @@ exports.authenticate = flow('authenticate')(
       this.endWith(error);
       return;
     }
+    // If we have stored credentials, use them.
+    loadCredentials(this.async(as(0)));
+  },
+  function authenticate2(credentials) {
+    if (credentials) {
+      pantheonEmail = credentials.email;
+      pantheonPassword = credentials.password;
+    }
     // Build command from site options.
     var command = 'KALABOX=on drush pauth ';
     command += pantheonEmail;
@@ -75,13 +83,13 @@ exports.authenticate = flow('authenticate')(
     // Run command against VM via Vagrant.
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
-  function authenticate2() {
+  function authenticate3() {
     // Set gitconfig
     var command = 'KALABOX=on drush tset ';
     // Run command against VM via Vagrant.
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
-  function authenticate3() {
+  function authenticate4() {
     refresh(this.async());
   },
   function authenticateEnd(stdout, stderr) {
@@ -110,7 +118,8 @@ var refresh = exports.refresh = flow('refresh')(
   function refresh0(callback) {
     this.data.callback = callback;
     // Check box's Internet connection.
-    services.checkConnection(this.async(as(0)));
+    //services.checkConnection(this.async(as(0)));
+    this.next();
   },
   function refresh1(error) {
     if (error) {

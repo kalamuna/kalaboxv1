@@ -189,7 +189,7 @@ function handlePantheonClose() {
 }
 
 function handlePantheonRefresh() {
-  pantheonAuth.refresh(function(error, success) {
+  pantheonAuth.authenticate(function(error, success) {
     if (error) {
       logger.warn(error.message);
     }
