@@ -172,7 +172,7 @@ function handlePantheonAuth(data) {
       pantheonAuth.storeCredentials();
     }
     socket.emit('pantheonAuthFinished', {succeeded: success, error: error});
-  });
+  }, true);
 }
 
 function handlePantheonClose() {
@@ -194,7 +194,7 @@ function handlePantheonRefresh() {
       logger.warn(error.message);
     }
     socket.emit('pantheonRefreshFinished', {refreshed: success, error: error});
-  });
+  }, true);
 }
 
 // Module communication handlers:

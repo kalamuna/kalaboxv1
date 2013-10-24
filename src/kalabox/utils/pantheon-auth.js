@@ -49,15 +49,23 @@ exports.getEmail = function() {
 
 /**
  * Signals the virtual machine to authenticate with Pantheon, passing it the username and password.
- * Will also pull down sites for rhe first time.
+ * Will also pull down sites for the first time.
  *
  * @param function callback
  *   Function to call when complete, passing an error if one ocurred
  *   and a boolean result of the authentication.
+ * @param (optional) bool refresh
+ *   Set to true to refresh Pantheon aliases after authenticating. Defaults to false.
  */
 exports.authenticate = flow('authenticate')(
-  function authenticate0(callback) {
+  function authenticate0(callback, refresh) {
     this.data.callback = callback;
+    if (typeof refresh === 'undefined') {
+      this.data.refresh = false;
+    }
+    else {
+      this.data.refresh = refresh;
+    }
     // Check box's Internet connection.
     services.checkConnection(this.async(as(0)));
   },
@@ -90,7 +98,13 @@ exports.authenticate = flow('authenticate')(
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
   function authenticate4() {
-    refresh(this.async());
+    // Refresh if requested.
+    if (this.data.refresh) {
+      refresh(this.async());
+    }
+    else {
+      this.next();
+    }
   },
   function authenticateEnd(stdout, stderr) {
     if (this.err) {

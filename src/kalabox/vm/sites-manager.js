@@ -11,7 +11,8 @@ var flow = require('nue').flow,
     http = require('http'),
     host = require('../utils/host'),
     config = require('../../config'),
-    services = require('./services');
+    services = require('./services'),
+    pantheonAuth = require('../utils/pantheon-auth');
 
 // "Constants":
 var SITES_SOURCE = 'http://aliases.kala',
@@ -71,6 +72,10 @@ exports.buildSite = flow('buildSite')(
       this.endWith(error);
       return;
     }
+    // Authenticate so we don't get a denial.
+    pantheonAuth.authenticate(this.async());
+  },
+  function buildSite2() {
     // Build command from site options.
     var command = 'KALABOX=on drush pullsite ',
         options = this.data.options;
@@ -84,7 +89,7 @@ exports.buildSite = flow('buildSite')(
     // Run command against VM via Vagrant.
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
-  function buildSite2(stdout, stderr) {
+  function buildSite3(stdout, stderr) {
     // Add site entry to /etc/hosts.
     var siteId = this.data.options.site.split('.');
     siteId = siteId[0];
@@ -207,6 +212,10 @@ exports.refreshSite = flow('refreshSite')(
       this.endWith(error);
       return;
     }
+    // Authenticate so we don't get a denial.
+    pantheonAuth.authenticate(this.async());
+  },
+  function refreshSite2() {
     // Refresh code if requested.
     var options = this.data.options;
     if (options.refreshCode) {
@@ -216,7 +225,7 @@ exports.refreshSite = flow('refreshSite')(
       this.next();
     }
   },
-  function refreshSite1() {
+  function refreshSite3() {
     // Refresh database if requested.
     var command = 'KALABOX=on drush pulldata ';
     command += this.data.alias;
@@ -230,7 +239,7 @@ exports.refreshSite = flow('refreshSite')(
       this.next();
     }
   },
-  function refreshSite2() {
+  function refreshSite4() {
     // Refresh files if requested.
     if (this.data.options.refreshFiles) {
       exec('vagrant ssh -c \'KALABOX=on drush pullfiles ' + this.data.alias + '\'', {cwd: KALASTACK_DIR}, this.async());
