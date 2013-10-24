@@ -350,7 +350,7 @@ var remover = exports.remover = {
       }
     }
     else {
-      // @todo Add error handling.
+      modal.showError(data.error);
     }
     delete this.sitesInProgress[site];
   }

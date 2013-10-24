@@ -100,13 +100,13 @@
           <div class="row">
             <div data-bind="foreach: sites.builtSites">
               <div class="site-box">
-                <a href="#" data-bind="click: $root.sites.openSite">
+                <a href="#" class="open-site-link" data-bind="click: $root.sites.openSite">
                   <img class="centered" width="150" data-bind="visible: isIdle, attr:{ src: imgSrc }">
                   <i class="icon-refresh icon-site-size" data-bind="visible: refreshing"></i>
                   <i class="icon-trash icon-site-size" data-bind="visible: removing"></i>
                   <div class="site-label" data-bind="text: name"></div>
                 </a>
-                <div class="dropdown">
+                <div class="dropdown site-operations">
                   <i class="icon-cogs site-operations-button" data-toggle="dropdown"></i>
                   <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
                     <li role="presentation" data-bind="visible: isRemote">

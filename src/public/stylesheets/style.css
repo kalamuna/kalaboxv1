@@ -186,6 +186,22 @@ small {
   bottom: 10px;
 }
 
+.open-site-link {
+  display: block;
+  height: 190px;
+}
+
+.site-box img[src^="http://images.kala"] {
+  position: relative;
+  top: 20px;
+}
+
+.site-operations {
+  position: relative;
+  bottom: 28px;
+  right: 0px;
+}
+
 .site-operations-button {
   float: right;
   cursor: pointer;
