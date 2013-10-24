@@ -295,6 +295,9 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
         if (info.imgSrc) {
           siteObject.imgSrc = info.imgSrc;
         }
+        else {
+          siteObject.imgSrc = '/images/kalaboxv2-site.png';
+        }
         builtSites.unshift(siteObject);
       });
       // Alert the user.
