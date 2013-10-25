@@ -15,6 +15,10 @@ a.btn-help {
   display: block;
 }
 
+textarea {
+  resize: none;
+}
+
 div.service-links.equidistant-row {
   max-width: 200px;
   margin: 0 auto;
