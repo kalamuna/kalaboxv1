@@ -160,7 +160,7 @@ var getPassword = flow('getPassword')(
     exec('osascript sudo-pass.scpt', {cwd: __dirname}, this.async());
   },
   function getPassword1(stdout, stderr) {
-    var password = stdout.toString().match(/text returned:(.+), button returned/);
+    var password = stdout.toString().match(/text returned:(.+?), (?:button returned:OK, )?gave up:false/);
     if (password && password[1]) {
       password = password[1];
       this.data.password = password;
