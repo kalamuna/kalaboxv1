@@ -124,7 +124,7 @@ function handleSiteBuild(data) {
       logger.warn(error.message);
       success = false;
     }
-    socket.emit('siteBuildFinished', {succeeded: success, site: data.site, error: error});
+    socket.emit('siteBuildFinished', {succeeded: success, site: data.site, error: processError(error)});
   });
 }
 
@@ -135,7 +135,7 @@ function handleSiteNew(data) {
       logger.warn(error.message);
       success = false;
     }
-    socket.emit('siteBuildFinished', {succeeded: success, site: data.site, error: error});
+    socket.emit('siteBuildFinished', {succeeded: success, site: data.site, error: processError(error)});
   });
 }
 
@@ -146,7 +146,7 @@ function handleSiteRemove(data) {
       logger.warn(error.message);
       success = false;
     }
-    socket.emit('siteRemoveFinished', {succeeded: success, site: data.aliasName, error: error});
+    socket.emit('siteRemoveFinished', {succeeded: success, site: data.aliasName, error: processError(error)});
   });
 }
 
@@ -157,7 +157,7 @@ function handleSiteRefresh(data) {
       logger.warn(error.message);
       success = false;
     }
-    socket.emit('siteRefreshFinished', {succeeded: success, site: data.alias, error: error});
+    socket.emit('siteRefreshFinished', {succeeded: success, site: data.alias, error: processError(error)});
   });
 }
 
@@ -171,7 +171,7 @@ function handlePantheonAuth(data) {
     if (success) {
       pantheonAuth.storeCredentials();
     }
-    socket.emit('pantheonAuthFinished', {succeeded: success, error: error});
+    socket.emit('pantheonAuthFinished', {succeeded: success, error: processError(error)});
   }, true);
 }
 
@@ -193,7 +193,7 @@ function handlePantheonRefresh() {
     if (error) {
       logger.warn(error.message);
     }
-    socket.emit('pantheonRefreshFinished', {refreshed: success, error: error});
+    socket.emit('pantheonRefreshFinished', {refreshed: success, error: processError(error)});
   }, true);
 }
 
@@ -244,3 +244,26 @@ exports.initialize = function() {
   box.on('stop', services.stopChecking);
   services.initialize(box.isRunning());
 };
+
+function processError(error) {
+  if (!error) {
+    return {};
+  }
+  var processedError = {};
+  if (error.message) {
+    var message = error.message;
+    // Extract user friendly error message.
+    friendlyMessage = message.match(/An error occurred in an async call\.([^]+)cause stack is/m);
+    if (friendlyMessage && friendlyMessage[1]) {
+      message = friendlyMessage[1].trim();
+    }
+    // Remove terminal artifacts from error message.
+    message = message.replace('Error message: Command failed: ', '');
+    message = message.replace(/\s+\[error\]/, '');
+    processedError.message = message;
+  }
+  if (error.code) {
+    processedError.code = error.code;
+  }
+  return processedError;
+}

@@ -89,7 +89,7 @@ exports.buildSite = flow('buildSite')(
     // Run command against VM via Vagrant.
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
-  function buildSite3(stdout, stderr) {
+  function buildSite3() {
     // Add site entry to /etc/hosts.
     var siteId = this.data.options.site.split('.');
     siteId = siteId[0];
