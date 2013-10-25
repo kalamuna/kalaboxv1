@@ -413,14 +413,18 @@ var install = flow('installKalabox')(
       });
     }
   },
-  // Check to make sure a kalabox isn't already in Vagrant.
+  // Restart VirtualBox for good measure.
   function install10() {
+    sudoRunner.runCommand('/Library/StartupItems/VirtualBox/VirtualBox', ['restart'], this.async());
+  },
+  // Check to make sure a kalabox isn't already in Vagrant.
+  function install11() {
     // Increment final "step" to 10%
     sendProgress(10);
     exec('vagrant box list', this.async());
   },
   // Start box build from Kalabox image if necessary.
-  function install11(stdout, stderr) {
+  function install12(stdout, stderr) {
     var response = stdout.toString();
     if (/kalabox\s+\(virtualbox\)/.test(response)) {
       this.next();
@@ -429,19 +433,19 @@ var install = flow('installKalabox')(
     }
   },
   // Run a sudo command to get authentication.
-  function install12(stdout, stderr) {
+  function install13(stdout, stderr) {
     // Increment final "step" to 40%
     sendProgress(40);
     sudoRunner.runCommand('echo', ['something something something darkside!'], this.async());
   },
   // Finish box build with "vagrant up".
-  function install13(output) {
+  function install14(output) {
     // Show this step as 70% complete
     sendProgress(70);
     installUtils.spinupBox(this.async());
   },
   // Reinitialize the box module.
-  function install14(stdout, stderr) {
+  function install15(stdout, stderr) {
     // Bump up the progress of this step to 100%
     sendProgress(100);
     box.initialize(this.async());
