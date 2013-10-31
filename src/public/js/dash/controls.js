@@ -80,7 +80,7 @@ var foldersButton = exports.foldersButton = {
 var helpButton = exports.helpButton = {
   disabled: ko.observable(false),
   onClick: function() {
-    socket.emit('urlRequest', {url: 'https://kalamuna.atlassian.net/wiki/display/kalabox/Kalabox+Home'});
+    socket.emit('urlRequest', {url: 'https://kalamuna.atlassian.net/wiki/display/kalabox/Kalabox+Wiki'});
   }
 };
 
