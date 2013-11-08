@@ -15,6 +15,10 @@
       <label>
         <input type="checkbox" data-bind="checked: refreshFiles"> Files
       </label>
+
+      <div class="data-download-method" data-bind="template: {name: 'data-download-method'}, visible: refreshData">
+      </div>
+
     </div>
     <div class="modal-footer">
       <input type="submit" class="btn btn-success" value="Refresh" data-bind="click: refresh, enable: refreshCode() || refreshData() || refreshFiles()">

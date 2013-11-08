@@ -86,6 +86,13 @@ exports.buildSite = flow('buildSite')(
     if (options.pipe) {
       command += ' --pipe';
     }
+    command += ' --db-backup-bucket=';
+    if (options.dbDownload) {
+      command += options.dbDownload;
+    }
+    else {
+      command += 'latest';
+    }
     // Run command against VM via Vagrant.
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
@@ -232,6 +239,13 @@ exports.refreshSite = flow('refreshSite')(
     if (this.data.pipe) {
       command += ' --pipe';
     }
+    command += ' --db-backup-bucket=';
+    if (this.data.options.dbDownload) {
+      command += this.data.options.dbDownload;
+    }
+    else {
+      command += 'latest';
+    }
     if (this.data.options.refreshData) {
       exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
     }
@@ -255,6 +269,58 @@ exports.refreshSite = flow('refreshSite')(
     }
     else {
       this.data.callback();
+    }
+    this.next();
+  }
+);
+
+/**
+ * Gets the list of database backups for a particular site.
+ *
+ * @param string siteId
+ *   Site's Pantheon uuid.
+ * @param function callback
+ *   Function to call with error (if one occurs) and backup object.
+ */
+exports.getDbBackups = flow('getDbBackups')(
+  function getDbBackups0(siteId, callback) {
+    this.data.siteId = siteId;
+    this.data.callback = callback;
+    // Check box's Internet connection.
+    services.checkConnection(this.async(as(0)));
+  },
+  function getDbBackups1(error) {
+    if (error) {
+      this.endWith(error);
+      return;
+    }
+    // Authenticate so we don't get a denial.
+    pantheonAuth.authenticate(this.async());
+  },
+  function getDbBackups2() {
+    // Load list of database backups for the given site.
+    var command = 'vagrant ssh -c \'drush pantheon-site-backups ';
+    command += this.data.siteId + ' ' + 'dev --json\'';
+    exec(command, {cwd: KALASTACK_DIR}, this.async());
+  },
+  function getDbBackupsEnd(stdout, stderr) {
+    if (this.err) {
+      this.data.callback(this.err);
+      this.err = null;
+    }
+    else {
+      // Filter out non-database backups.
+      var backups = JSON.parse(stdout.toString().replace(/,$/, ''));
+      var filteredBackups = [];
+      for (var backup in backups) {
+        if (!backups.hasOwnProperty(backup)) {
+          continue;
+        }
+        if (backups[backup][2] == 'database') {
+          filteredBackups.push(backups[backup]);
+        }
+      }
+      this.data.callback(null, filteredBackups);
     }
     this.next();
   }

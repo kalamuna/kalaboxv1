@@ -23,7 +23,8 @@ var templates = [
   {name: 'vagrant-error'},
   {name: 'remove-site-confirmation'},
   {name: 'refresh-site-form'},
-  {name: 'modal-notification'}
+  {name: 'modal-notification'},
+  {name: 'data-download-method'}
 ];
 
 // Server event handlers:

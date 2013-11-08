@@ -247,6 +247,7 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
     remoteSiteBuilder.selectedSite = site;
     // Ask if user wants to download files.
     modal.template('build-remote-site-form');
+    remoteSiteBuilder.resetDataMethod();
     remoteSiteBuilder.shouldDownloadFiles(false);
     modal.show();
   },
@@ -265,6 +266,7 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
       remoteSite.pipe = true;
       this.shouldPipeData(false);
     }
+    this.prepareDataRequest(remoteSite);
     // Add site to in progress.
     this.sitesInProgress[aliasName] = selectedSite;
     // Send request and update UI.
@@ -372,14 +374,19 @@ var refresher = exports.refresher = {
     refresher.refreshCode(false);
     refresher.refreshData(false);
     refresher.refreshFiles(false);
+    refresher.resetDataMethod();
     modal.show();
   },
   refresh: function() {
     var site = refresher.selectedSite;
     site.refreshing(true);
-    var refreshRequest = ko.toJS(refresher);
-    delete refreshRequest.selectedSite;
+    var refreshRequest = {
+      refreshCode: refresher.refreshCode(),
+      refreshData: refresher.refreshData(),
+      refreshFiles: refresher.refreshFiles(),
+    };
     refreshRequest.alias = site.builtFrom;
+    refresher.prepareDataRequest(refreshRequest);
     refresher.sitesInProgress[site.builtFrom] = site;
     socket.emit('siteRefreshRequest', refreshRequest);
     modal.close();
@@ -400,6 +407,62 @@ var refresher = exports.refresher = {
   }
 };
 socket.on('siteRefreshFinished', refresher.refreshComplete.bind(refresher));
+
+/**
+ * Data download chooser mixin.
+ */
+var dataDownload = {
+  dataDownloadMethod: ko.observable(),
+  selectedDbBackup: ko.observable(),
+  dbBackupOptions: ko.observableArray(),
+  dbOptionsVisible: ko.observable(),
+  resetDataMethod: function() {
+    this.dataDownloadMethod('latest');
+    this.selectedDbBackup('');
+    this.dbBackupOptions([{value: 'latest', display: 'Loading backups...'}]);
+    this.dbOptionsVisible(false);
+  },
+  onDataMethodSelect: function() {
+    var downloadMethod = this.dataDownloadMethod();
+    if (downloadMethod == 'pick') {
+      // Load backup list from Pantheon.
+      var connection = $.getJSON('/site-db-backups/' + this.selectedSite.pantheonId);
+      var self = this;
+      this.dbOptionsVisible(true);
+      connection.done(function(data) {
+        var backups = [];
+        for (var i = 0, length = data.length; i < length; i++) {
+          backups.push({
+            value: data[i][3],
+            display: data[i][1]
+          });
+        }
+        if (backups.length === 0) {
+          backups.push({
+            value: 'new',
+            display: 'Sorry, you have no backups...'
+          });
+        }
+        self.dbBackupOptions(backups);
+      });
+    }
+    else {
+      this.dbOptionsVisible(false);
+    }
+  },
+  prepareDataRequest: function(request) {
+    var dbDownloadMethod = this.dataDownloadMethod();
+    if (dbDownloadMethod == 'pick') {
+      request.dbDownload = this.selectedDbBackup();
+    }
+    else {
+      request.dbDownload = dbDownloadMethod;
+    }
+  }
+};
+// Mix in to services that need it.
+$.extend(refresher, dataDownload);
+$.extend(remoteSiteBuilder, dataDownload);
 
 // Server event handlers:
 

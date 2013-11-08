@@ -78,6 +78,17 @@ exports.sitesList = function(req, res) {
   });
 };
 
+exports.siteDbBackups = function(req, res) {
+  sitesManager.getDbBackups(req.params.id, function(error, backups) {
+    if (error || !backups) {
+      res.send(500, { error: 'Unable to load backups.' });
+    }
+    else {
+      res.send(backups);
+    }
+  });
+};
+
 exports.firewallIssue = function(req, res) {
   res.render('firewall_issue', {
     title : 'Kalabox'
