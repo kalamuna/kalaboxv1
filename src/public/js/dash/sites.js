@@ -240,7 +240,6 @@ socket.on('siteBuildFinished', newSiteForm.onComplete.bind(newSiteForm));
  */
 var remoteSiteBuilder = exports.remoteSiteBuilder = {
   shouldDownloadFiles: ko.observable(false),
-  shouldPipeData: ko.observable(false),
   selectedSite: null,
   sitesInProgress: {},
   onClick: function(site) {
@@ -261,10 +260,6 @@ var remoteSiteBuilder = exports.remoteSiteBuilder = {
     if (this.shouldDownloadFiles()) {
       remoteSite.files = true;
       this.shouldDownloadFiles(false);
-    }
-    if (this.shouldPipeData()) {
-      remoteSite.pipe = true;
-      this.shouldPipeData(false);
     }
     this.prepareDataRequest(remoteSite);
     // Add site to in progress.

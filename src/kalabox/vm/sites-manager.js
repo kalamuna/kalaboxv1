@@ -56,7 +56,7 @@ exports.getSitesList = flow('getSitesList')(
  * Pull down site from Pantheon
  *
  * @param object options
- *   Site parameters with site (required) files, pipe.
+ *   Site parameters with site (required), files.
  * @param function callback
  *   Function to call with error if one occurs.
  */
@@ -82,9 +82,6 @@ exports.buildSite = flow('buildSite')(
     command += options.site;
     if (options.files) {
       command += ' --files';
-    }
-    if (options.pipe) {
-      command += ' --pipe';
     }
     command += ' --db-backup-bucket=';
     if (options.dbDownload) {
@@ -210,7 +207,6 @@ exports.refreshSite = flow('refreshSite')(
     this.data.options = options;
     this.data.callback = callback;
     this.data.alias = options.alias;
-    this.data.pipe = options.pipe;
     // Check box's Internet connection.
     services.checkConnection(this.async(as(0)));
   },
@@ -236,9 +232,6 @@ exports.refreshSite = flow('refreshSite')(
     // Refresh database if requested.
     var command = 'KALABOX=on drush pulldata ';
     command += this.data.alias;
-    if (this.data.pipe) {
-      command += ' --pipe';
-    }
     command += ' --db-backup-bucket=';
     if (this.data.options.dbDownload) {
       command += this.data.options.dbDownload;
