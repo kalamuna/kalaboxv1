@@ -29,8 +29,11 @@ var VBOX_VERSION = config.get('VBOX_VERSION'),
     KALABOX64_URL = 'http://files.kalamuna.com/kalabox64.box',
     KALABOX64_FILENAME = 'kalabox64.box',
     KALASTACK_DIR = config.get('KALASTACK_DIR'),
-    KALASTACK_URL = config.get('KALASTACK_URL'),
+    KALASTACK_BASE_URL = config.get('KALASTACK_BASE_URL'),
+    KALASTACK_VERSION = config.kalastack.get('kalastack_version'),
+    KALASTACK_URL = KALASTACK_BASE_URL + KALASTACK_VERSION,
     KALASTACK_FILENAME = 'kalastack.tar.gz',
+    APP_ROOT = config.root,
     LICENSE_FILE = __dirname + '/../../LICENSE.txt';
 
 // "Variables":
@@ -432,20 +435,26 @@ var install = flow('installKalabox')(
       exec('vagrant box add kalabox "' + KALABOX_DIR + KALABOX64_FILENAME + '"', {cwd: KALASTACK_DIR}, this.async());
     }
   },
-  // Run a sudo command to get authentication.
+  // Move the kalastack config file into place.
   function install13(stdout, stderr) {
+    var reader = fs.createReadStream(fs.realpathSync(APP_ROOT + '/kalastack.json'));
+    reader.on('end', this.async());
+    reader.pipe(fs.createWriteStream(KALASTACK_DIR + '/config.json'));
+  },
+  // Run a sudo command to get authentication.
+  function install14() {
     // Increment final "step" to 40%
     sendProgress(40);
     sudoRunner.runCommand('echo', ['something something something darkside!'], this.async());
   },
   // Finish box build with "vagrant up".
-  function install14(output) {
+  function install15(output) {
     // Show this step as 70% complete
     sendProgress(70);
     installUtils.spinupBox(this.async());
   },
   // Reinitialize the box module.
-  function install15(stdout, stderr) {
+  function install16(stdout, stderr) {
     // Bump up the progress of this step to 100%
     sendProgress(100);
     box.initialize(this.async());

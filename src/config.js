@@ -6,7 +6,8 @@
  */
 
 // Dependencies:
-var config = require('./kalabox.json'); // Loads our config file.
+var config = require('./kalabox.json'), // Loads our config file.
+    kalastackConfig = require('./kalastack.json');
 
 // Process config file.
 for (var configProp in config) {
@@ -28,9 +29,22 @@ for (var configProp in config) {
  * @return mixed
  *   Value of the config variable.
  */
-exports.get = function(name) {
-  if (typeof config[name] === 'undefined') {
+var get = function(name) {
+  if (typeof this[name] === 'undefined') {
     throw new Error('Requested undefined configuration variable: ' + name);
   }
-  return config[name];
+  return this[name];
 };
+exports.get = get.bind(config);
+
+/**
+ * An accessor object for accessing Kalastack-specific configuration.
+ */
+exports.kalastack = {
+  get: get.bind(kalastackConfig)
+};
+
+/**
+ * The root directory of the app.
+ */
+exports.root = __dirname;
