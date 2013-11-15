@@ -34,7 +34,8 @@ var UPDATE_URL = config.get('UPDATE_URL'),
 var configFileContents = null,
     configuration = {},
     dependenciesUpdate = false,
-    kalastackUpdate = false;
+    kalastackUpdate = false,
+    socket;
 
 /**
  * Checks the canonical online source for updates.
@@ -81,6 +82,13 @@ exports.checkForUpdates = flow('checkForUpdates')(
 exports.update = flow('update')(
   function update0(callback) {
     this.data.callback = callback;
+    // Connect to the UI.
+    io.sockets.on('connection', this.async(as(0)));
+  },
+  function update1(newSocket) {
+    socket = newSocket;
+    sendMessage('Updating Things...');
+    sendIcon('icon-cog', 'kalablue');
     // Write the new configuration file.
     fs.writeFileSync(KALASTACK_DIR + 'config.json', configFileContents);
     // Halt the box.
@@ -101,12 +109,15 @@ exports.update = flow('update')(
   },
   function updateEnd() {
     if (this.err) {
-      this.data.callback(this.err);
+      if (this.data.callback) {
+        this.data.callback(this.err);
+      }
       this.err = null;
     }
-    else {
+    else if (this.data.callback) {
       this.data.callback();
     }
+    socket.emit('updatesComplete');
     this.next();
   }
 );
@@ -168,3 +179,24 @@ var refreshKalastack = flow('refreshKalastack')(
     this.next();
   }
 );
+
+/* UI Interaction Functions */
+
+function sendMessage(message) {
+  socket.emit('installer', { message: message });
+}
+
+function sendIcon(icon, kalacolor) {
+  socket.emit('installer', { icon: icon, kalacolor: kalacolor});
+}
+
+function sendProgress(progress, install) {
+  progressBump = progressWeight / 100;
+  if (install) {
+    realPercent = (progressRunning + ((((progress * progressBump) / progressFinal)) * 100) * .90);
+  }
+  else {
+    realPercent = progressRunning + (((progress * progressBump) / progressFinal)) * 100;
+  }
+  socket.emit('installer', { complete: realPercent });
+}

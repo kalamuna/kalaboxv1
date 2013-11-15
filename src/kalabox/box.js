@@ -318,7 +318,6 @@ var checkStatus = flow('checkStatus')(
       this.data.isRunning = false;
       this.err = null;
     }
-    console.log('Box running: ' + this.data.isRunning);
     // Execute callback with the result.
     this.data.callback(this.data.isRunning);
     this.next();

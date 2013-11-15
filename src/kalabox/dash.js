@@ -12,7 +12,8 @@ var box = require('./box'),
     services = require('./vm/services'),
     logger = require('../logger'),
     sitesManager = require('./vm/sites-manager'),
-    pantheonAuth = require('./utils/pantheon-auth');
+    pantheonAuth = require('./utils/pantheon-auth'),
+    updater = require('./updater');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -43,6 +44,12 @@ function handleStartRequest(data) {
     if (socket) {
       socket.emit('boxStarted');
     }
+    // Check for updates.
+    updater.checkForUpdates(function(updatesAvailable) {
+      if (updatesAvailable && socket) {
+        socket.emit('updatesDetected');
+      }
+    });
   });
   pantheonAuth.loadCredentials(function(credentials) {
     if (credentials) {

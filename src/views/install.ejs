@@ -50,4 +50,9 @@
 <script src="/js/libs/bootstrap-modal.js"></script>
 <script src="/js/libs/mousetrap.min.js"></script>
 <script src="/js/keyboard-copy.js"></script>
-<script src="/js/install.js"></script>
+<% if (updating) { %>
+  <script src="/js/update.js"></script>
+<% } %>
+<% if (!updating) { %>
+  <script src="/js/install.js"></script>
+<% } %>

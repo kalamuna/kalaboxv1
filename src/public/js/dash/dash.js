@@ -24,7 +24,8 @@ var templates = [
   {name: 'remove-site-confirmation'},
   {name: 'refresh-site-form'},
   {name: 'modal-notification'},
-  {name: 'data-download-method'}
+  {name: 'data-download-method'},
+  {name: 'updates-available'}
 ];
 
 // Server event handlers:
@@ -39,6 +40,15 @@ socket.on('vmError', function(data) {
   modal.template('vagrant-error');
   modal.show();
 });
+
+// When updates are available.
+socket.on('updatesDetected', function(data) {
+  modal.template('updates-available');
+  modal.show();
+});
+self.runUpdates = function() {
+  window.location.href = '/update';
+};
 
 /**
  * Loads and initializes resources, including the Knockout view model.

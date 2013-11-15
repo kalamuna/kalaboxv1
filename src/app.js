@@ -17,6 +17,7 @@ var express = require('express'),
 
 // Initialize socket.io.
 io = require('socket.io').listen(app);
+io.set('log level', 1); // Only show warning messages.
 
 // Configuration
 app.configure(function() {
@@ -52,6 +53,7 @@ app.get('/permission-denied', routes.noPermission);
 app.get('/sites-list', routes.sitesList);
 app.get('/site-db-backups/:id', routes.siteDbBackups);
 app.get('/firewall-issue', routes.firewallIssue);
+app.get('/update', routes.update);
 
 /**
  * Setup AppJS

@@ -10,7 +10,8 @@ var installer = require('../kalabox/installer/installer'),
     box = require('../kalabox/box'),
     dash = require('../kalabox/dash'),
     logger = require('../logger'),
-    sitesManager = require('../kalabox/vm/sites-manager');
+    sitesManager = require('../kalabox/vm/sites-manager'),
+    updater = require('../kalabox/updater');
 
 exports.index = function(req, res) {
   if (box.isInstalled()) {
@@ -28,6 +29,7 @@ exports.install = function(req, res) {
     res.render('install', {
       title : 'Boot this Box!',
       licenseAgreement : licenseText,
+      updating : false
     });
   });
   installer.initialize();
@@ -93,4 +95,13 @@ exports.firewallIssue = function(req, res) {
   res.render('firewall_issue', {
     title : 'Kalabox'
   });
+};
+
+exports.update = function(req, res) {
+  res.render('install', {
+    title : 'Updating',
+    updating : true,
+    licenseAgreement : ''
+  });
+  updater.update();
 };
