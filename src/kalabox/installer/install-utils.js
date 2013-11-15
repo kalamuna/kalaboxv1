@@ -319,7 +319,7 @@ var spinupBox = exports.spinupBox = flow('spinupBox')(
   },
   function spinupBox1() {
     sudoRunner.startAuthRenewal();
-    exec('vagrant up', {cwd: KALASTACK_DIR}, this.async(as(0)));
+    exec('vagrant up --provision', {cwd: KALASTACK_DIR}, this.async(as(0)));
   },
   function spinupBox2(error) {
     var attempts = this.data.attempts + 1,
