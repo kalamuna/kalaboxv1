@@ -50,7 +50,10 @@ exports.checkForUpdates = flow('checkForUpdates')(
     // Parse the updates and read in the current config.
     configFileContents = body;
     configuration = JSON.parse(body);
-    currentConfig = JSON.parse(fs.readFileSync(KALASTACK_DIR + 'config.json'));
+    var currentConfig = {};
+    if (fs.existsSync(KALASTACK_DIR + 'config.json')) {
+      currentConfig = JSON.parse(fs.readFileSync(KALASTACK_DIR + 'config.json'));
+    }
     // Check the dependencies and Kalastack versions against the latest ones.
     DEPENDENCIES.forEach(function(dependency) {
       if (currentConfig[dependency + '_version'] != configuration[dependency + '_version']) {
