@@ -15,9 +15,9 @@
 <div class="dependency-install modal installer-modal fade" role="dialog">
   <div class="modal-dialog">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header" data-bind="html: permissionTitle">
       </div>
-      <div class="modal-body">
+      <div class="modal-body" data-bind="html: permissionMessage">
       </div>
       <div class="modal-footer">
         <a href="#" class="btn" data-bind="click: permissionDeniedButton.onClick">No</a>

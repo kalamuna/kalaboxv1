@@ -72,8 +72,8 @@ var install = (function($, ko, socket) {
       "version of Vagrant and would like to change it. Doing so should " +
       "have no impact on your Vagrant environments. May we proceed?</p>";
     }
-    $('.modal .modal-header').prepend(title);
-    $('.modal .modal-body').prepend(message);
+    self.permissionTitle(title);
+    self.permissionMessage(message);
     $dependencyInstallModal.modal(options);
     $dependencyInstallModal.modal('show');
   });
@@ -107,6 +107,10 @@ var install = (function($, ko, socket) {
       $licenseModal.modal('hide');
     }
   };
+
+  // Set up permission dialog.
+  self.permissionTitle = ko.observable('');
+  self.permissionMessage = ko.observable('');
 
   // If user's firewall has problematic setting, send user to notifications screen.
   socket.on('installer.firewallCheckFailed', function() {
