@@ -66,6 +66,9 @@ var getSitesLists = exports.getSitesLists = function() {
     builtSites(data.builtSites);
     unbuiltSites(data.unbuiltSites);
   });
+  connection.fail(function() {
+    modal.showError({code: 'SITES_LOAD_FAILED'});
+  });
   // @todo Add error handling.
 };
 

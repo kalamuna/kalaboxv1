@@ -12,7 +12,8 @@ var flow = require('nue').flow,
     host = require('../utils/host'),
     config = require('../../config'),
     services = require('./services'),
-    pantheonAuth = require('../utils/pantheon-auth');
+    pantheonAuth = require('../utils/pantheon-auth'),
+    logger = require('../../logger');
 
 // "Constants":
 var SITES_SOURCE = 'http://aliases.kala',
@@ -40,13 +41,24 @@ exports.getSitesList = flow('getSitesList')(
       that.data.data += chunk;
     }).on('end', this.async(as(0)));
   },
-  function getSitesListEnd(end) {
+  function getSitesList2(end) {
+    // Attempt to parse the site response.
+    try {
+      this.data.data = JSON.parse(this.data.data);
+    }
+    catch (error) {
+      this.endWith(error);
+    }
+    this.next();
+  },
+  function getSitesListEnd() {
     if (this.err) {
-      this.data.callback(this.err);
+      logger.warn('Error retrieving sites list: ' + this.err);
       this.err = null;
+      this.data.callback(this.err);
     }
     else {
-      this.data.callback(null, JSON.parse(this.data.data));
+      this.data.callback(null, this.data.data);
     }
     this.next();
   }
