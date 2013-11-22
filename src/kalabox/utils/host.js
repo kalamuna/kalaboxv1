@@ -13,7 +13,9 @@ var flow = require('nue').flow,
 
 // "Constants":
 var HOSTS_TAG = ' # KALABOX SITE',
-    VM_IP = config.get('VM_IP');
+    VM_IP = config.get('VM_IP'),
+    NODE_BIN = process.execPath.replace(' ', '\\ '),
+    HOSTS_SCRIPT = (config.root + '/scripts/hosts.js').replace(' ', '\\ ');
 
 /**
  * Adds an entry to the host machine's /etc/hosts file pointing to the VM's IP.
@@ -26,13 +28,7 @@ var HOSTS_TAG = ' # KALABOX SITE',
 exports.addHostsEntry = flow('addHostsEntry')(
   function addHostsEntry0(url, callback) {
     this.data.callback = callback;
-    this.data.entry = VM_IP + '  ' + url + HOSTS_TAG;
-    // Gotta ghetto this for now
-    sudoRunner.runCommand('echo', ['wiki wiki wild wild west'], this.async());
-  },
-  function addHostsEntry1(response) {
-    // This should eventually use sudo-runner
-    exec('sudo sh -c "echo \'' + this.data.entry + '\' >> /etc/hosts"', this.async());
+    sudoRunner.runCommand(NODE_BIN, [HOSTS_SCRIPT, 'add', url, VM_IP], this.async());
   },
   function addHostsEntryEnd(response) {
     if (this.err) {
@@ -57,9 +53,7 @@ exports.addHostsEntry = flow('addHostsEntry')(
 exports.removeHostsEntry = flow('removeHostsEntry')(
   function removeHostsEntry0(url, callback) {
     this.data.callback = callback;
-    url = url.replace('.', '\\.');
-    var sedString = "/" + url + HOSTS_TAG + "/d";
-    sudoRunner.runCommand('sed', ['-i.bak', '-e', sedString, '/etc/hosts'], this.async());
+    sudoRunner.runCommand(NODE_BIN, [HOSTS_SCRIPT, 'remove', url, VM_IP], this.async());
   },
   function removeHostsEntryEnd(response) {
     if (this.err) {
