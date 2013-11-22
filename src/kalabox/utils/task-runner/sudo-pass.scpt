@@ -1,4 +1,9 @@
-set kalaicon to alias ((path to me as text) & ":..:..:..:..:app.icns")
+set kalaicon to 2
+tell application "System Events" to set itExists to ¬
+  exists of alias ((path to me as text) & ":..:..:..:..:app.icns")
+if itExists
+  set kalaicon to alias ((path to me as text) & ":..:..:..:..:app.icns")
+end if
 tell application "SystemUIServer"
   activate
   set my_password to display dialog ¬
