@@ -9,13 +9,14 @@ var flow = require('nue').flow,
     as = require('nue').as,
     sudoRunner = require('./task-runner/sudo-runner'),
     config = require('../../config'),
+    utils = require('./utils'),
     exec = require('child_process').exec;
 
 // "Constants":
 var HOSTS_TAG = ' # KALABOX SITE',
     VM_IP = config.get('VM_IP'),
-    NODE_BIN = process.execPath.replace(' ', '\\ '),
-    HOSTS_SCRIPT = (config.root + '/scripts/hosts.js').replace(' ', '\\ ');
+    NODE_BIN = utils.escapeSpaces(process.execPath),
+    HOSTS_SCRIPT = utils.escapeSpaces(config.root + '/scripts/hosts.js');
 
 /**
  * Adds an entry to the host machine's /etc/hosts file pointing to the VM's IP.

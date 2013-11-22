@@ -7,7 +7,7 @@
 var errorMessages = require('./error-messages.json');
 
 var modal = module.exports = {
-  template: ko.observable('vagrant-error'),
+  template: ko.observable(''),
   title: ko.observable(''),
   message: ko.observable(''),
   $window: $('#dash-modal'),

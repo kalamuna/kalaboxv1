@@ -13,7 +13,8 @@ var box = require('./box'),
     logger = require('../logger'),
     sitesManager = require('./vm/sites-manager'),
     pantheonAuth = require('./utils/pantheon-auth'),
-    updater = require('./updater');
+    updater = require('./updater'),
+    utils = require('./utils/utils');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -87,7 +88,8 @@ function handleSSHRequest(data) {
     return;
   }
   // Launch ssh in a new Terminal window.
-  exec('osascript ' + __dirname + '/utils/scpts/start_ssh.scpt "' + KALASTACK_DIR + '"');
+  var sshScript = utils.escapeSpaces(__dirname + '/utils/scpts/start_ssh.scpt');
+  exec('osascript ' + sshScript + ' ' + utils.escapeSpaces(KALASTACK_DIR));
 }
 
 function handleServiceRequest(data) {

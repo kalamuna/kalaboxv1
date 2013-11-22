@@ -1,5 +1,6 @@
 {
   "NO_NET": "The box is having trouble connecting to the Internet. Please check your connection. You may need to restart the box to reestablish the connection.",
   "PANTHEON_AUTH_FAILED": "Unable to sign in. Please check your credentials.",
-  "SITES_LOAD_FAILED": "There's a problem with loading your sites list. Restarting the box may resolve it."
+  "SITES_LOAD_FAILED": "There's a problem with loading your sites list. Restarting the box may resolve it.",
+  "VM_ERROR": "Looks like the box wasn't quite ready. Please try again in a moment. If the problem persists, please let us know at errors@kalamuna.com."
 }

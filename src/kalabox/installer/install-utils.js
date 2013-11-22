@@ -17,7 +17,8 @@ var fs = require('fs'),
     as = require('nue').as,
     logger = require('../../logger'),
     config = require('../../config'),
-    sudoRunner = require('../utils/task-runner/sudo-runner');
+    sudoRunner = require('../utils/task-runner/sudo-runner'),
+    utils = require('../utils/utils');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -128,7 +129,8 @@ exports.downloadKalastack = flow('downloadKalastack')(
       this.end();
       return;
     }
-    exec('curl -L -o ' + this.data.kalastack_filename + ' ' + this.data.kalastack_url, {cwd: this.data.kalabox_dir}, this.async());
+    var file = utils.escapeSpaces(this.data.kalastack_filename);
+    exec('curl -L -o ' + file + ' ' + this.data.kalastack_url, {cwd: this.data.kalabox_dir}, this.async());
   },
   // Verify Kalastack download
   function downloadKalastack2(stdout, stderr) {
@@ -144,11 +146,14 @@ exports.downloadKalastack = flow('downloadKalastack')(
   },
   // Untar Kalastack.
   function downloadKalastack4() {
-    exec('tar zxvf ' + this.data.kalastack_filename + ' -C ' + this.data.kalastackDir + ' --strip-components 1', {cwd: this.data.kalabox_dir}, this.async());
+    var file = utils.escapeSpaces(this.data.kalastack_filename),
+        directory = utils.escapeSpaces(this.data.kalastackDir);
+    exec('tar zxvf ' + file + ' -C ' + directory + ' --strip-components 1', {cwd: this.data.kalabox_dir}, this.async());
   },
   // Delete Kalastack tar.gz file.
   function downloadKalastack5(stdout, stderr) {
-    exec('rm ' + this.data.kalastack_filename, {cwd: this.data.kalabox_dir}, this.async());
+    var file = utils.escapeSpaces(this.data.kalastack_filename);
+    exec('rm ' + file, {cwd: this.data.kalabox_dir}, this.async());
   },
   function downloadKalastackEnd(stdout, stderr) {
     if (this.err) {

@@ -20,7 +20,6 @@ var templates = [
   {name: 'site-build-complete'},
   {name: 'build-remote-site-form'},
   {name: 'site-build-failed'},
-  {name: 'vagrant-error'},
   {name: 'remove-site-confirmation'},
   {name: 'refresh-site-form'},
   {name: 'modal-notification'},
@@ -37,8 +36,7 @@ socket.on('appError', function(data) {
 
 // On virtual machine error, show modal with message.
 socket.on('vmError', function(data) {
-  modal.template('vagrant-error');
-  modal.show();
+  modal.showError({code: 'VM_ERROR'});
 });
 
 // When updates are available.
