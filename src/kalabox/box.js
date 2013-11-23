@@ -14,11 +14,13 @@ var flow = require('nue').flow,
     EventEmitter = require('events').EventEmitter,
     config = require('../config'),
     sudoRunner = require('./utils/task-runner/sudo-runner'),
-    connector = require('./vm/connector');
+    connector = require('./vm/connector'),
+    utils = require('./utils/utils');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
-    KALASTACK_DIR = config.get('KALASTACK_DIR');
+    KALASTACK_DIR = config.get('KALASTACK_DIR'),
+    VM_HALT_TIMEOUT = 180000; // 3 minutes.
 
 // State data:
 var installed = false,
@@ -167,7 +169,15 @@ exports.stopBox = flow('stopBox')(
   },
   function stopBox1(output) {
     // Run "vagrant halt" to power down the box.
-    exec('vagrant halt', {cwd: KALASTACK_DIR}, this.async(as(0)));
+    var callback = this.async(as(0));
+    utils.timedRun(function(finishCallback) {
+      exec('vagrant halt', {cwd: KALASTACK_DIR}, finishCallback);
+    },
+    VM_HALT_TIMEOUT,
+    callback,
+    function() {
+      exec('vboxmanage controlvm ' + getVBoxId() + ' poweroff', {cwd: KALASTACK_DIR}, callback);
+    });
   },
   function stopBoxEnd(vagrantError) {
     // Check for Vagrant error.
@@ -283,6 +293,22 @@ var checkInstalled = flow('checkInstalled')(
     this.next();
   }
 );
+
+/**
+ * Gets the VirtualBox ID for the virtual machine.
+ *
+ * @return string|bool
+ *   VM's ID, or false if unable to get it.
+ */
+var getVBoxId = exports.getVBoxId = function() {
+  var idPath = KALASTACK_DIR + '.vagrant/machines/default/virtualbox/id';
+  try {
+    return fs.readFileSync(idPath).toString();
+  }
+  catch (error) {
+    return false;
+  }
+};
 
 /**
  * Checks if Kalabox is running.
