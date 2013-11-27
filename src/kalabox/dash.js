@@ -89,7 +89,7 @@ function handleSSHRequest(data) {
   }
   // Launch ssh in a new Terminal window.
   var sshScript = utils.escapeSpaces(__dirname + '/utils/scpts/start_ssh.scpt');
-  exec('osascript ' + sshScript + ' ' + utils.escapeSpaces(KALASTACK_DIR));
+  exec('osascript ' + sshScript + ' "' + utils.escapeSpaces(KALASTACK_DIR) + '"');
 }
 
 function handleServiceRequest(data) {
