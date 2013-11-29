@@ -15,7 +15,8 @@ var flow = require('nue').flow,
     config = require('../config'),
     sudoRunner = require('./utils/task-runner/sudo-runner'),
     connector = require('./vm/connector'),
-    utils = require('./utils/utils');
+    utils = require('./utils/utils'),
+    host = require('./utils/host');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -45,10 +46,25 @@ exports = module.exports = new EventEmitter();
 exports.initialize = flow('initialize')(
   function initialize0(callback) {
     this.data.callback = callback;
+    // Verify that Vagrant has the correct VirtualBox ID.
+    var kalaboxId = host.getKalaboxId(),
+        currentId = host.getVBoxId();
+    if (kalaboxId && currentId) {
+      host.verifyVBoxId(currentId, this.async());
+    }
+    else {
+      this.next('NO_ID');
+    }
+  },
+  function initialize1(result) {
+    // Fix the VirtualBox ID Vagrant has if it's wrong.
+    if (result != 'correct' && result != 'NO_ID') {
+      host.fixVBoxId(result);
+    }
     // Check if Kalabox is installed.
     checkInstalled(this.async(as(0)));
   },
-  function initialize1(isInstalled) {
+  function initialize2(isInstalled) {
     installed = isInstalled;
     // Execute the status checker and set it to run periodically.
     if (isInstalled) {
@@ -176,7 +192,7 @@ exports.stopBox = flow('stopBox')(
     VM_HALT_TIMEOUT,
     callback,
     function() {
-      exec('vboxmanage controlvm ' + getVBoxId() + ' poweroff', {cwd: KALASTACK_DIR}, callback);
+      exec('vboxmanage controlvm ' + host.getVBoxId() + ' poweroff', {cwd: KALASTACK_DIR}, callback);
     });
   },
   function stopBoxEnd(vagrantError) {
@@ -293,22 +309,6 @@ var checkInstalled = flow('checkInstalled')(
     this.next();
   }
 );
-
-/**
- * Gets the VirtualBox ID for the virtual machine.
- *
- * @return string|bool
- *   VM's ID, or false if unable to get it.
- */
-var getVBoxId = exports.getVBoxId = function() {
-  var idPath = KALASTACK_DIR + '.vagrant/machines/default/virtualbox/id';
-  try {
-    return fs.readFileSync(idPath).toString();
-  }
-  catch (error) {
-    return false;
-  }
-};
 
 /**
  * Checks if Kalabox is running.

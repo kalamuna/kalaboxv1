@@ -12,6 +12,9 @@ var socket = require('./socket'),
 // Components:
 var toolsError = exports.toolsError = ko.observable('');
 
+// Variables:
+var powerButtonAction;
+
 /**
  * Start/stop button.
  */
@@ -25,9 +28,11 @@ var powerButton = exports.powerButton = {
       sites.sitesButton.visible(false);
       sites.newSiteButton.disabled(true);
       serviceButton.visible(false);
+      powerButtonAction = 'Stop';
     }
     else {
       socket.emit('startRequest', {});
+      powerButtonAction = 'Start';
     }
     powerButton.disabled(true);
     powerButton.label("<i class=\"icon-spinner icon-spin icon-large\"></i>");
@@ -116,5 +121,6 @@ socket.on('boxStartCanceled', function(data) {
 });
 
 socket.on('vmError', function(data) {
+  powerButton.label(powerButtonAction);
   powerButton.disabled(false);
 });
