@@ -150,8 +150,22 @@ exports.downloadKalastack = flow('downloadKalastack')(
         directory = utils.escapeSpaces(this.data.kalastackDir);
     exec('tar zxvf ' + file + ' -C ' + directory + ' --strip-components 1', {cwd: this.data.kalabox_dir}, this.async());
   },
-  // Delete Kalastack tar.gz file.
   function downloadKalastack5(stdout, stderr) {
+    // Verify that Kalastack was extracted successfully.
+    var checkFiles = ['Vagrantfile', 'default.config.json'],
+        filesExist = true,
+        kalastackDir = this.data.kalastackDir;
+    checkFiles.forEach(function(file) {
+      if (!fs.existsSync(kalastackDir + file)) {
+        filesExist = false;
+        return false;
+      }
+    });
+    if (!filesExist) {
+      this.endWith(new Error('Failed to extract Kalastack archive.'));
+      return;
+    }
+    // Delete Kalastack tar.gz file.
     var file = utils.escapeSpaces(this.data.kalastack_filename);
     exec('rm ' + file, {cwd: this.data.kalabox_dir}, this.async());
   },
