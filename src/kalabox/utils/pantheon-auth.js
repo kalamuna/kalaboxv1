@@ -169,7 +169,7 @@ exports.close = flow('close')(
   function close0(callback) {
     this.data.callback = callback;
     // Remove aliases
-    var command = 'rm /etc/drush/pantheon.aliases.drushrc.php';
+    var command = 'rm -f /etc/drush/terminatur.aliases.drushrc.php';
     exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
   function close1() {
