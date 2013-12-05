@@ -292,7 +292,9 @@ var deleteCredentials = flow('deleteCredentials')(
   },
   function deleteCredentialsEnd(stdout, stderr) {
     if (this.err) {
-      throw new Error(this.err.message);
+      // No harm in ignoring errors here, as they
+      // only happen when the keychain item isn't there.
+      this.err = null;
     }
     this.data.callback();
     this.next();
