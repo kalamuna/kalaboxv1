@@ -166,7 +166,7 @@ var getPassword = flow('getPassword')(
       this.data.password = password;
     }
     // Add password to keychain.
-    exec('security add-generic-password -a "' + process.env.USER + '" -s Kalabox -w "' + this.data.password + '"', this.async());
+    exec('security add-generic-password -U -a "' + process.env.USER + '" -s Kalabox -w "' + this.data.password + '"', this.async());
   },
   function getPasswordEnd(stdout, stderr) {
     if (this.err) {
