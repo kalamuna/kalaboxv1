@@ -11,6 +11,7 @@
     "ssh2": "~0.2.9",
     "request": "~2.27.0",
     "rimraf": "~2.2.2",
-    "hostile": "~0.2.0"
+    "hostile": "~0.2.0",
+    "underscore": "~1.5.2"
   }
 }
