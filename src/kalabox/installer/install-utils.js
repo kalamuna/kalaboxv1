@@ -18,7 +18,8 @@ var fs = require('fs'),
     logger = require('../../logger'),
     config = require('../../config'),
     sudoRunner = require('../utils/task-runner/sudo-runner'),
-    utils = require('../utils/utils');
+    utils = require('../utils/utils'),
+    host = require('../utils/host');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -338,7 +339,7 @@ var spinupBox = exports.spinupBox = flow('spinupBox')(
   },
   function spinupBox1() {
     sudoRunner.startAuthRenewal();
-    exec('vagrant up --provision', {cwd: KALASTACK_DIR}, this.async(as(0)));
+    exec('vagrant up --provision', {cwd: KALASTACK_DIR, env: host.getSSHEnv()}, this.async(as(0)));
   },
   function spinupBox2(error) {
     var attempts = this.data.attempts + 1,
