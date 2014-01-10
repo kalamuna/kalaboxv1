@@ -68,7 +68,7 @@ exports.downloadFile = flow('writeFile')(
   // Create stream and start the download.
   function writeFile1(exists){
     if(exists){
-      console.log('File already downloaded');
+      logger.info('File ' + this.data.destination + this.data.file_name + ' already downloaded.');
       this.end();
       return;
     }
@@ -126,7 +126,7 @@ exports.downloadKalastack = flow('downloadKalastack')(
   // See if Kalastack is already downloaded
   function downloadKalastack1(exists) {
     if (exists) {
-      console.log('Kalastack already downloaded');
+      logger.info('Kalastack already downloaded');
       this.end();
       return;
     }
@@ -338,6 +338,7 @@ var spinupBox = exports.spinupBox = flow('spinupBox')(
     sudoRunner.runCommand('echo', ['We needs the passwordz...'], this.async());
   },
   function spinupBox1() {
+    logger.info('Starting spinup attempt ' + this.data.attempts);
     sudoRunner.startAuthRenewal();
     exec('vagrant up --provision', {cwd: KALASTACK_DIR, env: host.getSSHEnv()}, this.async(as(0)));
   },
@@ -351,6 +352,7 @@ var spinupBox = exports.spinupBox = flow('spinupBox')(
       return;
     }
     // Otherwise, remove failed box.
+    logger.warn('Spinup attempt ' + this.data.attempts + ' failed with error: ' + error.message);
     exec('vagrant destroy -f', {cwd: KALASTACK_DIR}, function(destroyError) {
       // Error out if we've made the maximum number of attempts.
       if (attempts == MAX_SPINUP_ATTEMPTS) {
