@@ -41,7 +41,7 @@ echo ""
 echo "WHAT YOU WANT TO DO?"
 echo ""
 echo "1. Remove Kalabox code."
-echo "2. Remove Kalabox code AND uninstall VirtualBox and Vagrant. (WARNING: This will delete EVERYTHING, including your shared folders)"
+echo "2. Remove Kalabox code AND uninstall VirtualBox and Vagrant. (WARNING: This will delete EVERYTHING except your shared folders)"
 echo "3. Forget this ever happened."
 echo ""
 read my_answer
@@ -109,7 +109,8 @@ if [ "$my_answer" == "2" ]; then
         echo "    $file"
     done
 
-    # Actually delete Vagrant
+    # Actually delete Vagrant and remove plugins
+    /usr/bin/vagrant plugin uninstall vagrant-hostsupdater
     /usr/bin/sudo -p "Please enter %u's password:" /bin/rm -rf /Applications/Vagrant
     /usr/bin/sudo -p "Please enter %u's password:" /bin/rm -Rf /usr/bin/vagrant
 
