@@ -11,5 +11,6 @@
   ],
   "VAGRANT_VERSION": "1.3.5",
   "VBOX_VERSION": "4.3.0",
+  "VERSION_STRING": "1.0-beta2",
   "VM_IP": "1.3.3.7"
 }

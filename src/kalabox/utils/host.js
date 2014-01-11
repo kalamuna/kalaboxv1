@@ -173,3 +173,19 @@ exports.fixVBoxId = function(id) {
 exports.getSSHEnv = function() {
   return _.extend({}, process.env, SSH_EXPORTS);
 };
+
+/**
+ * Gets Mac OS version of the host.
+ *
+ * @param function callback
+ */
+exports.getMacVersion = function(callback) {
+  exec('sw_vers -productVersion', function(error, stdout, stderr) {
+    if (error) {
+      callback(false);
+    }
+    else {
+      callback(stdout.toString());
+    }
+  });
+};

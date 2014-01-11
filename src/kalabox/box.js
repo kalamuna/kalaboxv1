@@ -8,6 +8,7 @@
 // Dependencies:
 var flow = require('nue').flow,
     as = require('nue').as,
+    parallel = require('nue').parallel,
     fs = require('fs'),
     exec = require('child_process').exec,
     http = require('http'),
@@ -16,7 +17,9 @@ var flow = require('nue').flow,
     sudoRunner = require('./utils/task-runner/sudo-runner'),
     connector = require('./vm/connector'),
     utils = require('./utils/utils'),
-    host = require('./utils/host');
+    host = require('./utils/host'),
+    logger = require('../logger'),
+    installUtils = require('./installer/install-utils');
 
 // "Constants":
 var KALABOX_DIR = config.get('KALABOX_DIR'),
@@ -71,6 +74,27 @@ exports.initialize = flow('initialize')(
       repeatStatusCheck();
       statusChecker = setInterval(repeatStatusCheck, 10000);
     }
+    this.next();
+  },
+  // Get software versions for logging purposes.
+  parallel('getSoftwareVersions')(
+    function() {
+      host.getMacVersion(this.async(as(0)));
+    },
+    function() {
+      installUtils.checkVBox(this.async(as(0)));
+    },
+    function() {
+      installUtils.checkVagrant(this.async(as(0)));
+    }
+  ),
+  function initialize3(versions) {
+    // Log box initialized and software versions.
+    logger.info('Box initialized.');
+    logger.info('Kalabox Version: ' + config.get('VERSION_STRING'));
+    logger.info('Mac OS Version: ' + versions[0]);
+    logger.info('VirtualBox Version: ' + versions[1]);
+    logger.info('Vagrant Version: ' + versions[2]);
     this.next();
   },
   function initializeEnd() {
