@@ -189,7 +189,7 @@ exports.downloadKalastack = flow('downloadKalastack')(
  */
 exports.checkVBox = function(callback) {
   if (vboxVersion) {
-    return vboxVersion;
+    callback(vboxVersion);
   }
   // e.g. "4.2.8r83876"
   exec('VBoxManage -v', function(error, stdout, stderr) {
@@ -211,7 +211,7 @@ exports.checkVBox = function(callback) {
  */
 exports.checkVagrant = function(callback) {
   if (vagrantVersion) {
-    return vagrantVersion;
+    callback(vagrantVersion);
   }
   // e.g. "Vagrant version 1.0.3"
   exec('vagrant --version', function(error, stdout, stderr) {
