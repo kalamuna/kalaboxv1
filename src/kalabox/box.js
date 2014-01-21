@@ -78,13 +78,13 @@ exports.initialize = flow('initialize')(
   },
   // Get software versions for logging purposes.
   parallel('getSoftwareVersions')(
-    function() {
+    function get0() {
       host.getMacVersion(this.async(as(0)));
     },
-    function() {
+    function get1() {
       installUtils.checkVBox(this.async(as(0)));
     },
-    function() {
+    function get2() {
       installUtils.checkVagrant(this.async(as(0)));
     }
   ),

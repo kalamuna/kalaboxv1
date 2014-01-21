@@ -1,7 +1,7 @@
 {
   "KALABOX_DIR": "$HOME/.kalabox/",
   "KALASTACK_DIR": "$HOME/.kalabox/kalastack/",
-  "KALASTACK_BASE_URL": "https://codeload.github.com/kalamuna/kalastack/tar.gz/",
+  "KALASTACK_BASE_URL": "http://files.kalamuna.com/",
   "UPDATE_URL": "http://kalabox.kalamuna.com/kalastack.json",
   "VAGRANT_PLUGINS": [
     {
