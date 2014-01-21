@@ -63,14 +63,15 @@ append kala_files "/Applications/Kalabox.app"
 append kala_files "~/.kalabox/kalastack"
 
 # Actually delete Kalabox vagrant build and associated files
- if [ -e ~/.kalabox/kalastack/.kalabox/uuid ]; then
-    cd ~/.kalabox/kalastack
+ if [ -e $HOME/.kalabox/kalastack/.kalabox/uuid ]; then
+    cd $HOME/.kalabox/kalastack
     /usr/bin/vagrant halt -f
     /usr/bin/vagrant destroy -f
     sleep 10s
-    /bin/rm -rf ~/.kalabox/kalastack
-    /bin/rm ~/.kalabox/kalabox.log
 fi
+/bin/rm -rf $HOME/.kalabox/kalastack
+/bin/rm -rf $HOME/.kalabox/kalastack.tar.gz
+/bin/rm $HOME/.kalabox/kalabox.log
 
 # Delete the Kalabox application
 /usr/bin/sudo -p "Please enter %u's password:" /bin/rm -Rf /Applications/Kalabox.app
