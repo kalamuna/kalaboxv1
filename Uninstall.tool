@@ -72,6 +72,8 @@ fi
 /bin/rm -rf $HOME/.kalabox/kalastack
 /bin/rm -rf $HOME/.kalabox/kalastack.tar.gz
 /bin/rm $HOME/.kalabox/kalabox.log
+/bin/rm -rf $TMPDIR/*vagrant*
+/bin/rm -rf $TMPDIR/*virtualbox*
 
 # Delete the Kalabox application
 /usr/bin/sudo -p "Please enter %u's password:" /bin/rm -Rf /Applications/Kalabox.app
