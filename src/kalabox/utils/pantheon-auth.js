@@ -86,10 +86,11 @@ exports.authenticate = flow('authenticate')(
     var command = 'KALABOX=on drush pauth ';
     command += pantheonEmail;
     if (pantheonPassword) {
-      command += ' --password="' + pantheonPassword + '"';
+      command += ' --password="' + pantheonPassword.replace("'", "\\'") + '"';
     }
     // Run command against VM via Vagrant.
-    exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
+    // Use $ to make sure we are escaping quotes
+    exec('vagrant ssh -c $\'' + command + '\'', {cwd: KALASTACK_DIR}, this.async());
   },
   function authenticate3() {
     // Set gitconfig
