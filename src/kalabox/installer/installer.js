@@ -21,7 +21,7 @@ var flow = require('nue').flow,
 // "Constants":
 var VBOX_VERSION = config.get('VBOX_VERSION'),
     VBOX_URL = 'http://files.kalamuna.com/virtualbox-macosx-' + VBOX_VERSION + '.dmg',
-    TEMP_DIR = '/tmp/',
+    TEMP_DIR = process.env['TMPDIR'],
     VAGRANT_VERSION = config.get('VAGRANT_VERSION'),
     VAGRANT_URL = 'http://files.kalamuna.com/vagrant-macosx-' + VAGRANT_VERSION + '.dmg',
     VAGRANT_PLUGINS = config.get('VAGRANT_PLUGINS'),
