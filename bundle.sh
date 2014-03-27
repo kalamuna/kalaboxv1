@@ -103,8 +103,8 @@ rm -fr "${TARDIR}/${APPNAME}.app";
 
 # Copy the files to the proper places.
 cp -Rpa "${MACDIR}/AppBundle.skel.app" "${TARDIR}/${APPNAME}.app";
-cp -Rpa "${basedir}/bin"/* "${TARDIR}/${APPNAME}.app/Contents/MacOS/bin/";
-cp -Rpa "${basedir}/src"/* "${TARDIR}/${APPNAME}.app/Contents/Resources/";
+cp -Rpa "${basedir}/data/bin"/* "${TARDIR}/${APPNAME}.app/Contents/MacOS/bin/";
+cp -Rpa "${basedir}/data"/* "${TARDIR}/${APPNAME}.app/Contents/Resources/";
 
 # Write some settings to the plist file for the application name and such.
 defaults write "${TARDIR}/${APPNAME}.app/Contents/Info" CFBundleDisplayName "${APPNAME}";

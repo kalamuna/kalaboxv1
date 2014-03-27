@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleName</key>
-	<string>appjsmyapp</string>
+	<string>kalabox</string>
 	<key>CFBundleDisplayName</key>
-	<string>My AppJS Application</string>
+	<string>Kalabox</string>
 	<key>CFBundleIdentifier</key>
 	<string>org.appjs.myapp</string>
 	<key>CFBundleIconFile</key>

@@ -1,4 +1,4 @@
 #!/bin/bash
 
-browserify src/public/js/dash/main.js -o src/public/js/dash-compiled.js
-bin/node --harmony src/app
+browserify data/public/js/dash/main.js -o data/public/js/dash-compiled.js
+data/bin/node --harmony data/app
