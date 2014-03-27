@@ -95,13 +95,13 @@
             <i class="fa fa-spinner fa-spin"></i>
             Your site's coming right up! Please Standby.
           </div>
-          <div class="row">
+          <div class="row-fluid">
             <div data-bind="foreach: sites.builtSites">
               <div class="site-box">
                 <a href="#" class="open-site-link" data-bind="click: $root.sites.openSite">
                   <img class="centered" width="150" data-bind="visible: isIdle, attr:{ src: imgSrc }">
-                  <i class="fa fa-refresh fa fa-site-size" data-bind="visible: refreshing"></i>
-                  <i class="fa fa-trash fa fa-site-size" data-bind="visible: removing"></i>
+                  <i class="fa fa-refresh fa-spin icon-site-size" data-bind="visible: refreshing"></i>
+                  <i class="fa fa-trash-o icon-site-size" data-bind="visible: removing"></i>
                   <div class="site-label" data-bind="text: name"></div>
                 </a>
                 <div class="dropdown site-operations">
@@ -114,7 +114,7 @@
                     </li>
                     <li role="presentation">
                       <a role="menuitem" tabindex="-1" href="#" data-bind="click: $root.sites.remover.confirmRemove">
-                        <i class="fa fa-trash"></i> Remove
+                        <i class="fa fa-trash-o"></i> Remove
                       </a>
                     </li>
                   </ul>
@@ -156,6 +156,7 @@
             </form>
             <div class="alert alert-info message-signedin" data-bind="visible: signedIn">
               You are currently signed in. It's not for forever which is why you can also click below.
+              <br />
               <button href="#" class="btn btn-danger" data-bind="click: $root.configuration.signOutButton.onClick">Log Out</button>
             </div>
           </div>

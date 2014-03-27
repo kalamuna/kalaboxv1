@@ -48,12 +48,12 @@ var signOutButton = exports.signOutButton = {
 };
 
 var refreshButton = exports.refreshButton = {
-  label: ko.observable('<i class="fa fa-refresh fa-spin"></i> Refresh'),
+  label: ko.observable('<i class="fa fa-refresh"></i> Refresh'),
   disabled: ko.observable(false),
   onClick: function() {
     if (pantheonAuth.signedIn()) {
       socket.emit('pantheonRefreshRequest', {});
-      refreshButton.label("<i class=\"fa fa-spinner fa-spin\"></i>");
+      refreshButton.label("<i class=\"fa fa-refresh fa-spin disabled\"> Refreshing...</i>");
       refreshButton.disabled(true);
     }
   }
