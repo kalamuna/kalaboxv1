@@ -155,9 +155,8 @@ exports.startBox = flow('startBox')(
     }
     // Wait until box is ready before proceeding.
     var that = this;
-    console.log('HELLO');
     var checkingReady = setInterval(function() {
-      checkReady(function(ready) {
+      checkStatus(function(ready) {
         if (ready) {
           clearInterval(checkingReady);
           that.next();
@@ -167,7 +166,6 @@ exports.startBox = flow('startBox')(
   },
   function startBoxEnd() {
     // Restart status checking.
-    exports.emit('start');
     statusChecker = setInterval(repeatStatusCheck, 10000);
     if (this.err) {
       var error;
@@ -383,7 +381,6 @@ var checkStatus = flow('checkStatus')(
  * To be used with setTimeout or setInterval to schedule status checking.
  */
 function repeatStatusCheck() {
-  console.log('repeat');
   checkStatus(repeatStatusCheck.storeCheck);
 }
 repeatStatusCheck.storeCheck = function(isRunning) {
@@ -408,20 +405,16 @@ repeatStatusCheck.storeCheck = function(isRunning) {
  */
 var checkReady = flow('checkReady')(
   function checkReady0(callback) {
-    console.log('start');
     this.data.callback = callback;
     connector.runCommand('mount', this.async());
   },
   function checkReadyEnd(response) {
-    console.log('start2');
     if (this.err) {
       this.err = null;
       this.data.callback(false);
-      console.log('FAIL');
     }
     else {
       // Parse response to see if mount exists.
-      console.log('TRUE');
       response = response.toString();
       var nfs_mount = '/kalabox/www on /var/www type nfs';
       this.data.callback(response.indexOf(nfs_mount) !== -1);
