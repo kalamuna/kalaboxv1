@@ -1,0 +1,15 @@
+<div class="form-group">
+  <label for="data-download-method-choice">How do you want to download your database?</label>
+  <select id="data-download-method-choice" class="form-control" data-bind="value: dataDownloadMethod, event: {change: onDataMethodSelect}">
+    <option value="latest">Get it from the latest Pantheon backup.</option>
+    <option value="new">Create a new Pantheon backup and download it.</option>
+    <option value="pick">Pick one from a list of Pantheon backups.</option>
+  </select>
+</div>
+<div class="data-download-backup" data-bind="visible: dbOptionsVisible">
+  <div class="form-group">
+    <label for="data-download-backup-choice">Pick a database backup</label>
+    <select id="data-download-backup-choice" class="form-control" data-bind="value: selectedDbBackup, options: dbBackupOptions, optionsValue: 'value', optionsText: 'display'">
+    </select>
+  </div>
+</div>

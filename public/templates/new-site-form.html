@@ -1,0 +1,30 @@
+<form id="new-site-form" name="new-site-form" data-bind="with: sites.newSiteForm">
+  <div class="kala-modal new-site-modal">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 class="modal-title">Create a new site</h3>
+    </div>
+
+    <div class="modal-body">
+      <div class="alert alert-danger" data-bind="visible: errorMessages() !== '', html: errorMessages"></div>
+      <label for="new-site-name">Site Name</label>
+      <input type="text" class="form-control" id="new-site-name" name="new-site-name" data-bind="value: siteName">
+      <label for="new-site-id">URL Name</label>
+      <input type="text" title="Only lowercase letters, numbers, and dashes." class="form-control" name="new-site-id" id="new-site-id" data-bind="value: site">
+      <div class="description">
+        This should contain only lowercase letters, numbers, and dashes.
+        Once built, your new site will be available at <em>thisname</em>.kala
+      </div>
+      <label for="new-site-profile">Profile</label>
+      <select id="new-site-profile" class="form-control" data-bind="value: profile, options: profiles, optionsText: 'name', optionsValue: 'id'"></select>
+      <div class="description">
+        Pick which Drupal profile/distribution you'd like to use for your new site.
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <input type="submit" class="btn btn-success" value="Go go go!">
+      <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    </div>
+  </div>
+</form>

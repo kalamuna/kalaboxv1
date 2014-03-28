@@ -1,8 +1,0 @@
-#!/bin/bash
-
-dir=${0%/*}
-if [ "$dir" = "$0" ]; then
-  dir="."
-fi
-
-exec "$dir/bin/node" --harmony "$dir/../Resources/app.js";

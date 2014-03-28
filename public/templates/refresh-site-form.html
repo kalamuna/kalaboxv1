@@ -1,0 +1,28 @@
+<form data-bind="with: sites.refresher">
+  <div class="kala-modal refresh-site-modal">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+      <h3 class="modal-title">Refresh This Site</h3>
+    </div>
+    <div class="modal-body">
+      <p>What would you like to refresh?</p>
+      <label>
+        <input type="checkbox" data-bind="checked: refreshCode"> Code
+      </label>
+      <label>
+        <input type="checkbox" data-bind="checked: refreshData"> Database
+      </label>
+      <label>
+        <input type="checkbox" data-bind="checked: refreshFiles"> Files
+      </label>
+
+      <div class="data-download-method" data-bind="template: {name: 'data-download-method'}, visible: refreshData">
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <input type="submit" class="btn btn-success" value="Refresh" data-bind="click: refresh, enable: refreshCode() || refreshData() || refreshFiles()">
+      <button class="btn btn-primary" data-dismiss="modal" aria-hidden="true">Cancel</button>
+    </div>
+  </div>
+</form>

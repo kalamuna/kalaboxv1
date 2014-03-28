@@ -1,0 +1,280 @@
+/* Copyright 2013 Kalamuna LLC */
+
+a.btn-help {
+  text-decoration: none;
+}
+
+.icon-question-sign.icon-3 {
+  font-size: 30px;
+  vertical-align: bottom;
+}
+
+.centered {
+  margin-right: auto;
+  margin-left: auto;
+  display: block;
+}
+
+textarea {
+  resize: none;
+}
+
+div.service-links.equidistant-row {
+  max-width: 200px;
+  margin: 0 auto;
+}
+
+.equidistant-row {
+  text-align: justify;
+}
+
+.equidistant-row .btn {
+  display: inline-block;
+}
+
+.equidistant-row:after {
+  content: '';
+  width: 100%;
+  display: inline-block;
+}
+
+img.kalalogo {
+  width: 250px;
+  height: 250px;
+  margin-top: 10px;
+}
+
+a:hover > i {
+  text-decoration: none;
+}
+
+/* Start Screen */
+
+.kalatron {
+  margin: 40px 0;
+  text-align: center;
+}
+
+.kalatron h1 {
+  font-size: 72px;
+  line-height: 1;
+}
+
+.kalatron .btn {
+  font-size: 21px;
+  padding: 14px 24px;
+}
+
+.kalatron .lead {
+  font-size: 21px;
+}
+
+/* Kala Colors */
+
+.kalagreen {
+  color: #afd357;
+}
+
+.kalablue {
+  color: #74b2e5;
+}
+
+.kalared {
+  color: #ed6f90;
+}
+
+.kalapurple {
+  color: #8a64a8;
+}
+
+.kalaorange {
+  color: #faac48;
+}
+
+.kalayellow {
+  color: #ffed90;
+}
+
+.icon-massive {
+  font-size: 280px;
+}
+
+.icon-site-size {
+  font-size: 150px;
+  text-align: center;
+}
+
+.icon-kalabox {
+  width: 280px;
+  height: 280px;
+  background-image: url('/images/kalabox-logo.svg');
+  background-size: 280px 280px;
+  background-repeat: no-repeat;
+  display: block;
+  margin: auto;
+}
+
+.kalawrap {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.install #icoco {
+  padding-top: 25px;
+  padding-bottom: 15px;
+}
+
+.install .lead {
+  margin-bottom: 40px;
+  font-size: 30px;
+}
+
+.start .kalatron {
+  margin: 70px 0;
+}
+
+.btn-massive {
+  width: 200px;
+}
+
+small {
+  color: #999;
+  font-size: 11px;
+}
+
+.nav-pills>.active>a,.nav-pills>.active>a:hover,.nav-pills>.active>a:focus
+  {
+  background-color: #afd357;
+}
+
+/* Error page */
+
+.log-contents {
+  width: 95%;
+  height: 200px;
+  margin: 0 auto;
+}
+
+/* Sites page */
+
+.no-sites {
+  text-align: center;
+}
+
+#sites {
+  height: 371px;
+  overflow-y: scroll;
+}
+
+.site-box {
+  width: 188px;
+  height: 200px;
+  float: left;
+  border: 1px solid #eee;
+  margin-right: 25px;
+  margin-bottom: 25px;
+  padding: 10px;
+  position: relative;
+}
+
+.site-box a i.icon-site-size {
+  display: block;
+}
+
+.site-box.site-unbuilt a {
+  color: #666;
+}
+
+.site-box .site-label {
+  position: absolute;
+  bottom: 10px;
+}
+
+.open-site-link {
+  display: block;
+  height: 190px;
+}
+
+.site-box img[src^="http://images.kala"] {
+  position: relative;
+  top: 20px;
+}
+
+.site-operations {
+  position: relative;
+  bottom: 28px;
+  right: 0px;
+}
+
+.site-operations-button {
+  float: right;
+  cursor: pointer;
+}
+
+.alert-padright {
+  width: 615px;
+}
+
+.grayscale {
+  -webkit-filter: grayscale(1);
+}
+
+.refresh-sites {
+  margin-bottom: 20px;
+}
+
+/* Config */
+
+#config {
+  height: 371px;
+}
+
+#config .pantheon-brand img {
+  position: relative;
+  left: 24px;
+}
+
+#config .pantheon-brand {
+  padding-top: 45px;
+}
+
+#config .pantheon-authentication {
+  padding-right: 34px;
+  padding-top: 28px;
+}
+
+#config .pantheon-authentication .btn-success {
+  margin-top: 20px;
+}
+
+#config .pantheon-authentication .btn-danger {
+  margin-top: 20px;
+}
+
+#config .pantheon-authentication .message-signedin {
+  width: 216px;
+}
+
+/* Modal */
+
+.license.modal textarea.license-agreement {
+  height: 225px;
+  width: 540px;
+}
+
+.license .modal-content {
+  width: auto;
+}
+
+.modal {
+  overflow-y: hidden;
+}
+
+.modal-dialog {
+  margin: 0 auto;
+  width: 400px;
+}
+
+.installer-modal .modal-dialog {
+  width: 600px;
+}
