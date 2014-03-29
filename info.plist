@@ -7,14 +7,14 @@
   <key>CFBundleDevelopmentRegion</key>
   <string>en</string>
   <key>CFBundleDisplayName</key>
-  <string>Kalabox</string>
+  <string>node-webkit</string>
   <key>CFBundleDocumentTypes</key>
   <array>
     <dict>
       <key>CFBundleTypeIconFile</key>
-      <string>nw.icns</string>
+      <string>app.icns</string>
       <key>CFBundleTypeName</key>
-      <string>Kalabox App</string>
+      <string>node-webkit App</string>
       <key>CFBundleTypeRole</key>
       <string>Viewer</string>
       <key>LSHandlerRank</key>
@@ -38,9 +38,9 @@
     </dict>
   </array>
   <key>CFBundleExecutable</key>
-  <string>Kalabox</string>
+  <string>node-webkit</string>
   <key>CFBundleIconFile</key>
-  <string>nw.icns</string>
+  <string>app.icns</string>
   <key>CFBundleIdentifier</key>
   <string>com.intel.nw</string>
   <key>CFBundleInfoDictionaryVersion</key>
@@ -79,9 +79,9 @@
         <string>com.pkware.zip-archive</string>
       </array>
       <key>UTTypeDescription</key>
-      <string>Kalabox App</string>
+      <string>node-webkit App</string>
       <key>UTTypeIconFile</key>
-      <string>nw.icns</string>
+      <string>app.icns</string>
       <key>UTTypeIdentifier</key>
       <string>com.intel.nw.app</string>
       <key>UTTypeReferenceURL</key>
@@ -89,7 +89,7 @@
       <key>UTTypeTagSpecification</key>
       <dict>
         <key>com.apple.ostype</key>
-        <string>Kalabox</string>
+        <string>node-webkit</string>
         <key>public.filename-extension</key>
         <array>
           <string>nw</string>
