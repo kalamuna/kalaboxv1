@@ -13,7 +13,8 @@ var connector = require('./connector'),
 
 // "Constants":
 var KALASTACK_DIR = config.get('KALASTACK_DIR'),
-    NET_CHECK_HOST = '8.8.8.8'; // IP or hostname to ping as a test for Internet connection.
+    NET_CHECK_HOST = 'google.com'; // IP or hostname to request as a test for Internet connection.
+    NET_CHECK_TIMEOUT = 5; // Time out value in seconds for the Internet connection test.
 
 // Data objects:
 var socket,
@@ -71,7 +72,7 @@ exports.initialize = function(startChecking) {
  *   Function to call when check completes.
  */
 exports.checkConnection = function(callback) {
-  var command = 'ping -c 1 -q ' + NET_CHECK_HOST;
+  var command = 'curl --connect-timeout ' + NET_CHECK_TIMEOUT + ' http://' + NET_CHECK_HOST;
   exec('vagrant ssh -c \'' + command + '\'', {cwd: KALASTACK_DIR}, function(error) {
     if (error) {
       error = new Error('Box has no Internet connection.');
