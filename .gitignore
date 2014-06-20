@@ -8,3 +8,9 @@ app.nw
 kalabox.sublime-workspace
 Drupal.sublime-projectcompletions
 data/public/js/dash-compiled.js
+
+# ignore node_module
+# if you need to save local modules
+#
+# !node_modules/module_to_save
+node_modules
