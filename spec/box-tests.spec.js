@@ -4,7 +4,7 @@
  */
 
 // Dependencies:
-var box = require('../src/kalabox/box');
+var box = require('../kalabox/box');
 
 // "Constants":
 var BOX_INSTALLED = true; // Set this to true or false depending on if you have Kalabox installed or not.

@@ -8,6 +8,24 @@ module.exports = function (grunt) {
 
   // Project configuration.
   grunt.initConfig({
+    // jasmine node unit test
+    jasmine_node: {
+      options: {
+        forceExit: true,
+        match: '.',
+        matchall: false,
+        extensions: 'js',
+        specNameMatcher: 'spec',
+        jUnit: {
+          report: true,
+          savePath : "./report/jasmine/",
+          useDotNotation: true,
+          consolidate: true
+        }
+      },
+      app: ['spec/']
+    },
+    // Jshint
     jshint: {
       options: {
         jshintrc: '.jshintrc',
@@ -17,12 +35,14 @@ module.exports = function (grunt) {
         src: 'Gruntfile.js'
       },
       app: {
-        src: ['lib/**/*.js', 'kalabox/**/*.js', 'scripts/**/*.js', './*.js', '!Gruntfile.js']
+        src: ['kalabox/**/*.js', 'scripts/**/*.js',
+        './*.js', '!Gruntfile.js']
       },
       specs: {
         src: ['test/**/*.js']
       }
     },
+    // watch
     watch: {
       gruntfile: {
         files: '<%= jshint.gruntfile.src %>',
@@ -30,12 +50,16 @@ module.exports = function (grunt) {
       },
       app: {
         files: '<%= jshint.app.src %>',
-        tasks: ['jshint:lib']
+        tasks: ['jshint:lib', 'jasmine_node:app']
       },
+      specs: {
+        files: ['<%= jshint.specs.src %>'],
+        tasks: ['jshint:specs', 'jasmine_node:app']
+      }
     }
   });
 
   // Default task.
-  grunt.registerTask('default', ['jshint']);
+  grunt.registerTask('default', ['jshint','jasmine_node:app']);
 
 };
