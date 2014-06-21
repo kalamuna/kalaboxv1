@@ -10,5 +10,12 @@
   "unused": true,
   "boss": true,
   "eqnull": true,
-  "node": true
+  "node": true,
+  "predef": [
+    "it",
+    "describe",
+    "runs",
+    "waitsFor",
+    "expect"
+  ]
 }

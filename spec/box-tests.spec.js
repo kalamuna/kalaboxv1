@@ -7,7 +7,7 @@
 var box = require('../kalabox/box');
 
 // "Constants":
-var BOX_INSTALLED = true; // Set this to true or false depending on if you have Kalabox installed or not.
+var BOX_INSTALLED = false; // Set this to true or false depending on if you have Kalabox installed or not.
 
 describe('The Box object', function() {
 
@@ -23,7 +23,7 @@ describe('The Box object', function() {
 
     waitsFor(function() {
       return initialized;
-    }, 'The Box should initialize.', 2000);
+    }, 'The Box should initialize.', 4000);
 
     runs(function() {
       var installed = box.isInstalled();
