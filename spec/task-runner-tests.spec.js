@@ -4,7 +4,7 @@
  */
 
 // Dependencies:
-var sudoRunner = require('../src/kalabox/utils/task-runner/sudo-runner');
+var sudoRunner = require('../kalabox/utils/task-runner/sudo-runner');
 
 // Test the Sudo Runner.
 describe('The Sudo Runner', function() {

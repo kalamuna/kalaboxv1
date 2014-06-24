@@ -14,3 +14,5 @@ data/public/js/dash-compiled.js
 #
 # !node_modules/module_to_save
 node_modules
+# Hide test results
+report

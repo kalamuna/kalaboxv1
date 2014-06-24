@@ -4,7 +4,7 @@
  */
 
 // Dependencies:
-var installUtils = require('../src/kalabox/installer/install-utils');
+var installUtils = require('../kalabox/installer/install-utils');
 
 describe('Kalabox Installer', function() {
 
