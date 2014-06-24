@@ -5,7 +5,7 @@
  */
 
 // Dependencies:
-var connector = require('../src/kalabox/vm/connector');
+var connector = require('../kalabox/vm/connector');
 
 describe('The VM connector', function() {
 

@@ -12,7 +12,7 @@
     "width": 700,
     "height": 520,
     "position": "center",
-    "resizeable" : "false"
+    "resizeable": "false"
   },
   "dependencies": {
     "express": "2.5.8",
@@ -25,5 +25,16 @@
     "rimraf": "~2.2.2",
     "hostile": "~0.2.0",
     "underscore": "~1.5.2"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "load-grunt-tasks": "^0.4.0",
+    "time-grunt": "^0.3.1",
+    "jshint-stylish": "^0.2.0",
+    "grunt-jasmine-node": "^0.2.1"
+  },
+  "scripts": {
+    "test": "grunt"
   }
 }
