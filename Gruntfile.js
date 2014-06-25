@@ -74,6 +74,5 @@ module.exports = function (grunt) {
 
   // Default task.
   grunt.registerTask('default', ['jshint','jasmine_node:app', 'clean:build', 'nodewebkit:app']);
-  grunt.registerTask('build', 'Builds a packaged version of the app'
-    , ['clean:build','nodewebkit:app'])
+  grunt.registerTask('build', 'Builds a packaged version of the app', ['clean:build','nodewebkit:app']);
 };
