@@ -68,11 +68,12 @@ module.exports = function (grunt) {
       }
     },
     clean: {
-      build: ['./build']
+      build: ['./build/releases']
     }
   });
 
   // Default task.
-  grunt.registerTask('default', ['jshint','jasmine_node:app', 'nodewebkit:app']);
-
+  grunt.registerTask('default', ['jshint','jasmine_node:app', 'clean:build', 'nodewebkit:app']);
+  grunt.registerTask('build', 'Builds a packaged version of the app'
+    , ['clean:build','nodewebkit:app'])
 };
