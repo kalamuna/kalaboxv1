@@ -56,10 +56,23 @@ module.exports = function (grunt) {
         files: ['<%= jshint.specs.src %>'],
         tasks: ['jshint:specs', 'jasmine_node:app']
       }
+    },
+    nodewebkit: {
+      app: {
+        options: {
+          build_dir: './build',
+          mac: true,
+          win: false
+        },
+        src: ['./**/*', '!./build']
+      }
+    },
+    clean: {
+      build: ['./build']
     }
   });
 
   // Default task.
-  grunt.registerTask('default', ['jshint','jasmine_node:app']);
+  grunt.registerTask('default', ['jshint','jasmine_node:app', 'nodewebkit:app']);
 
 };
