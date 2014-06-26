@@ -62,7 +62,10 @@ module.exports = function (grunt) {
         options: {
           build_dir: './build',
           mac: true,
-          win: false
+          win: false,
+          app_name: 'Kalabox',
+          mac_icns: './app.icns',
+          zip: true
         },
         src: ['./**/*', '!./build']
       }
