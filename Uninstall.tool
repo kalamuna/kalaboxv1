@@ -308,6 +308,19 @@ if [ "$my_answer" == "2" ]; then
     fi
 fi
 
+if [ "$my_answer" != "3" ]; then
+    echo ""
+    echo "Do you want to remove the Kalabox VirtualBox image? This won’t impact anything on your system, but may make future Kalabox installs take longer. (y/n)"
+    read remove_kalabox64
+    if [ "$remove_kalabox64" == "y" ]; then
+        echo ""
+        echo "Preparing to remove kalabox64.box"
+        echo ""
+        /bin/rm -rf $HOME/.kalabox/kalabox64.box
+        echo "Successfully removed kalabox64.box."
+    fi
+fi
+
 echo "Done."
 key_exit 0;
 
