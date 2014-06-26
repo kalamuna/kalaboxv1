@@ -1,7 +1,7 @@
 {
   "boxname": "kalabox",
   "boxuser": "vagrant",
-  "kalastack_version": "3.0-beta3",
+  "kalastack_version": "3.0-beta4",
   "terminatur_version": "1.0-alpha5",
   "puppet_environment": "threebetathree",
   "default_memory": "2048",
@@ -29,7 +29,7 @@
     "nfs_version": "3",
     "create": "true"
   },
-  "ssh_forwarding": "true",
+  "ssh_forwarding": "false",
   "puppet_master": {
     "server": "kalabox.kalamuna.com"
   }
