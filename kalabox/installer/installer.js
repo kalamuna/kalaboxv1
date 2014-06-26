@@ -582,16 +582,6 @@ exports.initialize = function() {
   // Bind handlers for communication events coming from the client.
   io.sockets.on('connection', function (newSocket) {
     socket = newSocket;
-    // Before we start install, have the user accept the license agreement.
-    getUserLicenseAcceptance(function(userAccepted) {
-      if (userAccepted) {
-        logger.info('User accepted license.');
-        install();
-      } else {
-        logger.warn('User rejected license.');
-        io.sockets.emit('noPermission');
-        return;
-      }
-    });
+    install();
   });
 };
