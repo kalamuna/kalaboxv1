@@ -144,7 +144,7 @@ exports.startBox = flow('startBox')(
   },
   function startBox1(output) {
     // Run "vagrant up" to start the Kalabox.
-    exec('vagrant up', {cwd: KALASTACK_DIR, env: host.getSSHEnv()}, this.async(as(0)));
+    exec('vagrant up', {cwd: KALASTACK_DIR}, this.async(as(0)));
   },
   function startBox2(error) {
     // Check for Vagrant error.
