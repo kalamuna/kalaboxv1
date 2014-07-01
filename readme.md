@@ -36,8 +36,11 @@ https://github.com/kalamuna/terminatur
 
 If you installation fails you should report the failure to errors@kalamuna.com. You might also want to check out the Uninstall.tool utility that is packaged with the install DMG. THIS UTILITY CAN WIPE BOTH YOUR VIRTUAL BOX AND VAGRANT INSTALLS, INCLUDING PREVIOUSLY BUILT VMS. AKA BE CAREFUL.
 
-## More?
+## Building from source and contributing
+https://github.com/kalamuna/kalabox/wiki/Contributing-to-Kalabox
 
+## More?
+https://github.com/kalamuna/kalabox/wiki
 https://kalamuna.atlassian.net/wiki/display/kalabox/Kalabox+Home
 
 -------------------------------------------------------------------------------------
