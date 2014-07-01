@@ -90,8 +90,9 @@ exports.update = flow('update')(
   },
   function update1(newSocket) {
     socket = newSocket;
-    sendMessage('Updating Things...');
-    sendIcon('icon-cog', 'kalablue');
+    sendMessage('You Gone Get Updated!...');
+    sendIcon('fa fa-download', 'kalagreen');
+    sendProgress(25);
     // Write the new configuration file.
     fs.writeFileSync(KALASTACK_DIR + 'config.json', configFileContents);
     // Halt the box.
@@ -99,6 +100,8 @@ exports.update = flow('update')(
   },
   function update1() {
     // Refresh Kalastack if there's an update.
+    sendIcon('fa fa-cog fa-spin', 'kalablue');
+    sendProgress(40);
     if (kalastackUpdate) {
       refreshKalastack(this.async());
     }
@@ -108,6 +111,7 @@ exports.update = flow('update')(
   },
   function update2() {
     // Provision and start the box.
+    sendProgress(77);
     installUtils.spinupBox(this.async());
   },
   function updateEnd() {
@@ -120,6 +124,7 @@ exports.update = flow('update')(
     else if (this.data.callback) {
       this.data.callback();
     }
+    sendProgress(100);
     socket.emit('updatesComplete');
     this.next();
   }
@@ -194,12 +199,5 @@ function sendIcon(icon, kalacolor) {
 }
 
 function sendProgress(progress, install) {
-  progressBump = progressWeight / 100;
-  if (install) {
-    realPercent = (progressRunning + ((((progress * progressBump) / progressFinal)) * 100) * .90);
-  }
-  else {
-    realPercent = progressRunning + (((progress * progressBump) / progressFinal)) * 100;
-  }
-  socket.emit('installer', { complete: realPercent });
+  socket.emit('installer', { complete: progress });
 }

@@ -82,7 +82,7 @@ function sendMessage(message) {
 }
 
 function sendIcon(icon, kalacolor) {
-  io.sockets.emit('installer', { icon: icon, kalacolor: kalacolor});
+  io.sockets.emit('installer', { icon: icon, kalacolor: kalacolor });
 }
 
 function sendProgress(progress, install) {
