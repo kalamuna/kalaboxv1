@@ -87,9 +87,16 @@ function handleSSHRequest(data) {
   if (!box.isRunning()) {
     return;
   }
-  // Launch ssh in a new Terminal window.
-  var sshScript = utils.escapeSpaces(__dirname + '/utils/scpts/start_ssh.scpt');
-  exec('osascript ' + sshScript + ' "' + utils.escapeSpaces(KALASTACK_DIR) + '"');
+  // Launch ssh with the default SSH handler
+  exec("vagrant ssh-config | grep IdentityFile | awk '{print $2}'", {cwd: KALASTACK_DIR}, function(error, stdout, stderr) {
+    if (error !== null) {
+      logger.info('Could not find vagrant ssh identity. This is weird and should never happen.');
+    }
+    else {
+      vagrantSSHIdentity = stdout.toString().replace(/[\n\r]/g, "");
+      exec('ssh-add ' + vagrantSSHIdentity + ' & open ssh://vagrant@127.0.0.1:2222');
+    }
+  });
 }
 
 function handleServiceRequest(data) {

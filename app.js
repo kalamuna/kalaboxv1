@@ -2,7 +2,7 @@
  * @file
  * Configuration and starting point for the app.
  *
- * Copyright 2013 Kalamuna LLC
+ * Copyright 2014 Kalamuna LLC
  */
 
 // Dependencies:

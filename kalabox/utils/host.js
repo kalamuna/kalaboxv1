@@ -18,11 +18,8 @@ var flow = require('nue').flow,
 var VM_IP = config.get('VM_IP'),
     NODE_BIN = utils.escapeSpaces(config.root + '/bin/node'),
     HOSTS_SCRIPT = utils.escapeSpaces(config.root + '/scripts/hosts.js'),
-    KALASTACK_DIR = config.get('KALASTACK_DIR'),
-    SSH_EXPORTS = {
-      SSH_ASKPASS: utils.escapeSpaces(config.root + '/vendor/mac-ssh-askpass/ssh-askpass'),
-      DISPLAY: 'x11'
-    };
+    KALASTACK_DIR = config.get('KALASTACK_DIR');
+
 
 /**
  * Adds an entry to the host machine's /etc/hosts file pointing to the VM's IP.
@@ -167,16 +164,6 @@ exports.verifyVBoxId = flow('verifyVBoxId')(
  */
 exports.fixVBoxId = function(id) {
   fs.writeFileSync(KALASTACK_DIR + '.vagrant/machines/default/virtualbox/id', id);
-};
-
-/**
- * Gets environment variables with our SSH_ASKPASS script set.
- *
- * @return object
- *   Object with all environment variables plus our custom ssh-related ones.
- */
-exports.getSSHEnv = function() {
-  return _.extend({}, process.env, SSH_EXPORTS);
 };
 
 /**
