@@ -188,7 +188,7 @@ exports.removeSite = flow('removeSite')(
     // Run command against VM via Vagrant.
     var alias = site.aliasName;
 
-    exec('vagrant ssh -c \'KALABOX=on drush crush ' + alias + '\'', {cwd: KALASTACK_DIR}, this.async());
+    exec('vagrant ssh -c \'KALABOX=on drush crush ' + alias + ' -y\'', {cwd: KALASTACK_DIR}, this.async());
   },
   function removeSite1(stdout, stderr) {
     // Remove entry from /etc/hosts.
