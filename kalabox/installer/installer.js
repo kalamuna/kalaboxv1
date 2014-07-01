@@ -33,8 +33,7 @@ var VBOX_VERSION = config.get('VBOX_VERSION'),
     KALASTACK_VERSION = config.kalastack.get('kalastack_version'),
     KALASTACK_URL = KALASTACK_BASE_URL + 'kalastack-' + KALASTACK_VERSION + '.tar.gz',
     KALASTACK_FILENAME = 'kalastack.tar.gz',
-    APP_ROOT = config.root,
-    LICENSE_FILE = __dirname + '/../../LICENSE.txt';
+    APP_ROOT = config.root;
 
 // "Variables":
 var socket,
@@ -502,76 +501,6 @@ var install = flow('installKalabox')(
       io.sockets.emit('installerComplete');
       this.next();
     }
-  }
-);
-
-/**
- * Loads the license agreement.
- * @todo Could we combine this with the logic loading the error
- * log?
- *
- * @param function callback
- *   Function to call with the contents of the log file.
- */
-exports.loadLicense = flow('loadLicense')(
-  // Check if LICENSE.txt exists.
-  function loadLicense0(callback) {
-    this.data.callback = callback;
-    fs.exists(LICENSE_FILE, this.async(as(0)));
-  },
-  // Read in the file.
-  function loadLicense1(exists) {
-    if (!exists) {
-      this.end();
-    }
-    else {
-      fs.readFile(LICENSE_FILE, this.async());
-    }
-  },
-  // Return log contents.
-  function loadLicenseEnd(contents) {
-    if (this.err) {
-      logger.warn('Error loading log file: ' + this.err.message);
-      this.err = null;
-      this.next();
-      this.data.callback();
-      return;
-    }
-    if (contents) {
-      this.data.callback(contents);
-    }
-  }
-);
-
-
-// Flow for getting user's sign off on the license.
-// @todo: Perhaps combine this with the Vagrant/Vbox upload logic
-// to reduce code duplication.
-var getUserLicenseAcceptance = flow('getUserLicenseAcceptance')(
-  // Activate the license review modal.
-  function getUserLicenseAcceptance0(callback) {
-    this.data.callback = callback;
-    io.sockets.emit('licenseReview');
-    socket.on('permissionResponse', this.async(as(0)));
-  },
-  // If given permission, proceed. Otherwise, gracefully kill install.
-  function getUserLicenseAcceptance1(permissionResponse) {
-    if (permissionResponse.value !== true) {
-      this.data.permissionGranted = permissionResponse.value;
-    } else {
-      this.data.permissionGranted = true;
-    }
-
-    this.next();
-
-  },
-  function getUserLicenseAcceptanceEnd() {
-    if (this.err) {
-      this.data.callback({ message: this.err.message });
-      this.err = null;
-    }
-    this.data.callback(this.data.permissionGranted);
-    this.next();
   }
 );
 

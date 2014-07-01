@@ -26,12 +26,9 @@ exports.index = function(req, res) {
 };
 
 exports.install = function(req, res) {
-  installer.loadLicense(function(licenseText) {
-    res.render('install', {
-      title : 'Boot this Box!',
-      licenseAgreement : licenseText,
-      updating : false
-    });
+  res.render('install', {
+    title : 'Boot this Box',
+    updating : false
   });
   installer.initialize();
 };
@@ -101,8 +98,7 @@ exports.firewallIssue = function(req, res) {
 exports.update = function(req, res) {
   res.render('install', {
     title : 'Updating',
-    updating : true,
-    licenseAgreement : ''
+    updating : true
   });
   updater.update();
 };

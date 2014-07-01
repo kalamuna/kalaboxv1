@@ -12,12 +12,8 @@ var install = (function($, ko, socket) {
   // DOM elements:
   var $progressBar = $('.progress-bar'),
       $statusMessage = $('.lead'),
-      $dependencyInstallModal = $('.dependency-install.modal'),
-      $licenseModal = $('.license.modal'),
       $icono = $('#icoco'),
       progress = 0;
-
-
 
   // Server event handlers:
 
@@ -80,33 +76,6 @@ var install = (function($, ko, socket) {
   socket.on('noPermission', function() {
     window.location.href = '/permission-denied';
   });
-
-  // Launch modal so the user can review the user license.
-  socket.on('licenseReview', function(data) {
-    var options = ({keyboard: 'false', show: 'false', backdrop: 'static'});
-    $licenseModal.modal(options);
-    $licenseModal.modal('show');
-  });
-
-  // Declare the permissionButton view.
-  self.permissionGrantedButton = {
-    // Send permission request data back to the backend.
-    onClick: function() {
-      socket.emit('permissionResponse', {'value': true});
-      $dependencyInstallModal.modal('hide');
-      $licenseModal.modal('hide');
-    }
-  };
-
-  // Declare the permissionButton view.
-  self.permissionDeniedButton = {
-    // Send permission request data back to the backend.
-    onClick: function() {
-      socket.emit('permissionResponse', {'value': false});
-      $dependencyInstallModal.modal('hide');
-      $licenseModal.modal('hide');
-    }
-  };
 
   // Set up permission dialog.
   self.permissionTitle = ko.observable('');

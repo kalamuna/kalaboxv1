@@ -257,15 +257,6 @@ small {
 
 /* Modal */
 
-.license.modal textarea.license-agreement {
-  height: 225px;
-  width: 540px;
-}
-
-.license .modal-content {
-  width: auto;
-}
-
 .modal {
   overflow-y: hidden;
 }
