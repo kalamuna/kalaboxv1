@@ -99,7 +99,7 @@ exports.initialize = flow('initialize')(
   },
   function initializeEnd() {
     if (this.err) {
-      console.log(this.err.message);
+      logger.error(this.err.message);
       throw this.err;
     }
     exports.emit('initialized');
@@ -181,7 +181,7 @@ exports.startBox = flow('startBox')(
         this.err = null;
       }
       else {
-        console.log(this.err.message);
+        logger.error(this.err.message);
         throw this.err;
       }
     }
@@ -239,7 +239,7 @@ exports.stopBox = flow('stopBox')(
         this.err = null;
       }
       else {
-        console.log(this.err.message);
+        logger.error(this.err.message);
         throw this.err;
       }
     }
