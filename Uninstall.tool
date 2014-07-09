@@ -104,6 +104,7 @@ if [ "$my_answer" == "2" ]; then
     my_files=()
     append my_files "/Applications/Vagrant"
     append my_files "/usr/bin/vagrant"
+    append my_files "$HOME/.vagrant.d"
 
     # Print the files and directories that are to be removed and verify
     # with the user that that is what he/she really wants to do.
@@ -114,6 +115,7 @@ if [ "$my_answer" == "2" ]; then
 
     # Actually delete Vagrant and remove plugins
     /usr/bin/vagrant plugin uninstall vagrant-hostsupdater
+    /bin/rm -rf $HOME/.vagrant.d
     /usr/bin/sudo -p "Please enter %u's password:" /bin/rm -rf /Applications/Vagrant
     /usr/bin/sudo -p "Please enter %u's password:" /bin/rm -Rf /usr/bin/vagrant
 
