@@ -7,7 +7,7 @@ end if
 tell application "SystemUIServer"
   activate
   set my_password to display dialog ¬
-    "Please enter your administrator password:" with title ¬
+    "Please enter your Mac user account password. Installation will fail if your account does not have administrative privileges." with title ¬
     "Password" with icon kalaicon ¬
     default answer ¬
     "" buttons {"Cancel", "OK"} default button 2 ¬
