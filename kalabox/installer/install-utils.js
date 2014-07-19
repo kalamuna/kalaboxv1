@@ -305,7 +305,7 @@ exports.compareVersions = function(v1, v2) {
     if (v1parts[i] == v2parts[i]) {
       continue;
     }
-    else if (v1parts[i] > v2parts[i]) {
+    else if (parseInt(v1parts[i]) > parseInt(v2parts[i])) {
       return 1;
     }
     else {
