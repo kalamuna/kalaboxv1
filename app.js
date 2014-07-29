@@ -43,6 +43,7 @@ app.configure('production', function() {
 
 // Routes:
 app.get('/', routes.index);
+app.get('/start', routes.start);
 app.get('/install', routes.install);
 app.get('/dash', routes.dash);
 app.get('/error', routes.errorPage);
@@ -59,15 +60,9 @@ app.listen(51686);
 
 // Initialize error logging service.
 logger.initialize(function() {
-  // Initialize Kalabox and app window.
-  box.initialize(function () {
-    // Make sure box can clean up after itself when the user quits.
-    process.on('SIGTERM', function() {
-      box.cleanUp(function() {
-        process.exit();
-      });
-    });
-    // This should fix our issues
-    window.location = "http://localhost:51686/"
-  });
+  // Weird chrome location bug
+  setTimeout(function() {
+    window.location.href = "http://localhost:51686/start"
+  },500);
 }, io);
+

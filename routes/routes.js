@@ -13,16 +13,25 @@ var installer = require('../kalabox/installer/installer'),
     sitesManager = require('../kalabox/vm/sites-manager'),
     updater = require('../kalabox/updater');
 
-exports.index = function(req, res) {
-  console.log("stuff");
-  if (box.isInstalled()) {
-    exports.dash(req, res);
-  }
-  else {
-    res.render('index', {
-      title : 'Kalabox'
+
+exports.start = function(req, res) {
+  // Initialize Kalabox and app window.
+  box.initialize(function () {
+    // Make sure box can clean up after itself when the user quits.
+    if (box.isInstalled()) {
+      exports.dash(req, res);
+    }
+    else {
+      res.render('start', {
+        title : 'Kalabox'
+      });
+    }
+    process.on('SIGTERM', function() {
+      box.cleanUp(function() {
+        process.exit();
+      });
     });
-  }
+  });
 };
 
 exports.install = function(req, res) {
