@@ -149,7 +149,7 @@ exports.startBox = flow('startBox')(
     // Wait until box is ready before proceeding.
     var that = this;
     var checkingReady = setInterval(function() {
-      checkStatus(function(ready) {
+      checkReady(function(ready) {
         if (ready) {
           clearInterval(checkingReady);
           that.next();
