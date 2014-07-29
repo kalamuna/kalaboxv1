@@ -253,6 +253,11 @@ var installDMG = flow('installDMG')(
  * Route handler that installs Kalabox.
  */
 var install = flow('installKalabox')(
+  // use -k here because if you've previous entered sudo and are under timeout
+  // it will do weird things and you could enter in a wrong password
+  function installResetPassword() {
+    exec('sudo -k', this.async());
+  },
   // Get asking for the user's password out of the way.
   function installGetPassword() {
     sudoRunner.runCommand('echo', ['We needs the passwordz...'], this.async());
