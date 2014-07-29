@@ -1,9 +1,10 @@
 set kalaicon to 2
 tell application "System Events" to set itExists to ¬
-  exists of alias ((path to me as text) & ":app.icns")
+  exists of alias ((path to me as text) & ":..:..:..:..:app.icns")
 if itExists
-  set kalaicon to alias ((path to me as text) & ":app.icns")
+  set kalaicon to alias ((path to me as text) & ":..:..:..:..:app.icns")
 end if
+with timeout of 86400 seconds
 tell application "SystemUIServer"
   activate
   set my_password to display dialog ¬
@@ -11,6 +12,7 @@ tell application "SystemUIServer"
     "Password" with icon kalaicon ¬
     default answer ¬
     "" buttons {"Cancel", "OK"} default button 2 ¬
-    giving up after 295 ¬
+    giving up after 86400 ¬
     with hidden answer
 end tell
+end timeout
