@@ -21,6 +21,8 @@ var fs = require('fs'),
 var UPDATE_URL = config.get('UPDATE_URL'),
     KALASTACK_BASE_URL = config.get('KALASTACK_BASE_URL'),
     KALASTACK_DIR = config.get('KALASTACK_DIR'),
+    KALASTACK_VERSION = config.kalastack.get('kalastack_version'),
+    KALASTACK_URL = KALASTACK_BASE_URL + 'kalastack-' + KALASTACK_VERSION + '.tar.gz',
     DEPENDENCIES = [
       'terminatur'
     ],
@@ -154,7 +156,7 @@ var refreshKalastack = flow('refreshKalastack')(
       }
     });
     // Download the new Kalastack files.
-    var kalastackRequest = request(KALASTACK_BASE_URL + configuration['kalastack_version']);
+    var kalastackRequest = request(KALASTACK_URL);
     kalastackRequest.on('end', this.async());
     kalastackRequest.pipe(fs.createWriteStream(this.data.temp + 'kalastack.tar.gz'));
   },
