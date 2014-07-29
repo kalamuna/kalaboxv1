@@ -50,19 +50,12 @@ exports.initialize = flow('initialize')(
   function initialize0(callback) {
     this.data.callback = callback;
     // Verify that Vagrant has the correct VirtualBox ID.
-    var kalaboxId = host.getKalaboxId(),
-        currentId = host.getVBoxId();
-    if (kalaboxId && currentId) {
-      host.verifyVBoxId(currentId, this.async());
-    }
-    else {
-      this.next('NO_ID');
-    }
+    host.getVBoxId(this.async(as(0)));
   },
-  function initialize1(result) {
+  function initialize1(id) {
     // Fix the VirtualBox ID Vagrant has if it's wrong.
-    if (result != 'correct' && result != 'NO_ID') {
-      host.fixVBoxId(result);
+    if (id && id != 'NO_ID') {
+      host.fixVBoxId(id);
     }
     // Check if Kalabox is installed.
     checkInstalled(this.async(as(0)));
@@ -70,7 +63,7 @@ exports.initialize = flow('initialize')(
   function initialize2(isInstalled) {
     installed = isInstalled;
     // Execute the status checker and set it to run periodically.
-    if (isInstalled) {
+    if (installed) {
       repeatStatusCheck();
       statusChecker = setInterval(repeatStatusCheck, 10000);
     }
@@ -144,7 +137,7 @@ exports.startBox = flow('startBox')(
   },
   function startBox1(output) {
     // Run "vagrant up" to start the Kalabox.
-    exec('vagrant up', {cwd: KALASTACK_DIR}, this.async(as(0)));
+    exec('VAGRANT_CWD=' + KALASTACK_DIR + ' vagrant up default --no-parallel  ', {cwd: KALASTACK_DIR}, this.async(as(0)));
   },
   function startBox2(error) {
     // Check for Vagrant error.
@@ -302,7 +295,6 @@ var checkInstalled = flow('checkInstalled')(
     this.data.callback = callback;
     // Check if Kalabox/Kalastack directories exist.
     fs.exists(KALASTACK_DIR, this.async(as(0)));
-    console.log(KALASTACK_DIR);
   },
   // Run "vagrant status" to verify box is good to go.
   function checkInstalled1(exists) {
@@ -310,7 +302,7 @@ var checkInstalled = flow('checkInstalled')(
       this.end();
     }
     else {
-      exec('vagrant status', {cwd: KALASTACK_DIR}, this.async());
+      exec('VAGRANT_CWD=' + KALASTACK_DIR + ' vagrant status default', {cwd: KALASTACK_DIR}, this.async());
     }
   },
   // Parse Vagrant output to make sure box is built.

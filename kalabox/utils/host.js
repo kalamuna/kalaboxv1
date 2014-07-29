@@ -12,6 +12,7 @@ var flow = require('nue').flow,
     utils = require('./utils'),
     exec = require('child_process').exec,
     fs = require('fs'),
+    logger = require('../../logger'),
     _ = require('underscore');
 
 // "Constants":
@@ -98,15 +99,38 @@ var getKalaboxId = exports.getKalaboxId = function() {
  * @return string|bool
  *   VM's ID, or false if unable to get it.
  */
-exports.getVBoxId = function() {
-  var idPath = KALASTACK_DIR + '.vagrant/machines/default/virtualbox/id';
-  try {
-    return fs.readFileSync(idPath).toString();
+exports.getVBoxId = flow('getVBoxId')(
+  function getVBoxId0(callback) {
+    this.data.callback = callback;
+    // Get Kalabox's UUID.
+    this.data.uuid = getKalaboxId();
+    // Retrieve the correct VirtualBox ID.
+    exec('vboxmanage list vms', this.async({error: as(0), stdout: as(1), stderr: as(2)}));
+  },
+  function getVBoxId0(data) {
+    var uuid = this.data.uuid.replace(/\./g, '\\.'),
+        regex = new RegExp('^"' + uuid + '"\\s+\\{([a-zA-Z0-9-]+)\\}$', 'm'),
+        stdout = data.stdout || '',
+        output = stdout.toString(),
+        matches = output.match(regex);
+    if (matches && matches[1]) {
+      this.next(matches[1]);
+    }
+    else {
+      this.next('NO_ID');
+    }
+  },
+  function getVBoxIdEnd(id) {
+    if (this.err) {
+      this.data.callback(false);
+      this.err = null;
+    }
+    else {
+      this.data.callback(id);
+    }
+    this.next();
   }
-  catch (error) {
-    return false;
-  }
-};
+);
 
 /**
  * Checks if a supplied ID matches the ID returned by VirtualBox.
