@@ -157,6 +157,17 @@ exports.startBox = flow('startBox')(
       });
     }, 5000);
   },
+  function startBox3() {
+    var that = this;
+    // Start the SSH Agent
+    exec('VAGRANT_CWD=' + KALASTACK_DIR + ' vagrant ssh -c "eval $(ssh-agent)"', that.next());
+  },
+  function startBox4() {
+    var that = this;
+    // Add any keys that we have
+    exec('VAGRANT_CWD=' + KALASTACK_DIR + ' vagrant ssh -c "drush php-eval \'_terminatur_keys();\'"', this.async());
+    that.next();
+  },
   function startBoxEnd() {
     // Restart status checking.
     statusChecker = setInterval(repeatStatusCheck, 10000);
