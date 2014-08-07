@@ -4,6 +4,7 @@ dist/*
 /.settings
 /.buildpath
 /.project
+/.kalabox
 kalabox.sublime-project
 app.nw
 kalabox.sublime-workspace
