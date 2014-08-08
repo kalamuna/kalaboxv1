@@ -3,6 +3,8 @@
 Kalabox is more than just a local development environment. It's an easy to use, site building
 and deployment toolkit for the masses. Advanced webtools now belong to the people.
 
+**This repo is just for Kalabox V1. For V2 please visit https://github.com/kalabox**
+
 ## Requirements
 
   * Kalabox has been tested mostly on Mac OS X 10.8 and partially tested on 10.7 and 10.6. It may work on 10.6 or lower. If you try it out on an older OS X version, please share your experience.
