@@ -1,9 +1,9 @@
 # Kalabox
 
+THIS PROJECT IS CURRENTLY APPROACHING END OF LIFE IN FAVOR OF Kalabox2. IF YOU ARE A BRAVE AND DARING SOUL AND WANT TO HELP US TEST THE LATEST AND GREATEST HEAD OVER THAT WAY!
+
 Kalabox is more than just a local development environment. It's an easy to use, site building
 and deployment toolkit for the masses. Advanced webtools now belong to the people.
-
-**This repo is just for Kalabox V1. For V2 please visit https://github.com/kalabox**
 
 ## Requirements
 
