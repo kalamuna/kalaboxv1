@@ -1,6 +1,10 @@
-# Kalabox
+# Kalabox V1
 
-**HIS PROJECT IS CURRENTLY APPROACHING END OF LIFE IN FAVOR OF Kalabox2. IF YOU ARE A BRAVE AND DARING SOUL AND WANT TO HELP US TEST THE LATEST AND GREATEST HEAD OVER THAT WAY!**
+## Deprecated.
+
+Many components of this software have reached end of life and the project is no longer actively maintained
+
+Please check out the successor project [Kalabox2](https://github.com/kalabox/kalabox). This project is still under development but it very actively supported and should reach feature parity with Kalabox 1 shortly. 
 
 Kalabox is more than just a local development environment. It's an easy to use, site building
 and deployment toolkit for the masses. Advanced webtools now belong to the people.
